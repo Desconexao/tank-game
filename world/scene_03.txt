@@ -1,0 +1,10 @@
+XXXXXXXXXX
+X________X
+X_XXXXXX_X
+X_X____X_X
+__X____X__
+__X____X__
+X_X____X_X
+X_XXXXXX_X
+X________X
+__________

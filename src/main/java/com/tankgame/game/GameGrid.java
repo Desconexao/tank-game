@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 
 public class GameGrid {
     private char[][] grid;
@@ -20,32 +21,38 @@ public class GameGrid {
         this.row = row;
         this.col = col;
 
+        String sceneFileName;
+
         if(custom){
-            try {
-                /*
-                Reads each line from the custommap.txt file and converts each line to a character array.
+            sceneFileName = "world/custommap.txt";
+        }
+        else{
+            // Randomizes a map from world/
+            int n = (new Random()).nextInt(5) + 1;
+            sceneFileName = "world/scene_0" + n + ".txt";
+        }
+
+        /*
+                Reads each line from the scene layout file and converts each line to a character array.
                 For example: "X_X
                               _X_"
                 
                 grid[3][3] = [["X", "_", "X"],
                               ["_", "X", "_"]];
-                */
+        */
 
-                List<String> lines = Files.readAllLines(Path.of("world/custommap.txt"));
-                for (int i = 0; i < row; i++) {
-                    grid[i] = lines.get(i).toCharArray();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            List<String> lines = Files.readAllLines(Path.of(sceneFileName));
+            for (int i = 0; i < row; i++) {
+                grid[i] = lines.get(i).toCharArray();
             }
 
-            // Completely unnecessary print of the matrix
-            System.out.println(this.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else{
-            return;
-        }
+
+        // Completely unnecessary print of the matrix
+        System.out.println(this.toString());
     }
 
     // Returns the matrix
