@@ -12,8 +12,8 @@ public class GameGrid {
 
     public GameGrid(boolean custom, int row, int col) {
         /*
-        Caso custom == true: lê o arquivo de texto em world/custommap.txt e converte-o em uma matrix de caracteres baseada em row em col.
-        Caso false, seleciona um dos mapas pré-prontos em world/scene_*.txt
+        If custom == true: reads the text file at world/custommap.txt and converts it to a character matrix based on row and col.
+        If false, selects one of the pre-made maps in world/scene_*.txt
          */
 
         grid = new char[row][col];
@@ -23,8 +23,8 @@ public class GameGrid {
         if(custom){
             try {
                 /*
-                Lê cada linha do arquivo custommap.txt e converte cada linha em um array de caracteres.
-                Por exemplo: "X_X
+                Reads each line from the custommap.txt file and converts each line to a character array.
+                For example: "X_X
                               _X_"
                 
                 grid[3][3] = [["X", "_", "X"],
@@ -40,7 +40,7 @@ public class GameGrid {
                 e.printStackTrace();
             }
 
-            // Print totalmente desnecessário da matriz
+            // Completely unnecessary print of the matrix
             System.out.println(this.toString());
         }
         else{
@@ -48,12 +48,12 @@ public class GameGrid {
         }
     }
 
-    // Retorna a matriz
+    // Returns the matrix
     public char[][] getGridMatrix() {
         return grid;
     }
 
-    // Retorna a grid em String.
+    // Returns the grid as a String.
     @Override
     public String toString(){
         String gridString = "";
