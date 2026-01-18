@@ -1,52 +1,53 @@
 package com.tankgame.game;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.CardLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.tankgame.graphics.SpriteImport;
+import com.tankgame.screens.GameScene;
 
 public class MainWindow {
 
     public MainWindow(){
-        SpriteImport sprites = new SpriteImport();
 
         // Create basic Window.
         JFrame frame = new JFrame("Tank game");
-        frame.setSize(1200, 700);
+        frame.setSize(750, 750);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
-        // Create a 10x10 grid.
-        JPanel gameGrid = new JPanel();
-        gameGrid.setPreferredSize(new Dimension(75 * 10, 75 * 10));
-        gameGrid.setLayout(new GridLayout(10, 10, 0, 0));
+        // Create container of screens.
+        CardLayout layout = new CardLayout();
+        JPanel container = new JPanel(layout);
 
-        // Fill grid spaces with icon sprites based on custom map layout.
-        char[][] grid = (new GameGrid(false, 10, 10)).getGridMatrix();
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 10; j++){
-                char currChar = grid[i][j];
+        // Load screens to container
+        container.add(new GameScene(frame), "GameScene");
+        
+        frame.add(container);
 
-                if(currChar == 'X'){
-                    JLabel brick = new JLabel(sprites.getSpriteResized("brick", 75, 75));
-                    gameGrid.add(brick);
-                }
-                else{
-                    JLabel blackSquare = new JLabel(sprites.getSpriteResized("black", 75, 75));
-                    gameGrid.add(blackSquare);
+        // Select and show GameScene screen
+        layout.show(container, "GameScene");
+
+        
+    }
+
+    /*
+    // Load each screen's layout from screens/
+    // Will ignore files starting with "LOADOFF"
+    private void loadScreenLayouts(JPanel container){
+        File dir = new File("screens/");
+        String fileName;
+
+        // Iterate through every file from screens/
+        for (File f : dir.listFiles()) {
+            if (f.isFile()) { 
+                fileName = f.getName();
+                if (!fileName.startsWith("LOADOFF")){
+                    container.add(new J)
                 }
             }
         }
-
-        // Add created grid to the window
-        // Grid is packed and centered so no theres no blank space between tiles.
-        frame.add(gameGrid, BorderLayout.CENTER);
-        frame.pack();
-        frame.setVisible(true);
     }
+     */
 }
