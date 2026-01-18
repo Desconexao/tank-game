@@ -8,10 +8,25 @@ import java.nio.file.Path;
 import javax.swing.ImageIcon;
 
 public class SpriteImport {
+    /**
+    *   Ferramenta para importar sprites rapidamente com o nome do arquivo.
+    **/
 
     String spritesPath = "assets/sprites/";
 
     public ImageIcon getSpriteResized(String spriteName, int resX, int resY) throws FileNotFoundException {
+        /**
+        *   Retorna ImageIcon do sprite com resolução customizada.
+        * 
+        * @spriteName nome (sem extensão) do arquivo de sprite. Lança uma exceção caso não seja encontrado.
+        * @resX tamanho em pixels da nova largura do sprite retornado.
+        * @resY tamanho em pixels da nova altura do sprite retornado.
+        * 
+        * @return ImageIcon scaled do sprite.
+        * 
+        * @throws IllegalArgumentException("Sprite file not found")
+        *
+        **/
         String filePath = spritesPath + spriteName + ".png";
         if (!Files.exists(Path.of(filePath))) {
             throw new FileNotFoundException();
