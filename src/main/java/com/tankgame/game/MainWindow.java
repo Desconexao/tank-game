@@ -1,4 +1,4 @@
-package com.tankgame;
+package com.tankgame.game;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.tankgame.utils.SpriteImport;
+import com.tankgame.graphics.SpriteImport;
 
 public class MainWindow {
 
@@ -20,15 +20,8 @@ public class MainWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
-
-        
-        
-        
-        
-
         JPanel gameGrid = new JPanel();
         gameGrid.setPreferredSize(new Dimension(75 * 10, 75 * 10));
-
 
         gameGrid.setLayout(new GridLayout(10, 10, 0, 0));
         char[][] grid = (new GameGrid(true, 10, 10)).getGridMatrix();
@@ -45,18 +38,12 @@ public class MainWindow {
                         JLabel blackSquare = new JLabel(sprites.getSpriteResized("black", 75, 75));
                         gameGrid.add(blackSquare);
                     }
-                    
                 }
             }
-            
         }
         catch (FileNotFoundException e){
             System.out.println(e);
         }
-        
-
-
-
         frame.add(gameGrid, BorderLayout.CENTER);
         frame.pack();
         frame.setVisible(true);
