@@ -26,7 +26,7 @@ public class MainWindow {
         gameGrid.setPreferredSize(new Dimension(75 * 10, 75 * 10));
         gameGrid.setLayout(new GridLayout(10, 10, 0, 0));
 
-        // Fill grid spaces with icon sprites based on map grid.
+        // Fill grid spaces with icon sprites based on custom map layout.
         char[][] grid = (new GameGrid(true, 10, 10)).getGridMatrix();
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
