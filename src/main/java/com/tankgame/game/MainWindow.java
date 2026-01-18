@@ -14,15 +14,19 @@ public class MainWindow {
 
     public MainWindow(){
         SpriteImport sprites = new SpriteImport();
+
+        // Create basic Window.
         JFrame frame = new JFrame("Tank game");
         frame.setSize(1200, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
+        // Create a 10x10 grid.
         JPanel gameGrid = new JPanel();
         gameGrid.setPreferredSize(new Dimension(75 * 10, 75 * 10));
-
         gameGrid.setLayout(new GridLayout(10, 10, 0, 0));
+
+        // Fill grid spaces with icon sprites based on map grid.
         char[][] grid = (new GameGrid(true, 10, 10)).getGridMatrix();
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
@@ -38,6 +42,9 @@ public class MainWindow {
                 }
             }
         }
+
+        // Add created grid to the window
+        // Grid is packed and centered so no theres no blank space between tiles.
         frame.add(gameGrid, BorderLayout.CENTER);
         frame.pack();
         frame.setVisible(true);
