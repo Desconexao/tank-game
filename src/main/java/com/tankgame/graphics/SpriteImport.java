@@ -36,4 +36,25 @@ public class SpriteImport {
         Image scaledImage = importedIcon.getImage().getScaledInstance(resX, resY, Image.SCALE_SMOOTH);
         return new ImageIcon(scaledImage);
     }
+
+
+    public ImageIcon getSprite(String spriteName){
+        /**
+        *   Retorna ImageIcon do sprite.
+        * 
+        * @spriteName nome (sem extensão) do arquivo de sprite. Lança uma exceção caso não seja encontrado.
+        * 
+        * @return ImageIcon scaled do sprite.
+        * 
+        * @throws IllegalArgumentException("Sprite file not found")
+        *
+        **/
+        String filePath = spritesPath + spriteName + ".png";
+        if (!Files.exists(Path.of(filePath))) {
+            throw new IllegalArgumentException("Sprite file not found");
+        }
+
+        ImageIcon importedIcon = new ImageIcon(filePath);
+        return importedIcon;
+    }
 }
