@@ -1,7 +1,6 @@
 package com.tankgame.graphics;
 
 import java.awt.Image;
-import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -14,7 +13,7 @@ public class SpriteImport {
 
     String spritesPath = "assets/sprites/";
 
-    public ImageIcon getSpriteResized(String spriteName, int resX, int resY) throws FileNotFoundException {
+    public ImageIcon getSpriteResized(String spriteName, int resX, int resY){
         /**
         *   Retorna ImageIcon do sprite com resolução customizada.
         * 
@@ -29,7 +28,7 @@ public class SpriteImport {
         **/
         String filePath = spritesPath + spriteName + ".png";
         if (!Files.exists(Path.of(filePath))) {
-            throw new FileNotFoundException();
+            throw new IllegalArgumentException("Sprite file not found");
         }
 
         ImageIcon importedIcon = new ImageIcon(filePath);
