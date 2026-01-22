@@ -73,4 +73,12 @@ public class GameGrid {
             }
         return gridString;
     }
+
+    // Inserts a character at the specified Y (row) and X (column) position
+    public void insertPosition(char c, int y, int x) {
+        if (y >= 0 && y < row && x >= 0 && x < col) {
+            grid[y][x] = c;
+        }
+    }
+    
 }

@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.tankgame.screens.GameScene;
-import com.tankgame.input.Keyboard;
 
 public class MainWindow {
 
@@ -20,10 +19,9 @@ public class MainWindow {
 
         GameScene gameScene = new GameScene(frame);
         container.add(gameScene, "GameScene");
-        Keyboard keyInput = new Keyboard(gameScene);
-        frame.addKeyListener(keyInput);
         frame.setFocusable(true);
         frame.add(container);
+        layout.show(container, "GameScene");
 
         frame.pack();
         frame.setLocationRelativeTo(null);
