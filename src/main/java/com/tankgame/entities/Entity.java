@@ -1,10 +1,10 @@
 package com.tankgame.entities;
 
 public abstract class Entity {
-    protected int x, y;
+    protected double x, y;
     protected String spriteKey;
 
-    public Entity(int x, int y, String spriteKey) {
+    public Entity(double x, double y, String spriteKey) {
         this.x = x;
         this.y = y;
         this.spriteKey = spriteKey;
@@ -14,19 +14,19 @@ public abstract class Entity {
         return spriteKey;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 }

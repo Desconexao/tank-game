@@ -1,35 +1,48 @@
-package com.tankgame.entities;
+package com.tankgame.entities.tank;
 
+import com.tankgame.entities.Entity;
 import com.tankgame.utils.Movable;
 
 public abstract class Tank extends Entity implements Movable {
     protected int health;
-    protected int speed;
+    protected double speed;
 
-    public Tank(int x, int y, int health, String spriteKey) {
+    public Tank(double x, double y, int health, String spriteKey) {
         super(x, y, spriteKey);
         this.health = health;
-        this.speed = 1;
+        this.speed = 4.0;
     }
 
-    @Override
     public void moveUp() {
         this.y -= speed;
     }
 
-    @Override
     public void moveDown() {
         this.y += speed;
     }
 
-    @Override
     public void moveLeft() {
         this.x -= speed;
     }
 
-    @Override
     public void moveRight() {
         this.x += speed;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public abstract void shoot();
