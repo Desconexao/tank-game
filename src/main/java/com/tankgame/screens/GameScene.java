@@ -2,6 +2,7 @@ package com.tankgame.screens;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -27,7 +28,7 @@ public class GameScene extends JPanel {
 
         this.gridLogic = new GameGrid(true, Globals.GRID_HEIGHT, Globals.GRID_WIDTH);
 
-        this.player = new Player(Globals.TILE_SIZE, Globals.TILE_SIZE, 3, "player_tank");
+        this.player = new Player(Globals.TILE_SIZE, Globals.TILE_SIZE, 3, "player_tank", 0);
 
         this.gameGrid = new JPanel() {
             @Override

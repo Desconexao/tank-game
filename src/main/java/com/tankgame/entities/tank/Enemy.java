@@ -1,8 +1,10 @@
 package com.tankgame.entities.tank;
 
+import com.tankgame.entities.projectile.Bullet;
+
 public class Enemy extends Tank {
-    public Enemy(int x, int y, int health, String spriteKey) {
-        super(x, y, health, spriteKey);
+    public Enemy(int x, int y, int health, String spriteKey, int direction) {
+        super(x, y, health, spriteKey, direction);
     }
 
     @Override
@@ -25,7 +27,15 @@ public class Enemy extends Tank {
         this.x++;
     }
 
-    public void shoot() {
-        // pewpew
+    @Override
+    public void setDirection(int direction){
+        this.direction = direction;
     }
+
+    public Bullet shoot() {
+        return new Bullet(x, y, 0, this);
+    }
+
+    
+
 }

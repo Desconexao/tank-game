@@ -28,22 +28,4 @@ public class MainWindow {
         frame.setVisible(true);
     }
 
-    /*
-     * // Load each screen's layout from screens/
-     * // Will ignore files sta
-     * private void loadScreenLayouts(JPanel container){
-     * File dir = new File("screens/");
-     * String fileName;
-     * 
-     * // Iterate through every file from screens/
-     * for (File f : dir.listFiles()) {
-     * if (f.isFile()) {
-     * fileName = f.getName();
-     * if (!fileName.startsWith("LOADOFF")){
-     * container.add(new J)
-     * }
-     * }
-     * }
-     * }
-     */
 }

@@ -4,7 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class Keyboard extends KeyAdapter {
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, shootPressed;
 
     public Keyboard() {
     }
@@ -28,5 +28,7 @@ public class Keyboard extends KeyAdapter {
             leftPressed = pressed;
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT)
             rightPressed = pressed;
+        if (code == KeyEvent.VK_Z || code == KeyEvent.VK_SPACE)
+            shootPressed = pressed;
     }
 }
