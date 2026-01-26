@@ -1,165 +1,179 @@
 package com.tankgame.game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.tankgame.entities.projectile.Bullet;
+import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
+import com.tankgame.entities.tank.Tank;
 import com.tankgame.input.Keyboard;
 import com.tankgame.screens.GameScene;
 import com.tankgame.settings.Globals;
+import com.tankgame.utils.Direction;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameTick implements Runnable {
-    private final int TPS = Globals.TPS;
-    private final long bulletCooldown = Globals.BULLET_COOL_DOWN;
+    private final GameScene scene;
+    private final Keyboard keys;
+    private final List<Bullet> bullets = new ArrayList<>();
+    private long lastShot;
 
-    private boolean running = true;
-    private GameScene currScene;
-    private Keyboard keyInput;
-    private long lastMove = 0;
-    private long lastPlayerShot;
-    private long now;
-    private Player scenePlayer;
-    private List<Bullet> projectiles = new ArrayList<>();
-    // private long MOVE_DELAY = 150; // in miliseconds
-
-    public GameTick(GameScene currScene) {
-        this.currScene = currScene;
-        keyInput = new Keyboard();
-        currScene.mainWindow.addKeyListener(keyInput);
-        scenePlayer = currScene.getPlayer();
+    public GameTick(GameScene scene) {
+        this.scene = scene;
+        this.keys = new Keyboard();
+        this.scene.mainWindow.addKeyListener(keys);
     }
 
+    @Override
     public void run() {
-        long nsPerTick = 1_000_000_000L / TPS;
+        long nsPerTick = 1_000_000_000L / Globals.TPS;
         long last = System.nanoTime();
-        lastPlayerShot = System.nanoTime();
-
-        while (running) {
-            now = System.nanoTime();
+        while (true) {
+            long now = System.nanoTime();
             if (now - last >= nsPerTick) {
-                this.tick();
+                update();
                 last += nsPerTick;
             }
         }
     }
 
-    private void tick() {
-
-        checkInputs();
-
-        // Iterate ArrayList
-        for (var element : projectiles) {
-            // Add bullet to renderQueue for this frame
-            if(!currScene.renderer.pushRenderQueue("bullet_vertical", (int) element.getX(), (int) element.getY()))
-                throw new IllegalArgumentException("Sprite name not loaded");
-            element.update();
-        }
-
-        checkProjectileNextColision();
-
-        
-
-        
-        currScene.update();
-        
-        
-
+    private void update() {
+        handlePlayerInput();
+        updateProjectiles();
+        updateEnemies();
+        scene.getEnemies().removeIf(enemy -> enemy.getHealth() <= 0);
+        scene.update();
     }
 
-    public void stop() {
-        running = false;
-    }
+    private void updateProjectiles() {
+        bullets.removeIf(b -> {
+            double currentX = b.getX();
+            double currentY = b.getY();
 
-    private void checkInputs() {
-        double speed = scenePlayer.getSpeed();
-        
+            double nextX = currentX;
+            double nextY = currentY;
 
-        if (keyInput.upPressed) {
-            if (canMove(scenePlayer.getX(), scenePlayer.getY() - speed)) {
-                scenePlayer.moveUp();
+            double s = b.getSpeed();
+            int bSize = Globals.BULLET_SIZE;
+
+            switch (b.getDirection()) {
+                case UP -> nextY -= s;
+                case DOWN -> nextY += s;
+                case LEFT -> nextX -= s;
+                case RIGHT -> nextX += s;
             }
-        }
-        if (keyInput.downPressed) {
-            if (canMove(scenePlayer.getX(), scenePlayer.getY() + speed)) {
-                scenePlayer.moveDown();
+
+            double centerX = nextX + bSize / 2.0;
+            double centerY = nextY + bSize / 2.0;
+
+            boolean hitWall = isBlocked(centerX, centerY);
+            if (hitWall) {
+                scene.gridLogic.removeBlock(
+                        nextX + bSize / 2.0,
+                        nextY + bSize / 2.0);
+                return true;
             }
-        }
-        if (keyInput.leftPressed) {
-            if (canMove(scenePlayer.getX() - speed, scenePlayer.getY())) {
-                scenePlayer.moveLeft();
+
+            b.update();
+            for (Enemy e : scene.getEnemies()) {
+                if (checkHit(b, e)) {
+                    e.setHealth(e.getHealth() - 1);
+                    return true;
+                }
             }
-        }
-        if (keyInput.rightPressed) {
-            if (canMove(scenePlayer.getX() + speed, scenePlayer.getY())) {
-                scenePlayer.moveRight();
+
+            if (b.getX() < 0 || b.getX() > Globals.GRID_WIDTH * Globals.TILE_SIZE ||
+                    b.getY() < 0 || b.getY() > Globals.GRID_HEIGHT * Globals.TILE_SIZE) {
+                return true;
             }
-        }
-        if (keyInput.shootPressed && canShoot(lastPlayerShot)){
-            addProjectile(scenePlayer.shoot());
-            lastPlayerShot = System.nanoTime();
-        }
-    }
 
-    private boolean isTileBlocked(double nextY, double nextX) {
-        int gridX = (int) (nextX / Globals.TILE_SIZE);
-        int gridY = (int) (nextY / Globals.TILE_SIZE);
-
-        if (gridY < 0 || gridY >= Globals.GRID_HEIGHT || gridX < 0 || gridX >= Globals.GRID_WIDTH) {
-            return true;
-        }
-
-        char tile = currScene.gridLogic.getGridMatrix()[gridY][gridX];
-
-        return tile == 'X';
-    }
-
-    private boolean canMove(double nextX, double nextY) {
-        // Default to player size if not specified
-        return canMove(nextX, nextY, Globals.TILE_SIZE - 1);
-    }
-
-    private boolean canMove(double nextX, double nextY, int size) {
-        return !isTileBlocked(nextY, nextX) &&
-                !isTileBlocked(nextY, nextX + size) &&
-                !isTileBlocked(nextY + size, nextX) &&
-                !isTileBlocked(nextY + size, nextX + size);
-    }
-
-    private boolean canShoot(long lastShotTime){
-        if(now - lastShotTime > bulletCooldown){
-            return true;
-            }
-        return false;
-    }
-
-    private boolean addProjectile(Bullet bullet){
-        projectiles.add(bullet);
-        return true;
-        //???
-    }
-
-    private void checkProjectileNextColision(){
-
-        projectiles.removeIf(e -> {
-            double speed = e.getSpeed();
-            // Use bullet size, otherwise bullets hit walls too early
-            int size = Globals.BULLET_SIZE; 
-            
-            // Return TRUE to remove bullet (if !canMove)
-            switch (e.getDirection()) {
-                case 0: // UP
-                    return !canMove(e.getX(), e.getY() - speed, size);
-                case 1: // DOWN
-                    return !canMove(e.getX(), e.getY() + speed, size);
-                case 2: // LEFT
-                    return !canMove(e.getX() - speed, e.getY(), size);
-                case 3: // RIGHT
-                    return !canMove(e.getX() + speed, e.getY(), size);
-                default:
-                    return false;
-            }
+            scene.renderer.pushRenderQueue(b.getSpriteKey(), (int) b.getX(), (int) b.getY());
+            return false;
         });
+    }
 
+    private boolean checkHit(Bullet b, Tank t) {
+        return b.getX() < t.getX() + Globals.TILE_SIZE &&
+                b.getX() + Globals.BULLET_SIZE > t.getX() &&
+                b.getY() < t.getY() + Globals.TILE_SIZE &&
+                b.getY() + Globals.BULLET_SIZE > t.getY();
+    }
+
+    private void handlePlayerInput() {
+        Player p = scene.getPlayer();
+        double s = p.getSpeed();
+        if (keys.upPressed && canMove(p.getX(), p.getY() - s)) {
+            p.moveUp();
+            p.setDirection(Direction.UP);
+        } else if (keys.downPressed && canMove(p.getX(), p.getY() + s)) {
+            p.moveDown();
+            p.setDirection(Direction.DOWN);
+        } else if (keys.leftPressed && canMove(p.getX() - s, p.getY())) {
+            p.moveLeft();
+            p.setDirection(Direction.LEFT);
+        } else if (keys.rightPressed && canMove(p.getX() + s, p.getY())) {
+            p.moveRight();
+            p.setDirection(Direction.RIGHT);
+        }
+
+        if (keys.shootPressed && (System.nanoTime() - lastShot > Globals.BULLET_COOL_DOWN)) {
+            bullets.add(p.shoot());
+            lastShot = System.nanoTime();
+        }
+    }
+
+    private void updateEnemies() {
+        for (Enemy e : scene.getEnemies()) {
+            double s = e.getSpeed();
+            boolean moved = false;
+
+            switch (e.getDirection()) {
+                case UP -> {
+                    if (canMove(e.getX(), e.getY() - s)) {
+                        e.moveUp();
+                        moved = true;
+                    }
+                }
+                case DOWN -> {
+                    if (canMove(e.getX(), e.getY() + s)) {
+                        e.moveDown();
+                        moved = true;
+                    }
+                }
+                case LEFT -> {
+                    if (canMove(e.getX() - s, e.getY())) {
+                        e.moveLeft();
+                        moved = true;
+                    }
+                }
+                case RIGHT -> {
+                    if (canMove(e.getX() + s, e.getY())) {
+                        e.moveRight();
+                        moved = true;
+                    }
+                }
+            }
+
+            // Se ele não conseguiu se mover (bateu na parede), ele sorteia uma nova direção
+            if (!moved) {
+                Direction[] directions = Direction.values();
+                e.setDirection(directions[new java.util.Random().nextInt(directions.length)]);
+            }
+        }
+    }
+
+    private boolean canMove(double x, double y) {
+        return canMove(x, y, Globals.TILE_SIZE - 2);
+    }
+
+    private boolean canMove(double x, double y, int size) {
+        return !isBlocked(x, y) && !isBlocked(x + size, y) && !isBlocked(x, y + size) && !isBlocked(x + size, y + size);
+    }
+
+    private boolean isBlocked(double x, double y) {
+        int gx = (int) (x / Globals.TILE_SIZE);
+        int gy = (int) (y / Globals.TILE_SIZE);
+        if (gx < 0 || gx >= Globals.GRID_WIDTH || gy < 0 || gy >= Globals.GRID_HEIGHT)
+            return true;
+        return scene.gridLogic.getGridMatrix()[gy][gx] == 'X';
     }
 }

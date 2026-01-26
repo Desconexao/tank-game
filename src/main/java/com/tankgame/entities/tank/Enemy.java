@@ -1,41 +1,16 @@
 package com.tankgame.entities.tank;
 
-import com.tankgame.entities.projectile.Bullet;
+import com.tankgame.utils.Direction;
 
 public class Enemy extends Tank {
-    public Enemy(int x, int y, int health, String spriteKey, int direction) {
+    public Enemy(double x, double y, int health, String spriteKey, Direction direction) {
         super(x, y, health, spriteKey, direction);
+        this.speed = 10.0;
     }
 
     @Override
-    public void moveUp() {
-        this.y--;
-    }
-
-    @Override
-    public void moveDown() {
-        this.y++;
-    }
-
-    @Override
-    public void moveLeft() {
-        this.x--;
-    }
-
-    @Override
-    public void moveRight() {
-        this.x++;
-    }
-
-    @Override
-    public void setDirection(int direction){
+    public void setDirection(Direction direction) {
         this.direction = direction;
+        this.spriteKey = "enemy_tank_" + direction.name().toLowerCase();
     }
-
-    public Bullet shoot() {
-        return new Bullet(x, y, 0, this);
-    }
-
-    
-
 }

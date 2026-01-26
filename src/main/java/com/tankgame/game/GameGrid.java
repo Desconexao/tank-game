@@ -5,80 +5,54 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+import com.tankgame.settings.Globals;
 
 public class GameGrid {
     private char[][] grid;
-    private int row;
-    private int col;
+    private final int rows, cols;
 
-    public GameGrid(boolean custom, int row, int col) {
-        /*
-        If custom == true: reads the text file at world/custommap.txt and converts it to a character matrix based on row and col.
-        If false, selects one of the pre-made maps in world/scene_*.txt
-         */
-
-        grid = new char[row][col];
-        this.row = row;
-        this.col = col;
-
-        String sceneFileName;
-
-        if(custom){
-            sceneFileName = "world/custommap.txt";
-        }
-        else{
-            // Randomizes a map from world/
-            int n = (new Random()).nextInt(5) + 1;
-            sceneFileName = "world/scene_0" + n + ".txt";
-        }
-
-        /*
-                Reads each line from the scene layout file and converts each line to a character array.
-                For example: "X_X
-                              _X_"
-                
-                grid[3][3] = [["X", "_", "X"],
-                              ["_", "X", "_"]];
-        */
-
-        try {
-            List<String> lines = Files.readAllLines(Path.of(sceneFileName));
-            for (int i = 0; i < row; i++) {
-                grid[i] = lines.get(i).toCharArray();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Completely unnecessary print of the matrix
-        System.out.println(this.toString());
+    public GameGrid(boolean custom, int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        this.grid = new char[rows][cols];
+        loadMap(custom);
     }
 
-    // Returns the matrix
+    private void loadMap(boolean custom) {
+        String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(5) + 1) + ".txt";
+        try {
+            List<String> lines = Files.readAllLines(Path.of(fileName));
+            for (int i = 0; i < Math.min(rows, lines.size()); i++) {
+                grid[i] = lines.get(i).toCharArray();
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar mapa: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (char[] row : grid) {
+            for (char c : row)
+                sb.append(" ").append(c).append(" ");
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     public char[][] getGridMatrix() {
         return grid;
     }
 
-    // Returns the grid as a String.
-    @Override
-    public String toString(){
-        String gridString = "";
+    public void removeBlock(double x, double y) {
+        int gridX = (int) (x / Globals.TILE_SIZE);
+        int gridY = (int) (y / Globals.TILE_SIZE);
 
-        for (int i = 0; i < row; i++) {
-                for (int j = 0; j < col; j++) {
-                    gridString += " " + grid[i][j] + " ";
-                }
-                gridString += "\n";
+        if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols) {
+            if (grid[gridY][gridX] == 'X') {
+                grid[gridY][gridX] = ' ';
             }
-        return gridString;
-    }
-
-    // Inserts a character at the specified Y (row) and X (column) position
-    public void insertPosition(char c, int y, int x) {
-        if (y >= 0 && y < row && x >= 0 && x < col) {
-            grid[y][x] = c;
         }
     }
-    
 }

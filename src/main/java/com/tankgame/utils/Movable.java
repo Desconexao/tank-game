@@ -2,9 +2,14 @@ package com.tankgame.utils;
 
 public interface Movable {
     void moveUp();
+
     void moveDown();
+
     void moveLeft();
+
     void moveRight();
-    void setDirection(int direction);
-    int getDirection();
+
+    void setDirection(Direction direction);
+
+    Direction getDirection();
 }
