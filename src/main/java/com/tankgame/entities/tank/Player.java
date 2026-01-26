@@ -1,58 +1,44 @@
 package com.tankgame.entities.tank;
 
+import com.tankgame.utils.Direction;
+
 public class Player extends Tank {
-    public Player(double x, double y, int health, String spriteKey, int direction) {
+    public Player(double x, double y, int health, String spriteKey, Direction direction) {
         super(x, y, health, spriteKey, direction);
     }
 
     @Override
     public void moveUp() {
         super.moveUp();
-        setDirection(0);
+        setDirection(Direction.UP);
     }
 
     @Override
     public void moveDown() {
         super.moveDown();
-        setDirection(1);
+        setDirection(Direction.DOWN);
     }
 
     @Override
     public void moveLeft() {
         super.moveLeft();
-        setDirection(2);
+        setDirection(Direction.LEFT);
     }
 
     @Override
     public void moveRight() {
         super.moveRight();
-        setDirection(3);
+        setDirection(Direction.RIGHT);
     }
 
     @Override
-    public void setDirection(int direction){
+    public void setDirection(Direction direction) {
         this.direction = direction;
-
-        switch (direction) {
-            case 0:
-                this.spriteKey = "player_tank";
-                break;
-            
-            case 1:
-                this.spriteKey = "player_tank_down";
-                break;
-
-            case 2:
-                this.spriteKey = "player_tank_left";
-                break;
-
-            case 3:
-                this.spriteKey = "player_tank_right";
-                break;
-        
-            default:
-                this.spriteKey = "player_tank";
-                break;
-        }
+        this.spriteKey = switch (direction) {
+            case UP -> "player_tank";
+            case DOWN -> "player_tank_down";
+            case LEFT -> "player_tank_left";
+            case RIGHT -> "player_tank_right";
+        };
     }
 }
