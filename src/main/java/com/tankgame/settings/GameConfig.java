@@ -1,0 +1,36 @@
+package com.tankgame.settings;
+
+public final class GameConfig {
+    // Performance
+    public static final int TPS = 60;
+
+    // Grid
+    public static final int TILE_SIZE = 75;
+    public static final int GRID_WIDTH = 13;
+    public static final int GRID_HEIGHT = 13;
+
+    // Bullets
+    public static final int BULLET_SIZE = 20;
+    public static final double BULLET_SPEED = 8.0;
+    // public static final long BULLET_COOL_DOWN = 1_000_000_000L;
+    // public static final long BULLET_COOL_DOWN_MS = 1000;
+
+    // Player
+    public static final int PLAYER_START_HEALTH = 3;
+    public static final double PLAYER_SPEED = 4.0;
+    public static final int PLAYER_START_X = TILE_SIZE;
+    public static final int PLAYER_START_Y = TILE_SIZE;
+    public static final long PLAYER_BULLET_COOL_DOWN_MS = 500; // 0.5
+
+    // Enemy
+    public static final double ENEMY_SPEED = 4.0;
+    public static final int ENEMY_START_HEALTH = 2;
+    public static final long ENEMY_BULLET_COOL_DOWN_MS = 1000; // 1
+
+    // Graphics opcional -
+    public static final int PLAYER_ORIGINAL_SPRITE_SIZE = 13;
+    public static final int BULLET_ORIGINAL_SPRITE_SIZE = 3;
+
+    private GameConfig() {
+    }
+}

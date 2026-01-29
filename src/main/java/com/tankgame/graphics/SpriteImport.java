@@ -1,59 +1,72 @@
 package com.tankgame.graphics;
 
 import java.awt.Image;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import javax.swing.ImageIcon;
 
 public class SpriteImport {
-    /**
-    *   Tool to quickly import sprites by file name.
-    **/
-
     String spritesPath = "assets/sprites/";
 
-    public ImageIcon getSpriteResized(String spriteName, int resX, int resY){
-        /**
-        *   Returns an ImageIcon of the sprite with custom resolution.
-        * 
-        * @spriteName name (without extension) of the sprite file. Throws an exception if not found.
-        * @resX size in pixels of the new width of the returned sprite.
-        * @resY size in pixels of the new height of the returned sprite.
-        * 
-        * @return Scaled ImageIcon of the sprite.
-        * 
-        * @throws IllegalArgumentException("Sprite file not found")
-        *
-        **/
+    public ImageIcon getSpriteResized(String spriteName, int resX, int resY) {
         String filePath = spritesPath + spriteName + ".png";
+
         if (!Files.exists(Path.of(filePath))) {
-            throw new IllegalArgumentException("Sprite file not found");
+            System.out.println("Creating placeholder for: " + spriteName + " (" + resX + "x" + resY + ")");
+            return createPlaceholderSprite(spriteName, resX, resY);
         }
 
-        ImageIcon importedIcon = new ImageIcon(filePath);
-        Image scaledImage = importedIcon.getImage().getScaledInstance(resX, resY, Image.SCALE_SMOOTH);
-        return new ImageIcon(scaledImage);
+        try {
+            ImageIcon importedIcon = new ImageIcon(filePath);
+            Image scaledImage = importedIcon.getImage().getScaledInstance(resX, resY, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaledImage);
+        } catch (Exception e) {
+            System.err.println("Error loading sprite '" + spriteName + "': " + e.getMessage());
+            return createPlaceholderSprite(spriteName, resX, resY);
+        }
     }
 
+    private ImageIcon createPlaceholderSprite(String spriteName, int width, int height) {
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
 
-    public ImageIcon getSprite(String spriteName){
-        /**
-        *   Returns an ImageIcon of the sprite.
-        * 
-        * @spriteName name (without extension) of the sprite file. Throws an exception if not found.
-        * 
-        * @return ImageIcon of the sprite.
-        * 
-        * @throws IllegalArgumentException("Sprite file not found")
-        *
-        **/
-        String filePath = spritesPath + spriteName + ".png";
-        if (!Files.exists(Path.of(filePath))) {
-            throw new IllegalArgumentException("Sprite file not found");
+        Color fillColor;
+        Color borderColor = Color.BLACK;
+
+        if (spriteName.contains("player")) {
+            fillColor = Color.GREEN;
+        } else if (spriteName.contains("enemy")) {
+            fillColor = Color.RED;
+        } else if (spriteName.contains("brick")) {
+            fillColor = new Color(139, 69, 19);
+        } else if (spriteName.contains("black")) {
+            fillColor = Color.BLACK;
+            borderColor = Color.GRAY;
+        } else if (spriteName.contains("bullet")) {
+            fillColor = Color.YELLOW;
+        } else {
+            fillColor = Color.MAGENTA;
         }
 
-        ImageIcon importedIcon = new ImageIcon(filePath);
-        return importedIcon;
+        g2d.setColor(fillColor);
+        g2d.fillRect(0, 0, width, height);
+        g2d.setColor(borderColor);
+        g2d.drawRect(0, 0, width - 1, height - 1);
+
+        if (width > 30 && height > 30) {
+            g2d.setColor(Color.WHITE);
+            String shortName = spriteName.length() > 5 ? spriteName.substring(0, 5) : spriteName;
+            g2d.drawString(shortName, 5, height / 2);
+        }
+
+        g2d.dispose();
+        return new ImageIcon(img);
+    }
+
+    public ImageIcon getSprite(String spriteName) {
+        return getSpriteResized(spriteName, 64, 64);
     }
 }

@@ -2,13 +2,13 @@ package com.tankgame.entities.tank;
 
 import com.tankgame.entities.Entity;
 import com.tankgame.entities.projectile.Bullet;
-import com.tankgame.settings.Globals;
+import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.Movable;
 
 public abstract class Tank extends Entity implements Movable {
     protected int health;
-    protected double speed = 4.0;
+    protected double speed = GameConfig.PLAYER_SPEED;
     protected Direction direction;
 
     public Tank(double x, double y, int health, String spriteKey, Direction direction) {
@@ -34,8 +34,8 @@ public abstract class Tank extends Entity implements Movable {
     }
 
     public Bullet shoot() {
-        int p_Size = Globals.TILE_SIZE;
-        int b_Size = Globals.BULLET_SIZE;
+        int p_Size = GameConfig.TILE_SIZE;
+        int b_Size = GameConfig.BULLET_SIZE;
         int centerOffset = (p_Size - b_Size) / 2;
 
         double bulletX = x + centerOffset;

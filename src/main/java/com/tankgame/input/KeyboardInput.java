@@ -3,10 +3,11 @@ package com.tankgame.input;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Keyboard extends KeyAdapter {
+public class KeyboardInput extends KeyAdapter {
     public boolean upPressed, downPressed, leftPressed, rightPressed, shootPressed;
+    public boolean pausePressed = false;
 
-    public Keyboard() {
+    public KeyboardInput() {
     }
 
     @Override
@@ -30,5 +31,11 @@ public class Keyboard extends KeyAdapter {
             rightPressed = pressed;
         if (code == KeyEvent.VK_Z || code == KeyEvent.VK_SPACE)
             shootPressed = pressed;
+        if (code == KeyEvent.VK_ESCAPE)
+            pausePressed = pressed;
+    }
+
+    public void resetPause() {
+        pausePressed = false;
     }
 }
