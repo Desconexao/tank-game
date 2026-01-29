@@ -23,6 +23,7 @@ public class GameGrid {
     private void loadMap(boolean custom) {
 
         // This is ugly af, don't look.
+        // And it breaks if there will be more than 99 maps (hopefully unlikely)
         String mapNumberStr;
         int mapNumber = (new Random().nextInt(numberOfPremadeMaps) + 1);
 
