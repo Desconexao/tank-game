@@ -5,13 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
-
-import com.tankgame.settings.Globals;
+import com.tankgame.settings.GameConfig;
 
 public class GameGrid {
     private char[][] grid;
     private final int rows, cols;
-    private final int numberOfPremadeMaps = Globals.PREMADE_WORLDS_COUNT;
 
     public GameGrid(boolean custom, int rows, int cols) {
         this.rows = rows;
@@ -21,27 +19,14 @@ public class GameGrid {
     }
 
     private void loadMap(boolean custom) {
-
-        // This is ugly af, don't look.
-        // And it breaks if there will be more than 99 maps (hopefully unlikely)
-        String mapNumberStr;
-        int mapNumber = (new Random().nextInt(numberOfPremadeMaps) + 1);
-
-        if (mapNumber < 10){
-            mapNumberStr = "0" + mapNumber;
-        }
-        else{
-            mapNumberStr = "" + mapNumber;
-        }
-            
-        String fileName = custom ? "world/custommap.txt" : "world/scene_" + mapNumberStr + ".txt";
+        String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(5) + 1) + ".txt";
         try {
             List<String> lines = Files.readAllLines(Path.of(fileName));
             for (int i = 0; i < Math.min(rows, lines.size()); i++) {
                 grid[i] = lines.get(i).toCharArray();
             }
         } catch (IOException e) {
-            System.err.println("Erro ao carregar mapa: " + e.getMessage());
+            System.err.println("Map load error: " + e.getMessage());
         }
     }
 
@@ -61,8 +46,8 @@ public class GameGrid {
     }
 
     public void removeBlock(double x, double y) {
-        int gridX = (int) (x / Globals.TILE_SIZE);
-        int gridY = (int) (y / Globals.TILE_SIZE);
+        int gridX = (int) (x / GameConfig.TILE_SIZE);
+        int gridY = (int) (y / GameConfig.TILE_SIZE);
 
         if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols) {
             if (grid[gridY][gridX] == 'X') {

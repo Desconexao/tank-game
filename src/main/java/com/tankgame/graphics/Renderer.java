@@ -12,12 +12,12 @@ import javax.swing.ImageIcon;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.game.GameGrid;
-import com.tankgame.settings.Globals;
+import com.tankgame.settings.GameConfig;
 
 public class Renderer {
     private SpriteImport sprites;
-    private int size = Globals.TILE_SIZE;
-    private int bulletSize = Globals.BULLET_SIZE;
+    private int size = GameConfig.TILE_SIZE;
+    private int bulletSize = GameConfig.BULLET_SIZE;
 
     public Map<String, ImageIcon> loadedSprites = new HashMap<>();
     private Queue<Object[]> renderQueue = new ArrayDeque<>();
@@ -30,7 +30,6 @@ public class Renderer {
                 { "player_tank_down", size, size },
                 { "player_tank_left", size, size },
                 { "player_tank_right", size, size },
-                { "player_tank", size, size }, // enemy
                 { "brick", size, size },
                 { "black", size, size },
                 { "bullet_vertical", bulletSize, bulletSize }
@@ -39,28 +38,29 @@ public class Renderer {
         loadSprites(spritesToLoad);
     }
 
-    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies) {
+    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {
         Graphics2D g2d = (Graphics2D) g;
 
-        // Grid
         char[][] grid = gameGridLogic.getGridMatrix();
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 String tileKey = (grid[i][j] == 'X') ? "brick" : "black";
-                g2d.drawImage(loadedSprites.get(tileKey).getImage(), j * size, i * size, null);
+                ImageIcon tileIcon = loadedSprites.get(tileKey);
+                if (tileIcon != null) {
+                    g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                }
             }
         }
 
-        // Player
         drawTank(g2d, player);
 
-        // Enemies
         for (Enemy enemy : enemies) {
             drawTank(g2d, enemy);
         }
 
-        // Bullets
-        drawSpriteQueue(g2d);
+        if (bulletQueue != null) {
+            drawSpriteQueue(g2d, bulletQueue);
+        }
     }
 
     private void drawTank(Graphics2D g2d, Tank tank) {
@@ -70,7 +70,9 @@ public class Renderer {
             icon = loadedSprites.get("player_tank");
         }
 
-        g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
+        if (icon != null) {
+            g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
+        }
     }
 
     private void loadSprites(Object[][] spriteSpecs) {
@@ -78,13 +80,16 @@ public class Renderer {
             String key = (String) spec[0];
             int resX = (int) spec[1];
             int resY = (int) spec[2];
-            loadedSprites.put(key, sprites.getSpriteResized(key, resX, resY));
+            try {
+                loadedSprites.put(key, sprites.getSpriteResized(key, resX, resY));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Failed to load sprite: " + key + " - " + e.getMessage());
+            }
         }
     }
 
-    public void drawSpriteQueue(Graphics2D g2d) {
-        while (!renderQueue.isEmpty()) {
-            Object[] spriteInfo = renderQueue.poll();
+    private void drawSpriteQueue(Graphics2D g2d, List<Object[]> bulletQueue) {
+        for (Object[] spriteInfo : bulletQueue) {
             ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
             if (spriteIcon != null) {
                 g2d.drawImage(spriteIcon.getImage(), (int) spriteInfo[1], (int) spriteInfo[2], null);
