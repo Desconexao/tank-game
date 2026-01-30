@@ -1,20 +1,22 @@
 package com.tankgame.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.tankgame.entities.tank.Player;
 import com.tankgame.entities.tank.Tank;
-import com.tankgame.managers.EnemyManager;
-import com.tankgame.managers.ProjectileManager;
 import com.tankgame.managers.AssetManager;
 import com.tankgame.managers.CollisionManager;
+import com.tankgame.managers.EnemyManager;
+import com.tankgame.managers.ProjectileManager;
 import com.tankgame.screens.GameScene;
-import com.tankgame.systems.EnemyAISystem;
+import com.tankgame.settings.GameConfig;
+import com.tankgame.systems.InputSystem;
 import com.tankgame.systems.MovementSystem;
 import com.tankgame.systems.ProjectileSystem;
-import com.tankgame.systems.InputSystem;
-import com.tankgame.settings.GameConfig;
 import com.tankgame.systems.ShootingSystem;
-import java.util.List;
-import java.util.ArrayList;
+import com.tankgame.systems.ai.DefaultAI;
+import com.tankgame.systems.ai.EnemyAISystem;
 
 public class GameManager {
     // Managers
@@ -49,7 +51,7 @@ public class GameManager {
         this.collisionManager = new CollisionManager(scene.gridLogic);
 
         this.movementSystem = new MovementSystem(collisionManager);
-        this.enemyAISystem = new EnemyAISystem(movementSystem);
+        this.enemyAISystem = new DefaultAI(movementSystem);
         this.projectileSystem = new ProjectileSystem(collisionManager);
         this.inputSystem = new InputSystem();
         this.projectileManager = new ProjectileManager(projectileSystem);

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
 import javax.swing.ImageIcon;
 
 import com.tankgame.entities.tank.Enemy;
@@ -26,13 +27,18 @@ public class Renderer {
         this.sprites = sprites;
 
         Object[][] spritesToLoad = {
-                { "player_tank", size, size },
-                { "player_tank_down", size, size },
-                { "player_tank_left", size, size },
-                { "player_tank_right", size, size },
-                { "brick", size, size },
-                { "black", size, size },
-                { "bullet_vertical", bulletSize, bulletSize }
+                { "player_tank",        size,   size },
+                { "player_tank_down",   size,   size },
+                { "player_tank_left",   size,   size },
+                { "player_tank_right",  size,   size },
+                { "brick",              size,   size },
+                { "black",              size,   size },
+                { "bullet_vertical",    bulletSize, bulletSize },
+                { "tank_up_yellow",     size,   size},
+                { "tank_down_yellow",   size,   size},
+                { "tank_left_yellow",   size,   size},
+                { "tank_right_yellow",  size,   size},
+
         };
 
         loadSprites(spritesToLoad);

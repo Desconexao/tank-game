@@ -1,17 +1,17 @@
-package com.tankgame.systems;
+package com.tankgame.systems.ai;
 
 import com.tankgame.entities.tank.Enemy;
+import com.tankgame.systems.MovementSystem;
 import com.tankgame.utils.Direction;
-import java.util.Random;
 
-public class EnemyAISystem {
-    private final MovementSystem movementSystem;
-    private final Random random = new Random();
+public class DefaultAI extends EnemyAISystem{
 
-    public EnemyAISystem(MovementSystem movementSystem) {
-        this.movementSystem = movementSystem;
+
+    public DefaultAI(MovementSystem movementSystem) {
+        super(movementSystem);
     }
-
+    
+    @Override
     public void update(Enemy enemy) {
         double speed = enemy.getSpeed();
         double newX = enemy.getX();

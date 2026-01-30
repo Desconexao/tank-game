@@ -1,11 +1,12 @@
 package com.tankgame.managers;
 
-import com.tankgame.entities.tank.Enemy;
-import com.tankgame.settings.GameConfig;
-import com.tankgame.utils.Direction;
-import com.tankgame.systems.EnemyAISystem;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.tankgame.entities.tank.Enemy;
+import com.tankgame.settings.GameConfig;
+import com.tankgame.systems.ai.EnemyAISystem;
+import com.tankgame.utils.Direction;
 
 public class EnemyManager {
     private final List<Enemy> enemies;

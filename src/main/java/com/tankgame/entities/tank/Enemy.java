@@ -1,10 +1,11 @@
 package com.tankgame.entities.tank;
 
-import com.tankgame.utils.Direction;
 import com.tankgame.settings.GameConfig;
+import com.tankgame.utils.Direction;
 
 public class Enemy extends Tank {
     private long lastShotTime = 0;
+    
 
     public Enemy(double x, double y, int health, String spriteKey, Direction direction) {
         super(x, y, health, spriteKey, direction);
@@ -15,6 +16,7 @@ public class Enemy extends Tank {
     @Override
     public void setDirection(Direction direction) {
         this.direction = direction;
+
         this.spriteKey = "enemy_tank";
     }
 
