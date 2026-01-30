@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+
 import com.tankgame.settings.GameConfig;
 
 public class GameGrid {
@@ -19,6 +20,7 @@ public class GameGrid {
     }
 
     private void loadMap(boolean custom) {
+        // This will break if we go above 9 maps.
         String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(5) + 1) + ".txt";
         try {
             List<String> lines = Files.readAllLines(Path.of(fileName));
