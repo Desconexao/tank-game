@@ -7,6 +7,7 @@ import com.tankgame.entities.tank.Enemy;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.systems.ai.EnemyAISystem;
 import com.tankgame.utils.Direction;
+import com.tankgame.utils.TankColors;
 
 public class EnemyManager {
     private final List<Enemy> enemies;
@@ -17,11 +18,13 @@ public class EnemyManager {
 
     public void spawnInitialEnemies() {
         enemies.add(new Enemy(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE * 5,
-                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN));
+                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN, TankColors.GREEN));
+
         enemies.add(new Enemy(GameConfig.TILE_SIZE * 9, GameConfig.TILE_SIZE * 1,
-                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN));
+                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN, TankColors.YELLOW));
+
         enemies.add(new Enemy(GameConfig.TILE_SIZE * 10, GameConfig.TILE_SIZE * 8,
-                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN));
+                GameConfig.ENEMY_START_HEALTH, "enemy_tank", Direction.DOWN, TankColors.RED));
     }
 
     public void updateMovement(EnemyAISystem aiSystem) {

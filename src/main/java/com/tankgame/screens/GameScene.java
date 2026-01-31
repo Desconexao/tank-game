@@ -6,18 +6,20 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
-import com.tankgame.game.GameGrid;
 import com.tankgame.game.GameEngine;
+import com.tankgame.game.GameGrid;
 import com.tankgame.game.GameManager;
 import com.tankgame.graphics.Renderer;
 import com.tankgame.graphics.SpriteImport;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
+import com.tankgame.utils.TankColors;
 
 public class GameScene extends JPanel {
     private JPanel gameGrid;
@@ -44,8 +46,10 @@ public class GameScene extends JPanel {
                 GameConfig.PLAYER_START_X,
                 GameConfig.PLAYER_START_Y,
                 GameConfig.PLAYER_START_HEALTH,
-                "player_tank",
-                Direction.UP);
+                "tank_up_gray",
+                Direction.UP,
+                TankColors.GREEN
+            );
 
         this.gameGrid = new JPanel() {
             @Override
