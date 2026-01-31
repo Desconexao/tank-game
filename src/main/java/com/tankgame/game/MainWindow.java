@@ -1,7 +1,9 @@
 package com.tankgame.game;
 
-import com.tankgame.screens.GameScene;
 import javax.swing.JFrame;
+
+import com.tankgame.screens.GameScene;
+import com.tankgame.settings.GameConfig;
 
 public class MainWindow {
     private final JFrame frame;
@@ -15,7 +17,7 @@ public class MainWindow {
         frame.add(gameScene);
 
         frame.pack();
-        frame.setSize(975, 975);
+        frame.setSize(GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE, GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 

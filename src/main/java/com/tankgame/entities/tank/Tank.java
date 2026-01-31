@@ -39,7 +39,7 @@ public abstract class Tank extends Entity implements Movable {
     }
 
     public Bullet shoot() {
-        int p_Size = GameConfig.TILE_SIZE;
+        int p_Size = GameConfig.TANK_SIZE;
         int b_Size = GameConfig.BULLET_SIZE;
         int centerOffset = (p_Size - b_Size) / 2;
 

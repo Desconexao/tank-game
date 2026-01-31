@@ -68,6 +68,7 @@ public class GameScene extends JPanel {
         int worldWidth = GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE;
         int worldHeight = GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE;
         this.gameGrid.setPreferredSize(new Dimension(worldWidth, worldHeight));
+        this.gameGrid.setBackground(Color.BLACK);
 
         this.add(gameGrid);
         mainWindow.add(this);

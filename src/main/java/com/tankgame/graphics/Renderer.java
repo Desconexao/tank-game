@@ -3,6 +3,7 @@ package com.tankgame.graphics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class Renderer {
     private SpriteImport sprites;
     private int size = GameConfig.TILE_SIZE;
     private int bulletSize = GameConfig.BULLET_SIZE;
+    private int tankSize = GameConfig.TANK_SIZE;
 
     public Map<String, ImageIcon> loadedSprites = new HashMap<>();
     private Queue<Object[]> renderQueue = new ArrayDeque<>();
@@ -27,25 +29,26 @@ public class Renderer {
         this.sprites = sprites;
 
         Object[][] spritesToLoad = {
-                { "tank_up_gray",        size,   size },
-                { "tank_down_gray",   size,   size },
-                { "tank_left_gray",   size,   size },
-                { "tank_right_gray",  size,   size },
+                { "tank_up_gray",        tankSize,   tankSize },
+                { "tank_down_gray",   tankSize,   tankSize },
+                { "tank_left_gray",   tankSize,   tankSize },
+                { "tank_right_gray",  tankSize,   tankSize },
                 { "brick",              size,   size },
                 { "black",              size,   size },
+                { "steel",              size,   size },
                 { "bullet_vertical",    bulletSize, bulletSize },
-                { "tank_up_yellow",     size,   size},
-                { "tank_down_yellow",   size,   size},
-                { "tank_left_yellow",   size,   size},
-                { "tank_right_yellow",  size,   size},
-                { "tank_up_green",     size,   size},
-                { "tank_down_green",   size,   size},
-                { "tank_left_green",   size,   size},
-                { "tank_right_green",  size,   size},
-                { "tank_up_red",     size,   size},
-                { "tank_down_red",   size,   size},
-                { "tank_left_red",   size,   size},
-                { "tank_right_red",  size,   size}
+                { "tank_up_yellow",     tankSize,   tankSize},
+                { "tank_down_yellow",   tankSize,   tankSize},
+                { "tank_left_yellow",   tankSize,   tankSize},
+                { "tank_right_yellow",  tankSize,   tankSize},
+                { "tank_up_green",     tankSize,   tankSize},
+                { "tank_down_green",   tankSize,   tankSize},
+                { "tank_left_green",   tankSize,   tankSize},
+                { "tank_right_green",  tankSize,   tankSize},
+                { "tank_up_red",     tankSize,   tankSize},
+                { "tank_down_red",   tankSize,   tankSize},
+                { "tank_left_red",   tankSize,   tankSize},
+                { "tank_right_red",  tankSize,   tankSize}
 
         };
 
@@ -58,7 +61,11 @@ public class Renderer {
         char[][] grid = gameGridLogic.getGridMatrix();
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                String tileKey = (grid[i][j] == 'X') ? "brick" : "black";
+                String tileKey = switch (grid[i][j]) {
+                    case 'X' ->  "brick";
+                    case 'Y' -> "steel";
+                    default -> "black";
+                };
                 ImageIcon tileIcon = loadedSprites.get(tileKey);
                 if (tileIcon != null) {
                     g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
@@ -103,7 +110,8 @@ public class Renderer {
     }
 
     private void drawSpriteQueue(Graphics2D g2d, List<Object[]> bulletQueue) {
-        for (Object[] spriteInfo : bulletQueue) {
+        List<Object[]> snapshot = new ArrayList<>(bulletQueue);
+        for (Object[] spriteInfo : snapshot) {
             ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
             if (spriteIcon != null) {
                 g2d.drawImage(spriteIcon.getImage(), (int) spriteInfo[1], (int) spriteInfo[2], null);

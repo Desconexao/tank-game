@@ -10,10 +10,12 @@ public class Bullet extends Entity implements Movable {
     private double speed = GameConfig.BULLET_SPEED;
     private Direction direction;
     private boolean markedForRemoval = false;
+    private Tank owner;
 
     public Bullet(double x, double y, Direction direction, Tank owner) {
         super(x, y, "bullet_vertical");
         this.direction = direction;
+        this.owner = owner;
     }
 
     public void update() {
@@ -65,5 +67,9 @@ public class Bullet extends Entity implements Movable {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public Tank getOwner() {
+        return owner;
     }
 }
