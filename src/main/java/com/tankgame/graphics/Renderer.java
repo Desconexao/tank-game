@@ -27,10 +27,10 @@ public class Renderer {
         this.sprites = sprites;
 
         Object[][] spritesToLoad = {
-                { "player_tank",        size,   size },
-                { "player_tank_down",   size,   size },
-                { "player_tank_left",   size,   size },
-                { "player_tank_right",  size,   size },
+                { "tank_up_gray",        size,   size },
+                { "tank_down_gray",   size,   size },
+                { "tank_left_gray",   size,   size },
+                { "tank_right_gray",  size,   size },
                 { "brick",              size,   size },
                 { "black",              size,   size },
                 { "bullet_vertical",    bulletSize, bulletSize },
@@ -38,6 +38,14 @@ public class Renderer {
                 { "tank_down_yellow",   size,   size},
                 { "tank_left_yellow",   size,   size},
                 { "tank_right_yellow",  size,   size},
+                { "tank_up_green",     size,   size},
+                { "tank_down_green",   size,   size},
+                { "tank_left_green",   size,   size},
+                { "tank_right_green",  size,   size},
+                { "tank_up_red",     size,   size},
+                { "tank_down_red",   size,   size},
+                { "tank_left_red",   size,   size},
+                { "tank_right_red",  size,   size}
 
         };
 
@@ -73,10 +81,15 @@ public class Renderer {
         ImageIcon icon = loadedSprites.get(tank.getSpriteKey());
 
         if (icon == null) {
+
+            System.out.println("EH NULL");
+            System.out.println("NAO ENCONTROU: " + tank.getSpriteKey());
             icon = loadedSprites.get("player_tank");
         }
 
         if (icon != null) {
+            System.out.println("NAO EH NULL");
+            System.out.println("ENCONTROU: " + tank.getSpriteKey());
             g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
         }
     }

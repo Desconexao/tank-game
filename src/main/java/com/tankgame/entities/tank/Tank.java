@@ -5,16 +5,21 @@ import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.Movable;
+import com.tankgame.utils.TankColors;
 
 public abstract class Tank extends Entity implements Movable {
     protected int health;
     protected double speed = GameConfig.PLAYER_SPEED;
     protected Direction direction;
+    protected TankColors color;
 
-    public Tank(double x, double y, int health, String spriteKey, Direction direction) {
+    
+
+    public Tank(double x, double y, int health, String spriteKey, Direction direction, TankColors color) {
         super(x, y, spriteKey);
         this.health = health;
         this.direction = direction;
+        this.color = color;
     }
 
     public void moveUp() {
@@ -56,6 +61,17 @@ public abstract class Tank extends Entity implements Movable {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+        String newSpriteName = "tank_";
+
+        switch (direction) {
+            case UP -> newSpriteName += "up_" + color.getValue();
+            case DOWN -> newSpriteName += "down_" + color.getValue();
+            case LEFT -> newSpriteName += "left_" + color.getValue();
+            case RIGHT -> newSpriteName += "right_" + color.getValue();
+        }
+
+        this.spriteKey = newSpriteName;
+        System.out.println(newSpriteName);
     }
 
     public int getHealth() {
