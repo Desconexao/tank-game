@@ -81,15 +81,10 @@ public class Renderer {
         ImageIcon icon = loadedSprites.get(tank.getSpriteKey());
 
         if (icon == null) {
-
-            System.out.println("EH NULL");
-            System.out.println("NAO ENCONTROU: " + tank.getSpriteKey());
             icon = loadedSprites.get("player_tank");
         }
 
         if (icon != null) {
-            System.out.println("NAO EH NULL");
-            System.out.println("ENCONTROU: " + tank.getSpriteKey());
             g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
         }
     }

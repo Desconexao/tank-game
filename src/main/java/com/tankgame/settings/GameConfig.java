@@ -16,7 +16,7 @@ public final class GameConfig {
     // public static final long BULLET_COOL_DOWN_MS = 1000;
 
     // Player
-    public static final int PLAYER_START_HEALTH = 3;
+    public static final int PLAYER_START_HEALTH = 999999999;
     public static final double PLAYER_SPEED = 4.0;
     public static final int PLAYER_START_X = TILE_SIZE;
     public static final int PLAYER_START_Y = TILE_SIZE;

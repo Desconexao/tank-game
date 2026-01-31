@@ -15,8 +15,6 @@ import com.tankgame.systems.InputSystem;
 import com.tankgame.systems.MovementSystem;
 import com.tankgame.systems.ProjectileSystem;
 import com.tankgame.systems.ShootingSystem;
-import com.tankgame.systems.ai.DefaultAI;
-import com.tankgame.systems.ai.EnemyAISystem;
 
 public class GameManager {
     // Managers
@@ -27,7 +25,7 @@ public class GameManager {
 
     // Systems
     private final MovementSystem movementSystem;
-    private final EnemyAISystem enemyAISystem;
+    //private final EnemyAISystem enemyAISystem;
     private final ShootingSystem shootingSystem;
     private final ProjectileSystem projectileSystem;
     private final InputSystem inputSystem;
@@ -47,11 +45,12 @@ public class GameManager {
         this.player = player;
 
         this.assetManager = new AssetManager();
-        this.enemyManager = new EnemyManager();
+        
         this.collisionManager = new CollisionManager(scene.gridLogic);
 
         this.movementSystem = new MovementSystem(collisionManager);
-        this.enemyAISystem = new DefaultAI(movementSystem);
+        this.enemyManager = new EnemyManager(movementSystem);
+        //this.enemyAISystem = new RoamAI(movementSystem);
         this.projectileSystem = new ProjectileSystem(collisionManager);
         this.inputSystem = new InputSystem();
         this.projectileManager = new ProjectileManager(projectileSystem);
@@ -82,7 +81,7 @@ public class GameManager {
             shootingSystem.playerShoot(player);
         }
 
-        enemyManager.updateMovement(enemyAISystem);
+        enemyManager.updateMovement();
 
         shootingSystem.enemyShoot(enemyManager.getEnemies());
 
