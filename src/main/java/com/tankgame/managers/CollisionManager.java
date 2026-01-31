@@ -1,10 +1,11 @@
 package com.tankgame.managers;
 
+import java.util.List;
+
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Tank;
-import com.tankgame.settings.GameConfig;
 import com.tankgame.game.GameGrid;
-import java.util.List;
+import com.tankgame.settings.GameConfig;
 
 public class CollisionManager {
     private GameGrid grid;
@@ -25,7 +26,7 @@ public class CollisionManager {
         if (gx < 0 || gx >= GameConfig.GRID_WIDTH || gy < 0 || gy >= GameConfig.GRID_HEIGHT)
             return true;
 
-        return grid.getGridMatrix()[gy][gx] == 'X';
+        return grid.getGridMatrix()[gy][gx] == 'X' || grid.getGridMatrix()[gy][gx] == 'Y';
     }
 
     public boolean checkProjectileCollision(Bullet bullet, List<Tank> tanks) {
@@ -38,7 +39,7 @@ public class CollisionManager {
         }
 
         for (Tank tank : tanks) {
-            if (checkTankCollision(bullet, tank)) {
+            if (tank != bullet.getOwner() && checkTankCollision(bullet, tank)) {
                 tank.setHealth(tank.getHealth() - 1);
                 return true;
             }

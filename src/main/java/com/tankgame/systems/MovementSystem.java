@@ -12,7 +12,7 @@ public class MovementSystem {
     }
 
     public boolean tryMove(Tank tank, double newX, double newY) {
-        if (collisionManager.canMove(newX, newY, GameConfig.TILE_SIZE - 2)) {
+        if (collisionManager.canMove(newX, newY, GameConfig.TANK_SIZE)) {
             tank.setX(newX);
             tank.setY(newY);
             return true;

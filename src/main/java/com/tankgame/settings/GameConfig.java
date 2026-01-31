@@ -8,6 +8,7 @@ public final class GameConfig {
     public static final int TILE_SIZE = 75;
     public static final int GRID_WIDTH = 13;
     public static final int GRID_HEIGHT = 13;
+    public static final int TANK_SIZE = 60;
 
     // Bullets
     public static final int BULLET_SIZE = 20;
@@ -16,7 +17,7 @@ public final class GameConfig {
     // public static final long BULLET_COOL_DOWN_MS = 1000;
 
     // Player
-    public static final int PLAYER_START_HEALTH = 999999999;
+    public static final int PLAYER_START_HEALTH = 5;
     public static final double PLAYER_SPEED = 4.0;
     public static final int PLAYER_START_X = TILE_SIZE;
     public static final int PLAYER_START_Y = TILE_SIZE;
