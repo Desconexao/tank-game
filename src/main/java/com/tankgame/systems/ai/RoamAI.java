@@ -4,10 +4,8 @@ import com.tankgame.entities.tank.Enemy;
 import com.tankgame.systems.MovementSystem;
 import com.tankgame.utils.Direction;
 
-public class DefaultAI extends EnemyAISystem{
-
-
-    public DefaultAI(MovementSystem movementSystem, Enemy enemy) {
+public class RoamAI extends EnemyAISystem{
+    public RoamAI(MovementSystem movementSystem, Enemy enemy) {
         super(movementSystem, enemy);
     }
     
@@ -16,6 +14,12 @@ public class DefaultAI extends EnemyAISystem{
         double speed = enemy.getSpeed();
         double newX = enemy.getX();
         double newY = enemy.getY();
+ 
+        // 50% percent of the next direction be the same
+        int movementOportunity = random.nextInt(1000);
+        if (movementOportunity < 10){
+            enemy.setDirection(directions[random.nextInt(directions.length)]);
+        }
 
         switch (enemy.getDirection()) {
             case UP -> newY -= speed;
@@ -32,4 +36,6 @@ public class DefaultAI extends EnemyAISystem{
             enemy.setDirection(newDir);
         }
     }
+
+
 }
