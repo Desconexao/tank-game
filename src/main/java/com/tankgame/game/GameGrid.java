@@ -21,7 +21,7 @@ public class GameGrid {
 
     private void loadMap(boolean custom) {
         // This will break if we go above 9 maps.
-        String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(1)) + ".txt";
+        String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(6)) + ".txt";
         try {
             System.out.println(fileName);
             List<String> lines = Files.readAllLines(Path.of(fileName));
