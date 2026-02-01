@@ -11,15 +11,16 @@ public class MainWindow {
     public MainWindow() {
         frame = new JFrame("Tank Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
 
         GameScene gameScene = new GameScene(frame);
         frame.add(gameScene);
 
-        frame.pack();
+        //frame.pack();
         frame.setSize(GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE, GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         System.out.println("Window Created");
     }
