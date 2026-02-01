@@ -29,7 +29,7 @@ public class Renderer {
         this.sprites = sprites;
 
         Object[][] spritesToLoad = {
-                { "tank_up_gray",        tankSize,   tankSize },
+                { "tank_up_gray",       tankSize,   tankSize },
                 { "tank_down_gray",   tankSize,   tankSize },
                 { "tank_left_gray",   tankSize,   tankSize },
                 { "tank_right_gray",  tankSize,   tankSize },
@@ -45,10 +45,14 @@ public class Renderer {
                 { "tank_down_green",   tankSize,   tankSize},
                 { "tank_left_green",   tankSize,   tankSize},
                 { "tank_right_green",  tankSize,   tankSize},
-                { "tank_up_red",     tankSize,   tankSize},
-                { "tank_down_red",   tankSize,   tankSize},
-                { "tank_left_red",   tankSize,   tankSize},
-                { "tank_right_red",  tankSize,   tankSize}
+                { "tank_up_red",       tankSize,   tankSize},
+                { "tank_down_red",     tankSize,   tankSize},
+                { "tank_left_red",     tankSize,   tankSize},
+                { "tank_right_red",    tankSize,   tankSize},
+                { "eagle",             size,   size},
+                {"tree",               size,   size},
+                {"water",              size,   size},
+                {"flag",               size,   size}
 
         };
 
@@ -64,6 +68,9 @@ public class Renderer {
                 String tileKey = switch (grid[i][j]) {
                     case 'X' ->  "brick";
                     case 'Y' -> "steel";
+                    case 'T' -> "tree";
+                    case 'E' -> "eagle";
+                    case 'W' -> "water";
                     default -> "black";
                 };
                 ImageIcon tileIcon = loadedSprites.get(tileKey);

@@ -26,7 +26,16 @@ public class CollisionManager {
         if (gx < 0 || gx >= GameConfig.GRID_WIDTH || gy < 0 || gy >= GameConfig.GRID_HEIGHT)
             return true;
 
-        return grid.getGridMatrix()[gy][gx] == 'X' || grid.getGridMatrix()[gy][gx] == 'Y';
+        char tile = grid.getGridMatrix()[gy][gx];
+
+        return tile == 'X'
+            || tile == 'Y'
+            || tile == 'W'
+            || tile == 'E';
+
+
+        
+        
     }
 
     public boolean checkProjectileCollision(Bullet bullet, List<Tank> tanks) {
