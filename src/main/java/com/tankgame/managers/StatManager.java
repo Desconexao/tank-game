@@ -26,7 +26,7 @@ public class StatManager {
 
     public void update(int time, int score){
         healthPointLabel.setText( "" + player.getHealth());
-        livesLabel.setText("1"); // Change later lol
+        livesLabel.setText("?"); // Change later lol
         scoreLabel.setText("" + score);
         timerLabel.setText(String.format("%06d", time));
     }

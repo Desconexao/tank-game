@@ -33,6 +33,7 @@ public class GameScene extends JPanel {
     public JFrame mainWindow;
     private GameEngine gameEngine;
     private GameManager gameManager;
+    protected Font pixel;
 
     private List<Object[]> bulletsToRender = new ArrayList<>();
 
@@ -72,6 +73,9 @@ public class GameScene extends JPanel {
                 if (gameManager != null && gameManager.isPaused()) {
                     drawPauseText(g);
                 }
+                if(!gameManager.isRunning()){
+                    drawGameOverText(g);
+                }
             }
         };
 
@@ -82,7 +86,7 @@ public class GameScene extends JPanel {
 
         this.add(gameGrid);
 
-        Font pixel;
+        
         try{
             pixel = Font.createFont(Font.TRUETYPE_FONT, new File("assets/ttf/8bitOperatorPlus-Bold.ttf")).deriveFont(54f);
        
@@ -179,6 +183,34 @@ public class GameScene extends JPanel {
 
         g.setColor(originalColor);
         g.setFont(originalFont);
+    }
+
+    private void drawGameOverText(Graphics g) {
+        Color originalColor = g.getColor();
+        Font originalFont = g.getFont();
+
+        g.setFont(pixel);
+        g.setColor(Color.RED);
+
+        String pauseText = "GAME OVER";
+        int textWidth = g.getFontMetrics().stringWidth(pauseText);
+        int x = (gameGrid.getWidth() - textWidth) / 2;
+        int y = gameGrid.getHeight() / 2;
+
+        g.drawString(pauseText, x, y);
+
+        g.setFont(instructionFont);
+        g.setColor(Color.YELLOW);
+
+        String instruction = "YOU SCORED " + gameManager.getScore() + " POINTS";
+        int instWidth = g.getFontMetrics().stringWidth(instruction);
+        int instX = (gameGrid.getWidth() - instWidth) / 2;
+        int instY = y + 50;
+        g.setColor(Color.YELLOW);
+
+        g.drawString(instruction, instX, instY);
+
+        
     }
 
     public void update() {
