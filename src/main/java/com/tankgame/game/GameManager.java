@@ -9,6 +9,7 @@ import com.tankgame.managers.AssetManager;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.EnemyManager;
 import com.tankgame.managers.ProjectileManager;
+import com.tankgame.managers.StatManager;
 import com.tankgame.screens.GameScene;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.systems.InputSystem;
@@ -29,6 +30,7 @@ public class GameManager {
     private final ShootingSystem shootingSystem;
     private final ProjectileSystem projectileSystem;
     private final InputSystem inputSystem;
+    private final StatManager statSystem;
 
     // Refs
     private final GameScene scene;
@@ -39,14 +41,16 @@ public class GameManager {
     private boolean isRunning = true;
     private int score = 0;
     private int level = 1;
+    private int runningTime = 0;
+    private int tick = 0;
 
     public GameManager(GameScene scene, Player player) {
         this.scene = scene;
         this.player = player;
 
         this.assetManager = new AssetManager();
-        
         this.collisionManager = new CollisionManager(scene.gridLogic);
+        this.statSystem = new StatManager(scene);
 
         this.movementSystem = new MovementSystem(collisionManager);
         this.enemyManager = new EnemyManager(movementSystem);
@@ -86,6 +90,10 @@ public class GameManager {
         shootingSystem.enemyShoot(enemyManager.getEnemies());
 
         updateProjectiles();
+
+        increaseTimer();
+
+        statSystem.update(runningTime, score);
 
         cleanup();
 
@@ -248,5 +256,14 @@ public class GameManager {
 
     public void addScore(int points) {
         score += points;
+    }
+
+    private void increaseTimer(){
+        tick += 1;
+
+        if(tick >= GameConfig.TPS){
+            tick = 0;
+            runningTime += 1;
+        }
     }
 }
