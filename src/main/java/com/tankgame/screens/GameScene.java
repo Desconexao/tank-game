@@ -65,7 +65,7 @@ public class GameScene extends JPanel {
                 super.paintComponent(g);
                 List<Enemy> enemies = gameManager != null ? gameManager.getEnemyManager().getEnemies()
                         : new ArrayList<>();
-                renderer.draw(g, gridLogic, player, enemies, bulletsToRender);
+                renderer.newDraw(g, gridLogic, player, enemies, bulletsToRender);
 
                 if (gameManager != null && gameManager.isPaused()) {
                     drawPauseText(g);
