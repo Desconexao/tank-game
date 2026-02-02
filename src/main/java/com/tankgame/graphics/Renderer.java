@@ -35,7 +35,7 @@ public class Renderer {
         loadSprites(SpriteList.SPRITES_TO_LOAD);
     }
 
-    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {
+    public void OLDdraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {
         Graphics2D g2d = (Graphics2D) g;
 
         char[][] grid = gameGridLogic.getGridMatrix();

@@ -17,6 +17,7 @@ public class GameGrid {
     private char[][] grid;
     private final int rows, cols;
     private Tile[][] tileGrid;
+    private Eagle EagleObjective;
 
     public GameGrid(boolean custom, int rows, int cols) {
         this.rows = rows;
@@ -45,7 +46,11 @@ public class GameGrid {
     private void loadMapTiles(){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
-                tileGrid[i][j] = getTile(grid[i][j], j, i);
+                Tile tile = getTile(grid[i][j], j, i);
+                tileGrid[i][j] = tile;
+
+                if(tile instanceof Eagle)
+                    setEagle(((Eagle) tile));
             }
         }
     }
@@ -121,6 +126,14 @@ public class GameGrid {
             }
 
         }
+    }
+
+    private void setEagle(Eagle eagle){
+        this.EagleObjective = eagle;
+    }
+
+    public Eagle getEagleObjective(){
+        return this.EagleObjective;
     }
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.tankgame.entities.tank.Player;
 import com.tankgame.entities.tank.Tank;
+import com.tankgame.entities.tile.Eagle;
 import com.tankgame.managers.AssetManager;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.EnemyManager;
@@ -35,6 +36,7 @@ public class GameManager {
     // Refs
     private final GameScene scene;
     private final Player player;
+    private final Eagle EagleObjective;
 
     // State
     private boolean isPaused = false;
@@ -47,6 +49,7 @@ public class GameManager {
     public GameManager(GameScene scene, Player player) {
         this.scene = scene;
         this.player = player;
+        this.EagleObjective = scene.gridLogic.getEagleObjective();
 
         this.assetManager = new AssetManager();
         this.collisionManager = new CollisionManager(scene.gridLogic);
@@ -160,6 +163,14 @@ public class GameManager {
             gameOver(false);
             return;
         }
+
+        if (EagleObjective.isBroken()){
+            gameOver(false);
+            return;
+        }
+
+
+
 
         if (enemyManager.getEnemies().isEmpty()) {
             levelComplete();
