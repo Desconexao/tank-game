@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 
 import com.tankgame.entities.tank.Player;
 import com.tankgame.screens.GameScene;
+import com.tankgame.screens.widgets.StatBoardWidget;
 
 public class StatManager {
 
@@ -12,13 +13,16 @@ public class StatManager {
     JLabel livesLabel;
     JLabel scoreLabel;
     Player player;
+    StatBoardWidget statWidget;
 
     public StatManager(GameScene scene){
         player = scene.getPlayer();
-        timerLabel = scene.getStatTimerLabel();
-        healthPointLabel = scene.getStatHPLabel();
-        livesLabel = scene.getStatLivesLabel();
-        scoreLabel = scene.getStatScoreLabel();
+        statWidget = scene.getStatBoard();
+
+        timerLabel = statWidget.getStatTimerLabel();
+        healthPointLabel = statWidget.getStatHPLabel();
+        livesLabel = statWidget.getStatLivesLabel();
+        scoreLabel = statWidget.getStatScoreLabel();
 
         
 

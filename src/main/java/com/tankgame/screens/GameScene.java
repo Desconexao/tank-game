@@ -4,14 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.tankgame.entities.tank.Enemy;
@@ -21,7 +18,7 @@ import com.tankgame.game.GameGrid;
 import com.tankgame.game.GameManager;
 import com.tankgame.graphics.Renderer;
 import com.tankgame.graphics.SpriteImport;
-import com.tankgame.managers.FontManager;
+import com.tankgame.screens.widgets.StatBoardWidget;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
@@ -36,13 +33,10 @@ public class GameScene extends JPanel {
     private GameEngine gameEngine;
     private GameManager gameManager;
     protected Font pixel;
+    protected StatBoardWidget statWidget;
 
     private List<Object[]> bulletsToRender = new ArrayList<>();
 
-    private JLabel healthpointLabel;
-    private JLabel livesLabel;
-    private JLabel scoreLabel;
-    private JLabel timerLabel;
 
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
@@ -88,64 +82,13 @@ public class GameScene extends JPanel {
 
         this.add(gameGrid);
 
-        this.pixel = FontManager.getFont("pixel", 54f);
+        statWidget = new StatBoardWidget(action -> {
+            onAction.accept("start");
+        });
 
-        JPanel stats = new JPanel();
-        stats.setLayout(new GridLayout(0, 2));
 
-        JLabel healthpointLabelTitle = new JLabel("HP: ");
-        healthpointLabelTitle.setFont(pixel);
-        healthpointLabelTitle.setForeground(Color.WHITE);
-        healthpointLabel = new JLabel("000");
-        healthpointLabel.setForeground(Color.WHITE);
-        healthpointLabel.setFont(pixel);
+        add(statWidget);
         
-
-        JLabel livesLabelTitle = new JLabel("LIVES: ");
-        livesLabelTitle.setFont(pixel);
-        livesLabelTitle.setForeground(Color.WHITE);
-        livesLabel = new JLabel("111");
-        livesLabel.setForeground(Color.WHITE);
-        livesLabel.setFont(pixel);
-
-
-        JLabel scoreLabelTitle = new JLabel("SCORE: ");
-        scoreLabelTitle.setFont(pixel);
-        scoreLabelTitle.setForeground(Color.WHITE);
-        scoreLabel = new JLabel("222");
-        scoreLabel.setForeground(Color.WHITE);
-        scoreLabel.setFont(pixel);
-
-        JLabel timerLabelTitle = new JLabel("TIME: ");
-        timerLabelTitle.setFont(pixel);
-        timerLabelTitle.setForeground(Color.WHITE);
-        timerLabel = new JLabel("333");
-        timerLabel.setForeground(Color.WHITE);
-        timerLabel.setFont(pixel);
-
-        JButton backButton = new JButton("back");
-        backButton.setFont(FontManager.getFont("pixel", 25f));
-        backButton.setForeground(Color.WHITE);
-        backButton.setBackground(Color.BLACK);
-        backButton.setFocusPainted(false);
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
-        backButton.addActionListener(e -> onAction.accept("start"));
-
-        
-        stats.add(timerLabelTitle);
-        stats.add(timerLabel);
-        stats.add(scoreLabelTitle);
-        stats.add(scoreLabel);
-        stats.add(healthpointLabelTitle);
-        stats.add(healthpointLabel);
-        stats.add(livesLabelTitle);
-        stats.add(livesLabel);
-        stats.add(backButton);
-
-        stats.setBackground(Color.DARK_GRAY);
-
-        this.add(stats);
 
         mainWindow.add(this);
 
@@ -256,21 +199,7 @@ public class GameScene extends JPanel {
         }
     }
 
-    public JLabel getStatHPLabel() {
-        return healthpointLabel;
-    }
-
-    public JLabel getStatLivesLabel() {
-        return livesLabel;
-    }
-
-    public JLabel getStatScoreLabel() {
-        return scoreLabel;
-    }
-
-    public JLabel getStatTimerLabel() {
-        return timerLabel;
-    }
+    
 
     public void startGame() {
         if (gameEngine == null) {
@@ -289,5 +218,9 @@ public class GameScene extends JPanel {
         }
         this.gameEngine.stop();
         this.gameGrid.requestFocusInWindow();
+    }
+
+    public StatBoardWidget getStatBoard(){
+        return statWidget;
     }
 }

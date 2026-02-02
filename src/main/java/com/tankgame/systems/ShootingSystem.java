@@ -1,13 +1,12 @@
 package com.tankgame.systems;
 
-import com.tankgame.entities.tank.Tank;
-import com.tankgame.entities.tank.Player;
-import com.tankgame.entities.tank.Enemy;
+import java.util.Random;
+
 import com.tankgame.entities.projectile.Bullet;
+import com.tankgame.entities.tank.Enemy;
+import com.tankgame.entities.tank.Player;
 import com.tankgame.managers.ProjectileManager;
 import com.tankgame.settings.GameConfig;
-import java.util.List;
-import java.util.Random;
 
 public class ShootingSystem {
     private final ProjectileManager projectileManager;
