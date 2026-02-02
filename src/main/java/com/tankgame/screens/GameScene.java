@@ -5,10 +5,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +21,7 @@ import com.tankgame.game.GameGrid;
 import com.tankgame.game.GameManager;
 import com.tankgame.graphics.Renderer;
 import com.tankgame.graphics.SpriteImport;
+import com.tankgame.managers.FontManager;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
@@ -45,7 +47,7 @@ public class GameScene extends JPanel {
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
 
-    public GameScene(JFrame mainWindow) {
+    public GameScene(Consumer<String> onAction, JFrame mainWindow) {
         this.mainWindow = mainWindow;
         this.sprites = new SpriteImport();
         this.renderer = new Renderer(sprites);
@@ -86,12 +88,7 @@ public class GameScene extends JPanel {
 
         this.add(gameGrid);
 
-        
-        try{
-            pixel = Font.createFont(Font.TRUETYPE_FONT, new File("assets/ttf/8bitOperatorPlus-Bold.ttf")).deriveFont(54f);
-       
-        
-
+        this.pixel = FontManager.getFont("pixel", 54f);
 
         JPanel stats = new JPanel();
         stats.setLayout(new GridLayout(0, 2));
@@ -126,6 +123,15 @@ public class GameScene extends JPanel {
         timerLabel.setForeground(Color.WHITE);
         timerLabel.setFont(pixel);
 
+        JButton backButton = new JButton("back");
+        backButton.setFont(FontManager.getFont("pixel", 25f));
+        backButton.setForeground(Color.WHITE);
+        backButton.setBackground(Color.BLACK);
+        backButton.setFocusPainted(false);
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.addActionListener(e -> onAction.accept("start"));
+
         
         stats.add(timerLabelTitle);
         stats.add(timerLabel);
@@ -135,14 +141,11 @@ public class GameScene extends JPanel {
         stats.add(healthpointLabel);
         stats.add(livesLabelTitle);
         stats.add(livesLabel);
+        stats.add(backButton);
 
         stats.setBackground(Color.DARK_GRAY);
 
         this.add(stats);
-
-        }catch(Exception e){
-            System.err.println(e);
-        }
 
         mainWindow.add(this);
 
@@ -151,8 +154,6 @@ public class GameScene extends JPanel {
 
         this.gameEngine = new GameEngine(this);
         this.gameManager = gameEngine.getGameManager();
-
-        this.gameEngine.start();
 
         System.out.println("GameScene initialized");
     }
@@ -269,5 +270,24 @@ public class GameScene extends JPanel {
 
     public JLabel getStatTimerLabel() {
         return timerLabel;
+    }
+
+    public void startGame() {
+        if (gameEngine == null) {
+            this.gameEngine = new GameEngine(this);
+            this.gameManager = gameEngine.getGameManager();
+        }
+        this.gameEngine.start();
+        System.out.println("GameScene started");
+        this.gameGrid.requestFocusInWindow();
+    }
+
+    public void stopGame() {
+        if (gameEngine == null) {
+            this.gameEngine = new GameEngine(this);
+            this.gameManager = gameEngine.getGameManager();
+        }
+        this.gameEngine.stop();
+        this.gameGrid.requestFocusInWindow();
     }
 }

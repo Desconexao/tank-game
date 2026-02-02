@@ -1,0 +1,66 @@
+package com.tankgame.screens;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import com.tankgame.managers.FontManager;
+
+public class StartScreen extends JPanel {
+
+    public StartScreen(Consumer<String> onAction) {
+
+        
+        setLayout(new BorderLayout());
+        setBackground(Color.BLACK);
+
+        JLabel title = new JLabel("stupid ass tank game", SwingConstants.CENTER);
+        title.setFont(FontManager.getFont("pixel", 54f));
+        title.setForeground(Color.WHITE);
+
+        JButton startButton = new JButton("Start");
+        startButton.setFont(FontManager.getFont("pixel", 25f));
+        startButton.setForeground(Color.WHITE);
+        startButton.setBackground(Color.BLACK);
+        startButton.setFocusPainted(false);
+        startButton.setBorderPainted(false);
+        startButton.setContentAreaFilled(false);
+        startButton.addActionListener(e -> onAction.accept("game"));
+
+        JButton optionsButton = new JButton("OPTIONS");
+        optionsButton.setFont(FontManager.getFont("pixel", 25f));
+        optionsButton.setForeground(Color.WHITE);
+        optionsButton.setBackground(Color.BLACK);
+        optionsButton.setFocusPainted(false);
+        optionsButton.setBorderPainted(false);
+        optionsButton.setContentAreaFilled(false);
+        optionsButton.addActionListener(e -> onAction.accept("options"));
+
+        JButton createMapButton = new JButton("MAP CREATOR");
+        createMapButton.setFont(FontManager.getFont("pixel", 25f));
+        createMapButton.setForeground(Color.WHITE);
+        createMapButton.setBackground(Color.BLACK);
+        createMapButton.setFocusPainted(false);
+        createMapButton.setBorderPainted(false);
+        createMapButton.setContentAreaFilled(false);
+        createMapButton.addActionListener(e -> onAction.accept("mapcreator"));
+
+        
+
+
+        add(title, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.BLACK);
+        buttonPanel.add(startButton);
+        buttonPanel.add(optionsButton);
+        buttonPanel.add(createMapButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+}
