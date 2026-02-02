@@ -12,6 +12,7 @@ public abstract class Tank extends Entity implements Movable {
     protected double speed = GameConfig.PLAYER_SPEED;
     protected Direction direction;
     protected TankColors color;
+    protected int bulletDamage;
 
     
 
@@ -20,6 +21,7 @@ public abstract class Tank extends Entity implements Movable {
         this.health = health;
         this.direction = direction;
         this.color = color;
+        this.bulletDamage = GameConfig.DEFAULT_BULLET_DAMAGE;
     }
 
     public void moveUp() {
@@ -84,5 +86,13 @@ public abstract class Tank extends Entity implements Movable {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public int getBulletDamage(){
+        return this.bulletDamage;
+    }
+
+    public void setBulletDamage(int newDamage){
+        this.bulletDamage = newDamage;
     }
 }

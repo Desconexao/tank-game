@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
+import com.tankgame.entities.tile.Tile;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.settings.SpriteList;
@@ -51,6 +52,33 @@ public class Renderer {
                 ImageIcon tileIcon = loadedSprites.get(tileKey);
                 if (tileIcon != null) {
                     g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                }
+            }
+        }
+
+        drawTank(g2d, player);
+
+        for (Enemy enemy : enemies) {
+            drawTank(g2d, enemy);
+        }
+
+        if (bulletQueue != null) {
+            drawSpriteQueue(g2d, bulletQueue);
+        }
+    }
+
+    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue){
+        Graphics2D g2d = (Graphics2D) g;
+
+        Tile[][] grid = gameGridLogic.getGridTiles();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
+                if (tileIcon != null) {
+                    g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                }
+                else{
+                    System.err.println("fellbackedup [PROBLEMMMMMM]");
                 }
             }
         }

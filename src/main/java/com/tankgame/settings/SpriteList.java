@@ -29,9 +29,12 @@ public final class SpriteList {
                 { "tank_left_red",      TANK_SIZE,   TANK_SIZE},
                 { "tank_right_red",     TANK_SIZE,   TANK_SIZE},
                 { "eagle",              TILE_SIZE,   TILE_SIZE},
-                {"tree",                TILE_SIZE,   TILE_SIZE},
-                {"water",               TILE_SIZE,   TILE_SIZE},
-                {"flag",                TILE_SIZE,   TILE_SIZE}
+                { "tree",               TILE_SIZE,   TILE_SIZE},
+                { "water",              TILE_SIZE,   TILE_SIZE},
+                { "flag",               TILE_SIZE,   TILE_SIZE},
+                { "brick75",            TILE_SIZE,   TILE_SIZE},
+                { "brick50",            TILE_SIZE,   TILE_SIZE},
+                { "brick25",            TILE_SIZE,   TILE_SIZE}
 
         };
 

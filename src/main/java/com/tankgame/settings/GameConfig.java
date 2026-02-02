@@ -15,6 +15,7 @@ public final class GameConfig {
     public static final double BULLET_SPEED = 8.0;
     // public static final long BULLET_COOL_DOWN = 1_000_000_000L;
     // public static final long BULLET_COOL_DOWN_MS = 1000;
+    public static final int DEFAULT_BULLET_DAMAGE = 1;
 
     // Player
     public static final int PLAYER_START_HEALTH = 5;
@@ -31,6 +32,11 @@ public final class GameConfig {
     // Graphics opcional -
     public static final int PLAYER_ORIGINAL_SPRITE_SIZE = 13;
     public static final int BULLET_ORIGINAL_SPRITE_SIZE = 3;
+
+    // Tiles
+    public static final int BRICK_HP = 4;
+    public static final int STEEL_HP = 999;
+    public static final int EAGLE_HP = 1;
 
     private GameConfig() {
     }
