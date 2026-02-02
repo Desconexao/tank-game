@@ -15,6 +15,7 @@ import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
+import com.tankgame.settings.SpriteList;
 
 public class Renderer {
     private SpriteImport sprites;
@@ -28,35 +29,9 @@ public class Renderer {
     public Renderer(SpriteImport sprites) {
         this.sprites = sprites;
 
-        Object[][] spritesToLoad = {
-                { "tank_up_gray",       tankSize,   tankSize },
-                { "tank_down_gray",   tankSize,   tankSize },
-                { "tank_left_gray",   tankSize,   tankSize },
-                { "tank_right_gray",  tankSize,   tankSize },
-                { "brick",              size,   size },
-                { "black",              size,   size },
-                { "steel",              size,   size },
-                { "bullet_vertical",    bulletSize, bulletSize },
-                { "tank_up_yellow",     tankSize,   tankSize},
-                { "tank_down_yellow",   tankSize,   tankSize},
-                { "tank_left_yellow",   tankSize,   tankSize},
-                { "tank_right_yellow",  tankSize,   tankSize},
-                { "tank_up_green",     tankSize,   tankSize},
-                { "tank_down_green",   tankSize,   tankSize},
-                { "tank_left_green",   tankSize,   tankSize},
-                { "tank_right_green",  tankSize,   tankSize},
-                { "tank_up_red",       tankSize,   tankSize},
-                { "tank_down_red",     tankSize,   tankSize},
-                { "tank_left_red",     tankSize,   tankSize},
-                { "tank_right_red",    tankSize,   tankSize},
-                { "eagle",             size,   size},
-                {"tree",               size,   size},
-                {"water",              size,   size},
-                {"flag",               size,   size}
+        
 
-        };
-
-        loadSprites(spritesToLoad);
+        loadSprites(SpriteList.SPRITES_TO_LOAD);
     }
 
     public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {

@@ -18,6 +18,7 @@ import com.tankgame.game.GameGrid;
 import com.tankgame.game.GameManager;
 import com.tankgame.graphics.Renderer;
 import com.tankgame.graphics.SpriteImport;
+import com.tankgame.managers.FontManager;
 import com.tankgame.screens.widgets.StatBoardWidget;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
@@ -133,7 +134,7 @@ public class GameScene extends JPanel {
         Color originalColor = g.getColor();
         Font originalFont = g.getFont();
 
-        g.setFont(pixel);
+        g.setFont(FontManager.getFont("pixel", 52));
         g.setColor(Color.RED);
 
         String pauseText = "GAME OVER";
