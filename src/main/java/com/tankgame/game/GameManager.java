@@ -56,7 +56,7 @@ public class GameManager {
         this.statSystem = new StatManager(scene);
 
         this.movementSystem = new MovementSystem(collisionManager);
-        this.enemyManager = new EnemyManager(movementSystem);
+        this.enemyManager = new EnemyManager(movementSystem, scene.gridLogic.getEnemySpawnXY());
         //this.enemyAISystem = new RoamAI(movementSystem);
         this.projectileSystem = new ProjectileSystem(collisionManager);
         this.inputSystem = new InputSystem();

@@ -3,6 +3,7 @@ package com.tankgame.game;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,12 +19,15 @@ public class GameGrid {
     private final int rows, cols;
     private Tile[][] tileGrid;
     private Eagle EagleObjective;
+    private int[] playerSpawnXY;
+    private List<List<Integer>> enemySpawnXY = new ArrayList<>();
 
     public GameGrid(boolean custom, int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         this.grid = new char[rows][cols];
         this.tileGrid = new Tile[rows][cols];
+        
         loadMapChar(custom);
         loadMapTiles();
         // Let's keep the visual representation of characters for some reason (Maybe useful (Maybe I'd miss them))
@@ -46,11 +50,20 @@ public class GameGrid {
     private void loadMapTiles(){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
-                Tile tile = getTile(grid[i][j], j, i);
+                char tileChar = grid[i][j];
+                Tile tile = getTile(tileChar, j, i);
+
                 tileGrid[i][j] = tile;
 
                 if(tile instanceof Eagle)
                     setEagle(((Eagle) tile));
+
+                if(tileChar == 'P')
+                    playerSpawnXY = new int[] {j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE};
+
+                if(tileChar == 'S')
+                    enemySpawnXY.add(new ArrayList<>(List.of(j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE)));
+
             }
         }
     }
@@ -136,5 +149,16 @@ public class GameGrid {
         return this.EagleObjective;
     }
 
+    public int[] getPlayerSpawnXY(){
+        return this.playerSpawnXY;
+    }
+
+    public List<List<Integer>> getEnemySpawnXY(){
+        return this.enemySpawnXY;
+    }
+
+    public void setPlayerSpawn(int x, int y){
+        this.playerSpawnXY = new int[] {x, y};
+    }
 
 }

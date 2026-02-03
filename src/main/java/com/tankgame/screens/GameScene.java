@@ -46,17 +46,22 @@ public class GameScene extends JPanel {
         this.mainWindow = mainWindow;
         this.sprites = new SpriteImport();
         this.renderer = new Renderer(sprites);
-        this.gridLogic = new GameGrid(true, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
+        this.gridLogic = new GameGrid(false, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
 
         setBackground(Color.DARK_GRAY);
 
+        // This will explode if a custom map doesn't have a 'P' on it. I'm too lazy to care.
+        int playerSpawnX = gridLogic.getPlayerSpawnXY()[0];
+        int playerSpawnY = gridLogic.getPlayerSpawnXY()[1];
+
+
         this.player = new Player(
-                GameConfig.PLAYER_START_X,
-                GameConfig.PLAYER_START_Y,
+                playerSpawnX,
+                playerSpawnY,
                 GameConfig.PLAYER_START_HEALTH,
                 "tank_up_gray",
                 Direction.UP,
-                TankColors.GREEN
+                TankColors.GRAY
             );
 
         this.gameGrid = new JPanel() {
