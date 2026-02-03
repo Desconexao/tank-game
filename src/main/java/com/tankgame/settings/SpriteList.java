@@ -40,3 +40,14 @@ public final class SpriteList {
 
         private SpriteList(){}
 }
+
+/**
+ * Type of tiles:
+ * W - Water
+ * Y - Steel
+ * X - Brick
+ * E - Eagle                            (only one allowed)
+ * P - Player Spawn                     (can have only one) (becomes an empty tile)
+ * S - Spawn for Enemies                (can have multiple ones) (becomes an empty tile)
+ * _ - No tile,                         empty.
+ */
