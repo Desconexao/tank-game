@@ -5,6 +5,7 @@ import java.util.List;
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
+import com.tankgame.entities.tile.Water;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
 
@@ -46,7 +47,7 @@ public class CollisionManager {
 
         // Holy exceptions.
         if (gridX >= 0 && gridX < GameConfig.GRID_WIDTH && gridY >= 0 && gridY < GameConfig.GRID_HEIGHT) {
-            if (grid.getGridTiles()[gridY][gridX].getSpriteKey().equals("water")) {
+            if (grid.getGridTiles()[gridY][gridX] instanceof Water) {
                 return false;
             }
         }

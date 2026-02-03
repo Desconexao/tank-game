@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
+import com.tankgame.entities.tile.Tree;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.settings.SpriteList;
@@ -71,14 +72,17 @@ public class Renderer {
         Graphics2D g2d = (Graphics2D) g;
 
         Tile[][] grid = gameGridLogic.getGridTiles();
+        
+        // Draw background tiles (skip trees)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
-                if (tileIcon != null) {
-                    g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
-                }
-                else{
-                    System.err.println("fellbackedup [PROBLEMMMMMM]");
+                if (!(grid[i][j] instanceof Tree)) {
+                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
+                    if (tileIcon != null) {
+                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                    } else {
+                        System.err.println("fellbackedup [PROBLEMMMMMM]");
+                    }
                 }
             }
         }
@@ -87,6 +91,18 @@ public class Renderer {
 
         for (Enemy enemy : enemies) {
             drawTank(g2d, enemy);
+        }
+
+        // Draw foreground tiles (trees)
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] instanceof Tree) {
+                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
+                    if (tileIcon != null) {
+                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                    }
+                }
+            }
         }
 
         if (bulletQueue != null) {

@@ -12,6 +12,8 @@ import com.tankgame.entities.tile.Brick;
 import com.tankgame.entities.tile.Eagle;
 import com.tankgame.entities.tile.Steel;
 import com.tankgame.entities.tile.Tile;
+import com.tankgame.entities.tile.Tree;
+import com.tankgame.entities.tile.Water;
 import com.tankgame.settings.GameConfig;
 
 public class GameGrid {
@@ -72,11 +74,11 @@ public class GameGrid {
         Tile tile;
 
         tile = switch(tileChar){
-            case 'X' -> new Brick( (double) x, (double) y, "brick", GameConfig.BRICK_HP);
-            case 'Y' -> new Steel( (double) x, (double) y, "steel", GameConfig.STEEL_HP); // get rekt
-            case 'T' -> new Tile(x, y, "tree", false);
+            case 'X' -> new Brick(x, y, "brick", GameConfig.BRICK_HP);
+            case 'Y' -> new Steel(x, y, "steel", GameConfig.STEEL_HP); // get rekt
+            case 'T' -> new Tree(x, y);
             case 'E' -> new Eagle(x, y, "eagle", GameConfig.EAGLE_HP);
-            case 'W' -> new Tile(x, y, "water", true);
+            case 'W' -> new Water(x, y);
             default -> new Tile(x, y, "black", false);
         };
 
