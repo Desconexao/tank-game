@@ -76,9 +76,9 @@ public class GameGrid {
         tile = switch(tileChar){
             case 'X' -> new Brick(x, y, "brick", GameConfig.BRICK_HP);
             case 'Y' -> new Steel(x, y, "steel", GameConfig.STEEL_HP); // get rekt
-            case 'T' -> new Tree(x, y);
+            case 'T' -> new Tree(x, y, "tree", false);
             case 'E' -> new Eagle(x, y, "eagle", GameConfig.EAGLE_HP);
-            case 'W' -> new Water(x, y);
+            case 'W' -> new Water(x, y, "water", true);
             default -> new Tile(x, y, "black", false);
         };
 
