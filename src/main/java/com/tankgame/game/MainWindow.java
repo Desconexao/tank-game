@@ -34,6 +34,8 @@ public class MainWindow {
         MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(this::handleScreenAction);
         InstructionsScreen instructionsScreen = new InstructionsScreen(this::handleScreenAction);
 
+
+        // inserting new screens is painful
         root.add(startScreen, "start");
         // root.add(gameScene, "game"); // Don't add it here
         root.add(optionsScreen, "options");
