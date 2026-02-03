@@ -50,6 +50,15 @@ public class StartScreen extends JPanel {
         createMapButton.setContentAreaFilled(false);
         createMapButton.addActionListener(e -> onAction.accept("mapcreator"));
 
+        JButton instructionsButton = new JButton("instructions");
+        instructionsButton.setFont(FontManager.getFont("pixel", 25f));
+        instructionsButton.setForeground(Color.WHITE);
+        instructionsButton.setBackground(Color.BLACK);
+        instructionsButton.setFocusPainted(false);
+        instructionsButton.setBorderPainted(false);
+        instructionsButton.setContentAreaFilled(false);
+        instructionsButton.addActionListener(e -> onAction.accept("instructions"));
+
         
 
 
@@ -60,6 +69,7 @@ public class StartScreen extends JPanel {
         buttonPanel.add(startButton);
         buttonPanel.add(optionsButton);
         buttonPanel.add(createMapButton);
+        buttonPanel.add(instructionsButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
     }

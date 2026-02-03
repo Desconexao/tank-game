@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.tankgame.screens.GameScene;
+import com.tankgame.screens.InstructionsScreen;
 import com.tankgame.screens.MapCreatorScreen;
 import com.tankgame.screens.OptionsScreen;
 import com.tankgame.screens.StartScreen;
@@ -31,11 +32,13 @@ public class MainWindow {
         StartScreen startScreen = new StartScreen(this::handleScreenAction);
         OptionsScreen optionsScreen = new OptionsScreen(this::handleScreenAction);
         MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(this::handleScreenAction);
+        InstructionsScreen instructionsScreen = new InstructionsScreen(this::handleScreenAction);
 
         root.add(startScreen, "start");
         // root.add(gameScene, "game"); // Don't add it here
         root.add(optionsScreen, "options");
         root.add(mapCreatorScreen, "mapcreator");
+        root.add(instructionsScreen, "instructions");
 
         frame.setContentPane(root);
         cardLayout.show(root, "start");
@@ -55,6 +58,7 @@ public class MainWindow {
             case "options" -> showOptionsScreen();
             case "mapcreator" -> showMapCreatorScreen();
             case "start" -> showStartScreen();
+            case "instructions" -> showInstructionScreen();
             default -> System.out.println("Unknown action: " + action);
         }
     }
@@ -77,5 +81,9 @@ public class MainWindow {
 
     private void showMapCreatorScreen(){
         cardLayout.show(root, "mapcreator");
+    }
+
+    private void showInstructionScreen(){
+        cardLayout.show(root, "instructions");
     }
 }
