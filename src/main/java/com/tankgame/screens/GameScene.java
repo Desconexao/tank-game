@@ -46,7 +46,7 @@ public class GameScene extends JPanel {
         this.mainWindow = mainWindow;
         this.sprites = new SpriteImport();
         this.renderer = new Renderer(sprites);
-        this.gridLogic = new GameGrid(false, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
+        this.gridLogic = new GameGrid(true, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
 
         setBackground(Color.DARK_GRAY);
 
