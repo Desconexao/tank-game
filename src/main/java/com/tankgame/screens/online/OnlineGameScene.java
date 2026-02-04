@@ -181,7 +181,7 @@ public class OnlineGameScene extends JPanel {
             onAction.accept("start");
         });
 
-        this.add(statWidget, BorderLayout.SOUTH);
+        //this.add(statWidget, BorderLayout.SOUTH);
 
         this.gameGrid.setFocusable(true);
         this.gameGrid.requestFocusInWindow();
