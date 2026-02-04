@@ -1,13 +1,13 @@
 package com.tankgame.graphics;
 
-import java.awt.Image;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.net.URL;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
