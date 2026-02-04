@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import com.tankgame.screens.GameScene;
 import com.tankgame.screens.InstructionsScreen;
 import com.tankgame.screens.MapCreatorScreen;
+import com.tankgame.screens.OnlineLobbyScreen;
 import com.tankgame.screens.OptionsScreen;
 import com.tankgame.screens.StartScreen;
 import com.tankgame.settings.GameConfig;
@@ -33,6 +34,7 @@ public class MainWindow {
         OptionsScreen optionsScreen = new OptionsScreen(this::handleScreenAction);
         MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(this::handleScreenAction);
         InstructionsScreen instructionsScreen = new InstructionsScreen(this::handleScreenAction);
+        OnlineLobbyScreen onlineScreen = new OnlineLobbyScreen(this::handleScreenAction);
 
 
         // inserting new screens is painful
@@ -41,6 +43,7 @@ public class MainWindow {
         root.add(optionsScreen, "options");
         root.add(mapCreatorScreen, "mapcreator");
         root.add(instructionsScreen, "instructions");
+        root.add(onlineScreen, "online");
 
         frame.setContentPane(root);
         cardLayout.show(root, "start");
@@ -61,6 +64,7 @@ public class MainWindow {
             case "mapcreator" -> showMapCreatorScreen();
             case "start" -> showStartScreen();
             case "instructions" -> showInstructionScreen();
+            case "online" -> showOnlineScreen();
             default -> System.out.println("Unknown action: " + action);
         }
     }
@@ -87,5 +91,9 @@ public class MainWindow {
 
     private void showInstructionScreen(){
         cardLayout.show(root, "instructions");
+    }
+
+    private void showOnlineScreen(){
+        cardLayout.show(root, "online");
     }
 }

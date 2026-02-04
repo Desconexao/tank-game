@@ -2,6 +2,7 @@ package com.tankgame.managers;
 
 import java.awt.Font;
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,16 @@ public class FontManager {
     private static void loadFont(String fontName) {
         try {
             String filePath = FONT_PATH + fontName + ".ttf";
-            Font font = Font.createFont(Font.TRUETYPE_FONT, new File(filePath));
+            // Try to load from JAR first using ClassLoader
+            InputStream inputStream = FontManager.class.getClassLoader().getResourceAsStream(filePath);
+            
+            if (inputStream == null) {
+                // Fall back to file system if not in JAR
+                inputStream = java.nio.file.Files.newInputStream(new File(filePath).toPath());
+            }
+            
+            Font font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+            inputStream.close();
             fontCache.put(fontName, font);
         } catch (Exception e) {
             System.err.println("Failed to load font '" + fontName + "': " + e.getMessage());

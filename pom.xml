@@ -43,9 +43,32 @@
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- websockets for online stuff-->
+    <dependency>
+        <groupId>javax.websocket</groupId>
+        <artifactId>javax.websocket-api</artifactId>
+        <version>1.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish.tyrus</groupId>
+        <artifactId>tyrus-client</artifactId>
+        <version>1.17</version>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish.tyrus</groupId>
+        <artifactId>tyrus-container-grizzly-client</artifactId>
+        <version>1.17</version>
+    </dependency>
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>assets</directory>
+        <targetPath>assets</targetPath>
+      </resource>
+    </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
 
@@ -70,6 +93,13 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.4.2</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>com.tankgame.Main</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -90,5 +120,28 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>tank-game</finalName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.tankgame.Main</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
