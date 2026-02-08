@@ -12,6 +12,13 @@
         <targetPath>assets</targetPath>
         <directory>assets</directory>
       </resource>
+      <resource>
+        <targetPath>world</targetPath>
+        <directory>world</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
     </resources>
     <pluginManagement>
       <plugins>

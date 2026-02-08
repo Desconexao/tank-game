@@ -1,6 +1,9 @@
 package com.tankgame.game;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -53,13 +56,34 @@ public class GameGrid {
         String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(6)) + ".txt";
         try {
             System.out.println(fileName);
-            List<String> lines = Files.readAllLines(Path.of(fileName));
+            List<String> lines = loadLinesFromResource(fileName);
             for (int i = 0; i < Math.min(rows, lines.size()); i++) {
                 grid[i] = lines.get(i).toCharArray();
             }
         } catch (IOException e) {
             System.err.println("Map load error: " + e.getMessage());
         }
+    }
+
+    private List<String> loadLinesFromResource(String resourcePath) throws IOException {
+        List<String> lines = new ArrayList<>();
+        
+        // Try to load from JAR first using ClassLoader
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+        
+        // Fall back to file system if not in JAR
+        if (inputStream == null) {
+            inputStream = Files.newInputStream(Path.of(resourcePath));
+        }
+        
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+        
+        return lines;
     }
 
     private void loadMapTiles(){

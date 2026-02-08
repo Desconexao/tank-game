@@ -211,7 +211,7 @@ public class OnlineLobbyScreen extends JPanel {
             }
             
             @Override
-            public void onEnemyInput(String button, String state) {
+            public void onEnemyState(double x, double y, com.tankgame.utils.Direction facing, boolean shooting) {
                 // Not used in lobby screen
             }
             

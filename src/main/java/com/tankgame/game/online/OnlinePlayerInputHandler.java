@@ -14,10 +14,8 @@ public class OnlinePlayerInputHandler extends KeyAdapter {
     public boolean rightPressed;
     public boolean shootPressed;
     public boolean pausePressed = false;
-    private WebSocketClient webSocketClient;
 
-    public OnlinePlayerInputHandler(WebSocketClient webSocketClient) {
-        this.webSocketClient = webSocketClient;
+    public OnlinePlayerInputHandler() {
     }
 
     @Override
@@ -31,36 +29,19 @@ public class OnlinePlayerInputHandler extends KeyAdapter {
     }
 
     private void handleKey(int code, boolean pressed) {
-        String state = pressed ? "pressed" : "released";
-        
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
-            if (pressed != upPressed) {
-                webSocketClient.sendInteraction("up", state);
-            }
             upPressed = pressed;
         }
         if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
-            if (pressed != downPressed) {
-                webSocketClient.sendInteraction("down", state);
-            }
             downPressed = pressed;
         }
         if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
-            if (pressed != leftPressed) {
-                webSocketClient.sendInteraction("left", state);
-            }
             leftPressed = pressed;
         }
         if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
-            if (pressed != rightPressed) {
-                webSocketClient.sendInteraction("right", state);
-            }
             rightPressed = pressed;
         }
         if (code == KeyEvent.VK_Z || code == KeyEvent.VK_SPACE) {
-            if (pressed != shootPressed) {
-                webSocketClient.sendInteraction("shoot", state);
-            }
             shootPressed = pressed;
         }
         if (code == KeyEvent.VK_ESCAPE) {

@@ -115,7 +115,7 @@ public class OnlineGameScene extends JPanel {
                 movementSystem);
 
         // Create input handler
-        this.inputHandler = new OnlinePlayerInputHandler(webSocketClient);
+        this.inputHandler = new OnlinePlayerInputHandler();
 
         // Setup message handler to receive opponent actions
         webSocketClient.setMessageHandler(new WebSocketClient.MessageHandler() {
@@ -136,8 +136,8 @@ public class OnlineGameScene extends JPanel {
             }
 
             @Override
-            public void onEnemyInput(String button, String state) {
-                handleOpponentInput(button, state);
+            public void onEnemyState(double x, double y, Direction facing, boolean shooting) {
+                handleOpponentState(x, y, facing, shooting);
             }
 
             @Override
@@ -256,11 +256,11 @@ public class OnlineGameScene extends JPanel {
     }
 
     /**
-     * Handle opponent input from server
+     * Handle opponent state from server
      */
-    private void handleOpponentInput(String button, String state) {
+    private void handleOpponentState(double x, double y, Direction facing, boolean shooting) {
         if (opponentManager != null) {
-            opponentManager.handleButtonInput(button, state);
+            opponentManager.handleState(x, y, facing, shooting);
         }
     }
 

@@ -48,7 +48,7 @@ public class OnlineGameEngine implements Runnable {
         // Initialize managers with required systems
         this.projectileManager = new ProjectileManager(projectileSystem);
         this.shootingSystem = new ShootingSystem(projectileManager);
-        this.opponentManager = new OnlineOpponentManager(movementSystem, projectileManager);
+        this.opponentManager = new OnlineOpponentManager(projectileManager);
 
         // Setup message handler for opponent actions
         webSocketClient.setMessageHandler(new WebSocketClient.MessageHandler() {
@@ -70,8 +70,8 @@ public class OnlineGameEngine implements Runnable {
             }
 
             @Override
-            public void onEnemyInput(String button, String state) {
-                opponentManager.handleButtonInput(button, state);
+            public void onEnemyState(double x, double y, com.tankgame.utils.Direction facing, boolean shooting) {
+                opponentManager.handleState(x, y, facing, shooting);
             }
 
             @Override
@@ -169,6 +169,10 @@ public class OnlineGameEngine implements Runnable {
         // Handle player shooting - separate from movement
         if (inputHandler.shootPressed) {
             shootingSystem.playerShoot(player);
+        }
+
+        if (webSocketClient != null && webSocketClient.isConnected()) {
+            webSocketClient.sendPlayerState(player.getX(), player.getY(), player.getDirection(), inputHandler.shootPressed);
         }
 
         // Handle pause

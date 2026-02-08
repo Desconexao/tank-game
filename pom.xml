@@ -68,6 +68,13 @@
         <directory>assets</directory>
         <targetPath>assets</targetPath>
       </resource>
+      <resource>
+        <directory>world</directory>
+        <targetPath>world</targetPath>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
     </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>

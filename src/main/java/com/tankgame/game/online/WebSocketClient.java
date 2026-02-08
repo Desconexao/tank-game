@@ -1,6 +1,7 @@
 package com.tankgame.game.online;
 
 import java.net.URI;
+import java.util.Locale;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -11,6 +12,8 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
+
+import com.tankgame.utils.Direction;
 
 /**
  * WebSocket client for online gameplay.
@@ -28,7 +31,7 @@ public class WebSocketClient {
         void onLobbyJoined(String id, int size, int capacity, int playerNumber);
         void onReady();
         void onGameStarted();
-        void onEnemyInput(String button, String state);
+        void onEnemyState(double x, double y, Direction facing, boolean shooting);
         void onError(String message);
     }
 
@@ -91,10 +94,18 @@ public class WebSocketClient {
             messageHandler.onGameStarted();
         } else if (message.contains("\"type\":\"enemyInput\"")) {
             try {
-                String button = extractJsonValue(message, "button");
-                String state = extractJsonValue(message, "state");
-                System.out.println("[SERVER] Enemy input: button=" + button + ", state=" + state);
-                messageHandler.onEnemyInput(button, state);
+                String xValue = extractJsonValue(message, "x");
+                String yValue = extractJsonValue(message, "y");
+                String facingValue = extractJsonValue(message, "facing");
+                String shootingValue = extractJsonValue(message, "shooting");
+
+                double x = xValue.isEmpty() ? 0.0 : Double.parseDouble(xValue);
+                double y = yValue.isEmpty() ? 0.0 : Double.parseDouble(yValue);
+                Direction facing = parseFacing(facingValue);
+                boolean shooting = "true".equalsIgnoreCase(shootingValue);
+
+                System.out.println("[SERVER] Enemy state: x=" + x + ", y=" + y + ", facing=" + facing + ", shooting=" + shooting);
+                messageHandler.onEnemyState(x, y, facing, shooting);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -163,9 +174,56 @@ public class WebSocketClient {
     }
 
     public void sendInteraction(String button, String state) {
-        String json = String.format("{\"type\":\"interaction\",\"payload\":{\"button\":\"%s\",\"state\":\"%s\"}}", button, state);
-        System.out.println("[CLIENT] Sending input: button=" + button + ", state=" + state);
+        throw new UnsupportedOperationException("sendInteraction(button, state) is deprecated");
+    }
+
+    public void sendPlayerState(double x, double y, Direction facing, boolean shooting) {
+        String facingValue = facing != null ? facing.name().toLowerCase(Locale.ROOT) : "up";
+        String json = String.format(Locale.US,
+                "{\"type\":\"interaction\",\"payload\":{\"x\":%.3f,\"y\":%.3f,\"facing\":\"%s\",\"shooting\":%s}}",
+                x, y, facingValue, shooting ? "true" : "false");
+        System.out.println("[CLIENT] Sending state: x=" + x + ", y=" + y + ", facing=" + facingValue + ", shooting=" + shooting);
         sendMessage(json);
+    }
+
+    private Direction parseFacing(String facingValue) {
+        if (facingValue == null || facingValue.isEmpty()) {
+            return null;
+        }
+
+        String value = facingValue.trim().toLowerCase(Locale.ROOT);
+        switch (value) {
+            case "up":
+                return Direction.UP;
+            case "down":
+                return Direction.DOWN;
+            case "left":
+                return Direction.LEFT;
+            case "right":
+                return Direction.RIGHT;
+            default:
+                break;
+        }
+
+        try {
+            double angle = Double.parseDouble(value) % 360.0;
+            if (angle < 0) {
+                angle += 360.0;
+            }
+
+            if (angle >= 45.0 && angle < 135.0) {
+                return Direction.RIGHT;
+            }
+            if (angle >= 135.0 && angle < 225.0) {
+                return Direction.DOWN;
+            }
+            if (angle >= 225.0 && angle < 315.0) {
+                return Direction.LEFT;
+            }
+            return Direction.UP;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
     public void disconnect() {
