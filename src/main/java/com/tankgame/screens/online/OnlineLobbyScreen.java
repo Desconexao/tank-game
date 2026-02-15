@@ -37,7 +37,7 @@ public class OnlineLobbyScreen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        JLabel title = new JLabel("online shit", SwingConstants.CENTER);
+        JLabel title = new JLabel("online lobby", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
 
