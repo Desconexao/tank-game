@@ -31,7 +31,8 @@ public class WebSocketClient {
         void onLobbyJoined(String id, int size, int capacity, int playerNumber);
         void onReady();
         void onGameStarted();
-        void onEnemyState(double x, double y, Direction facing, boolean shooting);
+        void onEnemyInput(double x, double y, Direction facing);
+        void onEnemyShooting(boolean shooting);
         void onError(String message);
     }
 
@@ -97,15 +98,23 @@ public class WebSocketClient {
                 String xValue = extractJsonValue(message, "x");
                 String yValue = extractJsonValue(message, "y");
                 String facingValue = extractJsonValue(message, "facing");
-                String shootingValue = extractJsonValue(message, "shooting");
 
                 double x = xValue.isEmpty() ? 0.0 : Double.parseDouble(xValue);
                 double y = yValue.isEmpty() ? 0.0 : Double.parseDouble(yValue);
                 Direction facing = parseFacing(facingValue);
+
+                // System.out.println("[SERVER] Enemy input: x=" + x + ", y=" + y + ", facing=" + facing);
+                messageHandler.onEnemyInput(x, y, facing);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (message.contains("\"type\":\"enemyShooting\"")) {
+            try {
+                String shootingValue = extractJsonValue(message, "shooting");
                 boolean shooting = "true".equalsIgnoreCase(shootingValue);
 
-                System.out.println("[SERVER] Enemy state: x=" + x + ", y=" + y + ", facing=" + facing + ", shooting=" + shooting);
-                messageHandler.onEnemyState(x, y, facing, shooting);
+                // System.out.println("[SERVER] Enemy shooting: " + shooting);
+                messageHandler.onEnemyShooting(shooting);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -173,16 +182,20 @@ public class WebSocketClient {
         sendMessage(json);
     }
 
-    public void sendInteraction(String button, String state) {
-        throw new UnsupportedOperationException("sendInteraction(button, state) is deprecated");
-    }
-
-    public void sendPlayerState(double x, double y, Direction facing, boolean shooting) {
+    public void sendInteraction(double x, double y, Direction facing) {
         String facingValue = facing != null ? facing.name().toLowerCase(Locale.ROOT) : "up";
         String json = String.format(Locale.US,
-                "{\"type\":\"interaction\",\"payload\":{\"x\":%.3f,\"y\":%.3f,\"facing\":\"%s\",\"shooting\":%s}}",
-                x, y, facingValue, shooting ? "true" : "false");
-        System.out.println("[CLIENT] Sending state: x=" + x + ", y=" + y + ", facing=" + facingValue + ", shooting=" + shooting);
+                "{\"type\":\"interaction\",\"payload\":{\"x\":%.3f,\"y\":%.3f,\"facing\":\"%s\"}}",
+                x, y, facingValue);
+        // System.out.println("[CLIENT] Sending input: x=" + x + ", y=" + y + ", facing=" + facingValue);
+        sendMessage(json);
+    }
+
+    public void sendShooting(boolean shooting) {
+        String json = String.format(Locale.US,
+                "{\"type\":\"shooting\",\"payload\":{\"shooting\":%s}}",
+                shooting ? "true" : "false");
+        // System.out.println("[CLIENT] Sending shooting: " + shooting);
         sendMessage(json);
     }
 

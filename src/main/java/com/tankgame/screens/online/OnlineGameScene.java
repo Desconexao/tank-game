@@ -136,8 +136,13 @@ public class OnlineGameScene extends JPanel {
             }
 
             @Override
-            public void onEnemyState(double x, double y, Direction facing, boolean shooting) {
-                handleOpponentState(x, y, facing, shooting);
+            public void onEnemyInput(double x, double y, Direction facing) {
+                // Handled by engine
+            }
+
+            @Override
+            public void onEnemyShooting(boolean shooting) {
+                // Handled by engine
             }
 
             @Override
@@ -256,11 +261,20 @@ public class OnlineGameScene extends JPanel {
     }
 
     /**
-     * Handle opponent state from server
+     * Handle opponent input from server
      */
-    private void handleOpponentState(double x, double y, Direction facing, boolean shooting) {
+    private void handleOpponentInput(double x, double y, Direction facing) {
         if (opponentManager != null) {
-            opponentManager.handleState(x, y, facing, shooting);
+            opponentManager.handleInput(x, y, facing);
+        }
+    }
+
+    /**
+     * Handle opponent shooting from server
+     */
+    private void handleOpponentShooting(boolean shooting) {
+        if (opponentManager != null) {
+            opponentManager.handleShooting(shooting);
         }
     }
 

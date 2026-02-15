@@ -25,6 +25,12 @@ public class OnlineGameEngine implements Runnable {
     private boolean running = false;
     private boolean gameStarted = true; // Start immediately for testing/local play
 
+    // Last sent validation states
+    private double lastSentX = -1;
+    private double lastSentY = -1;
+    private com.tankgame.utils.Direction lastSentFacing = null;
+    private boolean lastSentShooting = false;
+
     // Systems
     private final MovementSystem movementSystem;
     private final ShootingSystem shootingSystem;
@@ -70,8 +76,13 @@ public class OnlineGameEngine implements Runnable {
             }
 
             @Override
-            public void onEnemyState(double x, double y, com.tankgame.utils.Direction facing, boolean shooting) {
-                opponentManager.handleState(x, y, facing, shooting);
+            public void onEnemyInput(double x, double y, com.tankgame.utils.Direction facing) {
+                opponentManager.handleInput(x, y, facing);
+            }
+
+            @Override
+            public void onEnemyShooting(boolean shooting) {
+                opponentManager.handleShooting(shooting);
             }
 
             @Override
@@ -172,7 +183,21 @@ public class OnlineGameEngine implements Runnable {
         }
 
         if (webSocketClient != null && webSocketClient.isConnected()) {
-            webSocketClient.sendPlayerState(player.getX(), player.getY(), player.getDirection(), inputHandler.shootPressed);
+            boolean posChanged = Math.abs(player.getX() - lastSentX) > 0.001 ||
+                                 Math.abs(player.getY() - lastSentY) > 0.001 ||
+                                 player.getDirection() != lastSentFacing;
+
+            if (posChanged) {
+                webSocketClient.sendInteraction(player.getX(), player.getY(), player.getDirection());
+                lastSentX = player.getX();
+                lastSentY = player.getY();
+                lastSentFacing = player.getDirection();
+            }
+
+            if (inputHandler.shootPressed != lastSentShooting) {
+                webSocketClient.sendShooting(inputHandler.shootPressed);
+                lastSentShooting = inputHandler.shootPressed;
+            }
         }
 
         // Handle pause

@@ -31,19 +31,28 @@ public class OnlineOpponentManager {
     }
 
     /**
-     * Handle state updates from server
+     * Handle input updates from server
      */
-    public void handleState(double x, double y, Direction facing, boolean shooting) {
+    public void handleInput(double x, double y, Direction facing) {
         if (opponent == null) {
-            System.err.println("[OPPONENT] Cannot handle input - opponent is null");
             return;
         }
 
         this.targetX = x;
         this.targetY = y;
         this.targetDirection = facing;
-        this.shooting = shooting;
         this.hasState = true;
+    }
+
+    /**
+     * Handle shooting updates from server
+     */
+    public void handleShooting(boolean shooting) {
+        if (opponent == null) {
+            return;
+        }
+
+        this.shooting = shooting;
     }
 
     /**

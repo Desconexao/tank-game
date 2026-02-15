@@ -1,4 +1,4 @@
-package com.tankgame.screens;
+package com.tankgame.screens.online;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,7 +16,6 @@ import javax.swing.Timer;
 
 import com.tankgame.game.online.WebSocketClient;
 import com.tankgame.managers.FontManager;
-import com.tankgame.screens.online.OnlineGameScene;
 import com.tankgame.settings.ServerConfig;
 
 public class OnlineLobbyScreen extends JPanel {
@@ -209,12 +208,17 @@ public class OnlineLobbyScreen extends JPanel {
                     statusLabel.setForeground(Color.WHITE);
                 });
             }
-            
+
             @Override
-            public void onEnemyState(double x, double y, com.tankgame.utils.Direction facing, boolean shooting) {
+            public void onEnemyInput(double x, double y, com.tankgame.utils.Direction facing) {
                 // Not used in lobby screen
             }
-            
+
+            @Override
+            public void onEnemyShooting(boolean shooting) {
+                // Not used in lobby screen
+            }
+
             @Override
             public void onError(String message) {
                 SwingUtilities.invokeLater(() -> {
