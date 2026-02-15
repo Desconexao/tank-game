@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 import com.tankgame.screens.GameScene;
 import com.tankgame.screens.InstructionsScreen;
 import com.tankgame.screens.MapCreatorScreen;
-import com.tankgame.screens.OnlineLobbyScreen;
 import com.tankgame.screens.OptionsScreen;
 import com.tankgame.screens.StartScreen;
+import com.tankgame.screens.online.OnlineLobbyScreen;
 import com.tankgame.settings.GameConfig;
 
 public class MainWindow {

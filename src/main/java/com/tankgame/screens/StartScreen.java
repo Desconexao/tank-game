@@ -19,7 +19,7 @@ public class StartScreen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        JLabel title = new JLabel("stupid ass tank game", SwingConstants.CENTER);
+        JLabel title = new JLabel("tank game (online build)", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
 
