@@ -1,6 +1,9 @@
 package com.tankgame.game;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import com.tankgame.entities.tile.Steel;
 import com.tankgame.entities.tile.Tile;
 import com.tankgame.entities.tile.Tree;
 import com.tankgame.entities.tile.Water;
+import com.tankgame.game.online.OnlineGridLoader;
 import com.tankgame.settings.GameConfig;
 
 public class GameGrid {
@@ -35,12 +39,24 @@ public class GameGrid {
         // Let's keep the visual representation of characters for some reason (Maybe useful (Maybe I'd miss them))
     }
 
+    /**
+     * Constructor for wrapping OnlineGridLoader
+     */
+    public GameGrid(OnlineGridLoader loader) {
+        this.rows = GameConfig.GRID_HEIGHT;
+        this.cols = GameConfig.GRID_WIDTH;
+        this.grid = loader.getGridMatrix();
+        this.tileGrid = loader.getTileGrid();
+        this.EagleObjective = loader.getEagle();
+        this.playerSpawnXY = new int[] {0, 0}; // Online handles spawns differently
+    }
+
     private void loadMapChar(boolean custom) {
         // This will break if we go above 9 maps.
         String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(6)) + ".txt";
         try {
             System.out.println(fileName);
-            List<String> lines = Files.readAllLines(Path.of(fileName));
+            List<String> lines = loadLinesFromResource(fileName);
             for (int i = 0; i < Math.min(rows, lines.size()); i++) {
                 grid[i] = lines.get(i).toCharArray();
             }
@@ -49,11 +65,32 @@ public class GameGrid {
         }
     }
 
+    private List<String> loadLinesFromResource(String resourcePath) throws IOException {
+        List<String> lines = new ArrayList<>();
+        
+        // Try to load from JAR first using ClassLoader
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+        
+        // Fall back to file system if not in JAR
+        if (inputStream == null) {
+            inputStream = Files.newInputStream(Path.of(resourcePath));
+        }
+        
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+        
+        return lines;
+    }
+
     private void loadMapTiles(){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 char tileChar = grid[i][j];
-                Tile tile = getTile(tileChar, j, i);
+                Tile tile = getTile(tileChar, j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE);
 
                 tileGrid[i][j] = tile;
 

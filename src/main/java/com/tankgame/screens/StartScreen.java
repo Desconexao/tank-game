@@ -19,7 +19,7 @@ public class StartScreen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        JLabel title = new JLabel("stupid ass tank game", SwingConstants.CENTER);
+        JLabel title = new JLabel("tank game (online build)", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
 
@@ -59,6 +59,15 @@ public class StartScreen extends JPanel {
         instructionsButton.setContentAreaFilled(false);
         instructionsButton.addActionListener(e -> onAction.accept("instructions"));
 
+        JButton onlineLobbyButton = new JButton("online");
+        onlineLobbyButton.setFont(FontManager.getFont("pixel", 25f));
+        onlineLobbyButton.setForeground(Color.WHITE);
+        onlineLobbyButton.setBackground(Color.BLACK);
+        onlineLobbyButton.setFocusPainted(false);
+        onlineLobbyButton.setBorderPainted(false);
+        onlineLobbyButton.setContentAreaFilled(false);
+        onlineLobbyButton.addActionListener(e -> onAction.accept("online"));
+
         
 
 
@@ -70,6 +79,7 @@ public class StartScreen extends JPanel {
         buttonPanel.add(optionsButton);
         buttonPanel.add(createMapButton);
         buttonPanel.add(instructionsButton);
+        buttonPanel.add(onlineLobbyButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
     }

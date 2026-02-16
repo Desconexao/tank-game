@@ -1,11 +1,14 @@
 package com.tankgame.graphics;
 
-import java.awt.Image;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class SpriteImport {
@@ -14,14 +17,27 @@ public class SpriteImport {
     public ImageIcon getSpriteResized(String spriteName, int resX, int resY) {
         String filePath = spritesPath + spriteName + ".png";
 
-        if (!Files.exists(Path.of(filePath))) {
+        // Try to load from JAR first using ClassLoader
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
+        
+        // Fall back to file system if not in JAR
+        if (inputStream == null && Files.exists(Path.of(filePath))) {
+            try {
+                inputStream = Files.newInputStream(Path.of(filePath));
+            } catch (Exception e) {
+                // Ignore, will create placeholder
+            }
+        }
+
+        if (inputStream == null) {
             System.out.println("Creating placeholder for: " + spriteName + " (" + resX + "x" + resY + ")");
             return createPlaceholderSprite(spriteName, resX, resY);
         }
 
         try {
-            ImageIcon importedIcon = new ImageIcon(filePath);
-            Image scaledImage = importedIcon.getImage().getScaledInstance(resX, resY, Image.SCALE_SMOOTH);
+            BufferedImage image = ImageIO.read(inputStream);
+            inputStream.close();
+            Image scaledImage = image.getScaledInstance(resX, resY, Image.SCALE_SMOOTH);
             return new ImageIcon(scaledImage);
         } catch (Exception e) {
             System.err.println("Error loading sprite '" + spriteName + "': " + e.getMessage());
