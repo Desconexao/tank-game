@@ -11,6 +11,7 @@ import java.util.Queue;
 
 import javax.swing.ImageIcon;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
@@ -68,7 +69,7 @@ public class Renderer {
         }
     }
 
-    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue){
+    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue, List<PowerUp> powerups){
         Graphics2D g2d = (Graphics2D) g;
 
         Tile[][] grid = gameGridLogic.getGridTiles();

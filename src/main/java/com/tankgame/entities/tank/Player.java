@@ -1,9 +1,13 @@
 package com.tankgame.entities.tank;
 
+import com.tankgame.entities.collectible.PowerUp;
+import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
 
 public class Player extends Tank {
+    private long bulletCooldown = GameConfig.PLAYER_BULLET_COOL_DOWN_MS;
+
     public Player(double x, double y, int health, String spriteKey, Direction direction, TankColors color) {
         super(x, y, health, spriteKey, direction, color);
     }
@@ -41,5 +45,34 @@ public class Player extends Tank {
             case LEFT -> "tank_left_gray";
             case RIGHT -> "tank_right_gray";
         };
+    }
+
+    public long getBulletCooldown() {
+        return bulletCooldown;
+    }
+
+    public void setBulletCooldown(long cooldown_ms){
+        this.bulletCooldown = cooldown_ms;
+    }
+
+    
+
+    public void getPowerUp(PowerUp powerup){
+        switch (powerup.getName()) {
+            case "STAR":
+                startStarPowerUp();
+                break;
+        
+            default:
+                return;
+        }
+    }
+
+    private void startStarPowerUp(){
+        setBulletCooldown(250);
+    }
+
+    private void endStarPowerUp(){
+        setBulletCooldown(GameConfig.PLAYER_BULLET_COOL_DOWN_MS);
     }
 }

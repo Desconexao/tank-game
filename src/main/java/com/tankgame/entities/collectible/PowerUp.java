@@ -4,16 +4,22 @@ import com.tankgame.entities.Entity;
 import com.tankgame.entities.tank.Tank;
 
 public abstract class PowerUp extends Entity {
-    protected String type;
+    private String description;
+    private String name;
 
-    public PowerUp(double x, double y, String type, String spriteKey) {
+    public PowerUp(double x, double y, String spriteKey, String name, String description) {
         super(x, y, spriteKey);
-        this.type = type;
+        this.name = name;
+        this.description = description;
     }
 
     public abstract void apply(Tank tank);
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription(){
+        return description;
     }
 }

@@ -6,7 +6,6 @@ import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.managers.ProjectileManager;
-import com.tankgame.settings.GameConfig;
 
 public class ShootingSystem {
     private final ProjectileManager projectileManager;
@@ -19,7 +18,7 @@ public class ShootingSystem {
 
     public void playerShoot(Player player) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastPlayerShotTime < GameConfig.PLAYER_BULLET_COOL_DOWN_MS) {
+        if (currentTime - lastPlayerShotTime < player.getBulletCooldown()) {
             return;
         }
  
@@ -38,8 +37,8 @@ public class ShootingSystem {
         }
     }
 
-    public boolean canPlayerShoot() {
+    public boolean canPlayerShoot(Player player) {
         long currentTime = System.currentTimeMillis();
-        return (currentTime - lastPlayerShotTime) >= GameConfig.PLAYER_BULLET_COOL_DOWN_MS;
+        return (currentTime - lastPlayerShotTime) >= player.getBulletCooldown();
     }
 }

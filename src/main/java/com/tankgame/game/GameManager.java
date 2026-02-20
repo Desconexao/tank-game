@@ -9,6 +9,7 @@ import com.tankgame.entities.tile.Eagle;
 import com.tankgame.managers.AssetManager;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.EnemyManager;
+import com.tankgame.managers.PowerUpManager;
 import com.tankgame.managers.ProjectileManager;
 import com.tankgame.managers.StatManager;
 import com.tankgame.screens.GameScene;
@@ -24,6 +25,7 @@ public class GameManager {
     private final ProjectileManager projectileManager;
     private final AssetManager assetManager;
     private final CollisionManager collisionManager;
+    private final PowerUpManager powerUpManager;
 
     // Systems
     private final MovementSystem movementSystem;
@@ -62,6 +64,7 @@ public class GameManager {
         this.inputSystem = new InputSystem();
         this.projectileManager = new ProjectileManager(projectileSystem);
         this.shootingSystem = new ShootingSystem(projectileManager);
+        this.powerUpManager = new PowerUpManager(scene.gridLogic, collisionManager);
 
         scene.getGameGrid().addKeyListener(inputSystem.getKeyboard());
         scene.getGameGrid().setFocusable(true);
@@ -95,6 +98,10 @@ public class GameManager {
         updateProjectiles();
 
         increaseTimer();
+
+        ///////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /// ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        TEMPORARYFUNCTION_INSERT_POWERUP();
 
         statSystem.update(runningTime, score);
 
@@ -276,5 +283,9 @@ public class GameManager {
             tick = 0;
             runningTime += 1;
         }
+    }
+
+    private void TEMPORARYFUNCTION_INSERT_POWERUP(){
+
     }
 }
