@@ -41,7 +41,7 @@ public class StatManager {
         if(red)
             timerLabel.setForeground(Color.RED);
         else
-            timerLabel.setForeground(Color.RED);
+            timerLabel.setForeground(Color.WHITE);
     }
 
 }

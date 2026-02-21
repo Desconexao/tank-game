@@ -183,7 +183,6 @@ public class GameManager {
 
 
         if (isTimeStopped){
-            System.out.println(System.currentTimeMillis() - lastTimeStop);
             if(System.currentTimeMillis() - lastTimeStop >= GameConfig.POWERUP_TIMESTOP_LENGTH_MS){
                 System.out.println();
                 deactivateTimeStop();
@@ -310,7 +309,15 @@ public class GameManager {
                     case "STOPWATCH":
                         activateTimeStop();
                         break;
-                
+
+                    case("SHOVEL"):
+                        protectEagleTile();
+                        break;
+
+                    case("GRENADE"):
+                        enemyManager.clear();
+                        break;
+
                     default:
                         break;
                 }
@@ -329,5 +336,9 @@ public class GameManager {
         this.isTimeStopped = false;
         scene.renderer.setVignette(false);
         statSystem.setRedTimer(isTimeStopped);
+    }
+
+    private void protectEagleTile(){
+        scene.gridLogic.protectEagleTile();
     }
 }
