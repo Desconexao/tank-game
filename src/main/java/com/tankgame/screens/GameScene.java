@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.game.GameEngine;
@@ -37,6 +38,7 @@ public class GameScene extends JPanel {
     protected StatBoardWidget statWidget;
 
     private List<Object[]> bulletsToRender = new ArrayList<>();
+    private List<PowerUp> powerUpsToRender = new ArrayList<>();
 
 
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
@@ -175,6 +177,16 @@ public class GameScene extends JPanel {
                 });
             }
         }
+
+        // I'm trying to use the old renderqueue like as before it got disrepectufully replaced.
+        powerUpsToRender.clear();
+        if(gameManager != null && gameManager.getPowerUpManager() != null){
+            for(var powerup : gameManager.getPowerUpManager().getCurrentMapPowerUps()){
+                powerUpsToRender.add(powerup); // Thisn is prolly stupidly unnecessary
+                renderer.pushRenderQueue(powerup.getSpriteKey(), (int) powerup.getX(), (int) powerup.getY());
+            }
+        }
+
 
         this.gameGrid.repaint();
     }

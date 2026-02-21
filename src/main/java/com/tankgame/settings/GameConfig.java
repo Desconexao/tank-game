@@ -38,6 +38,11 @@ public final class GameConfig {
     public static final int STEEL_HP = 999;
     public static final int EAGLE_HP = 1;
 
-    private GameConfig() {
-    }
+    //Power up
+    public static final long POWERUP_SPAWN_COOLDOWN_MS = 5000;
+    public static final int POWERUP_ENTITY_SIZE = 45;
+    public static final int POWERUP_SPAWN_BASE_CHANCE = 10000;
+    public static final int POWERUP_SPAWN_PROBABILITY = 9990;
+
+    private GameConfig() {}
 }

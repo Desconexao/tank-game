@@ -11,7 +11,6 @@ import java.util.Queue;
 
 import javax.swing.ImageIcon;
 
-import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
@@ -69,7 +68,7 @@ public class Renderer {
         }
     }
 
-    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue, List<PowerUp> powerups){
+    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue){
         Graphics2D g2d = (Graphics2D) g;
 
         Tile[][] grid = gameGridLogic.getGridTiles();
@@ -142,6 +141,26 @@ public class Renderer {
             ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
             if (spriteIcon != null) {
                 g2d.drawImage(spriteIcon.getImage(), (int) spriteInfo[1], (int) spriteInfo[2], null);
+            }
+        }
+
+
+
+        // Well IDK who made and why bulletQueue took over the renderQueue's dequeue method, but lets keep playing along so
+        // and I'm too drunk to care.
+
+        // I think it would be more correct to pass an Entity object and pull sprite and coords from their methods
+        // After all, are we dynamically rendering something that is not an Entity?
+        Object[] spriteInfo;
+        while ((spriteInfo = renderQueue.poll()) != null) {
+            ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
+            if (spriteIcon != null) {
+                g2d.drawImage(
+                    spriteIcon.getImage(),
+                    (int) spriteInfo[1],
+                    (int) spriteInfo[2],
+                    null
+                );
             }
         }
     }

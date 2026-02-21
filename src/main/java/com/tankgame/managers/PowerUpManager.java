@@ -1,5 +1,6 @@
 package com.tankgame.managers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,39 +22,74 @@ public class PowerUpManager {
 
     public PowerUpManager(GameGrid gridLogic, CollisionManager collisionManager){
         this.gridlogic = gridLogic;
+        this.collisionManager = collisionManager;
         this.lastPowerUpSpawn = System.currentTimeMillis();
         this.spawnCooldown = GameConfig.POWERUP_SPAWN_COOLDOWN_MS;
         this.random = new Random();
+        this.currentMapPowerUps = new ArrayList<PowerUp>();
 
     }
 
     public void update(){
         if (System.currentTimeMillis() - lastPowerUpSpawn >= spawnCooldown){
-            int prob = random.nextInt(100);
+            
+            // Should reset the timer so we check again in another 'spawnCooldown' cycle
+            // instead of checking every frame from now on.
+            
 
-            if (prob >= 75){
+            int prob = random.nextInt(GameConfig.POWERUP_SPAWN_BASE_CHANCE);
+
+            if (prob >= GameConfig.POWERUP_SPAWN_PROBABILITY){
+                lastPowerUpSpawn = System.currentTimeMillis(); 
                 spawnNewPowerUp();
-                lastPowerUpSpawn = System.currentTimeMillis();
             }
         }
     }
 
     private void spawnNewPowerUp(){
-        Class<? extends PowerUp> powerup = rouletteRandomPowerUp();
-
-        currentMapPowerUps.add(null);
-    }
-
-    private Class<? extends PowerUp> rouletteRandomPowerUp(){
+        
         int rand = random.nextInt(6);
+        PowerUp selectedPowerUp;
+        double randX, randY;
+        boolean canMove = false;
 
+        // randomize power up coords
+        do{
+            
+            int gridX = random.nextInt(GameConfig.GRID_WIDTH);
+            int gridY = random.nextInt(GameConfig.GRID_HEIGHT);
+            
+            randX = gridX * GameConfig.TILE_SIZE;
+            randY = gridY * GameConfig.TILE_SIZE;
+
+            //System.out.println("it's happening");
+
+            canMove = collisionManager.canMove(randX, randY, GameConfig.POWERUP_ENTITY_SIZE);
+        }while(!canMove);
+
+        
+
+        // Randomize power up
         switch (rand) {
             case 0:
-                return StarPowerUp.class;
+                selectedPowerUp = new StarPowerUp(randX, randY);
+                break;
         
             default:
-                System.out.println("Must add other classes to not fall under here.");
-                return StarPowerUp.class;
+                System.err.println("must add all powerups, some lacking");
+                selectedPowerUp = new StarPowerUp(randX, randY);
+                break;
         }
+
+        
+        System.out.println("PowerUp " + selectedPowerUp.getName() + " spawned at X: " + randX + " Y: " + randY);
+        // add to available powerups in map
+        currentMapPowerUps.add(selectedPowerUp);
     }
+
+    public List<PowerUp> getCurrentMapPowerUps(){
+        return currentMapPowerUps;
+    }
+
+
 }

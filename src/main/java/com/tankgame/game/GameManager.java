@@ -95,6 +95,8 @@ public class GameManager {
 
         shootingSystem.enemyShoot(enemyManager.getEnemies());
 
+        powerUpManager.update();
+
         updateProjectiles();
 
         increaseTimer();
@@ -286,6 +288,10 @@ public class GameManager {
     }
 
     private void TEMPORARYFUNCTION_INSERT_POWERUP(){
+        // ??? if i dindt remove it i fogor
+    }
 
+    public PowerUpManager getPowerUpManager(){
+        return this.powerUpManager;
     }
 }
