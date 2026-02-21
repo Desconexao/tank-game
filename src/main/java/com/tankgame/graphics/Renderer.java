@@ -160,6 +160,7 @@ public class Renderer {
 
     private void drawTank(Graphics2D g2d, Tank tank) {
         ImageIcon icon = loadedSprites.get(tank.getSpriteKey());
+        
 
         if (icon == null) {
             icon = loadedSprites.get("player_tank");
@@ -167,6 +168,20 @@ public class Renderer {
 
         if (icon != null) {
             g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
+        }
+
+        if (tank.isShielded()){
+            ImageIcon shieldIcon = loadedSprites.get("shield");
+            if (shieldIcon != null) {
+                int offset = (GameConfig.TANK_SIZE - GameConfig.POWERUP_SHIELD_SIZE) / 2;
+                
+                g2d.drawImage(
+                    shieldIcon.getImage(), 
+                    (int) tank.getX() + offset, 
+                    (int) tank.getY() + offset, 
+                    null
+                );
+            }
         }
     }
 

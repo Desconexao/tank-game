@@ -13,6 +13,7 @@ public abstract class Tank extends Entity implements Movable {
     protected Direction direction;
     protected TankColors color;
     protected int bulletDamage;
+    protected boolean isShielded;
 
     
 
@@ -22,6 +23,7 @@ public abstract class Tank extends Entity implements Movable {
         this.direction = direction;
         this.color = color;
         this.bulletDamage = GameConfig.DEFAULT_BULLET_DAMAGE;
+        this.isShielded = false;
     }
 
     public void moveUp() {
@@ -94,5 +96,17 @@ public abstract class Tank extends Entity implements Movable {
 
     public void setBulletDamage(int newDamage){
         this.bulletDamage = newDamage;
+    }
+
+    public void activateShield(){
+        this.isShielded = true;
+    }
+
+    public void deactivateShield(){
+        this.isShielded = false;
+    }
+
+    public boolean isShielded(){
+        return isShielded;
     }
 }

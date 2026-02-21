@@ -66,6 +66,10 @@ public class Player extends Tank {
             case "HEALTH":
                 setHealth(getHealth() + 1);
                 break;
+
+            case "HELMET":
+                activateShield();
+                break;
         
             default:
                 return;
