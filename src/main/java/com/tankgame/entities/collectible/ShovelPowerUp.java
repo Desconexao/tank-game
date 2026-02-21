@@ -9,7 +9,7 @@ public class ShovelPowerUp extends PowerUp{
         String description = "Protects your base with steel";
         String spriteKey = "shovel_power_up";
 
-        super(x, y, spriteKey, name, description);
+        super(x, y, spriteKey, name, description, false);
 
         
     }

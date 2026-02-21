@@ -9,7 +9,7 @@ public class StarPowerUp extends PowerUp {
         String description = "Decreases bullet cooldown";
         String spriteKey = "star_power_up";
 
-        super(x, y, spriteKey, name, description);
+        super(x, y, spriteKey, name, description, true);
 
         
     }

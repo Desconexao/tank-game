@@ -19,6 +19,7 @@ import com.tankgame.settings.GameConfig;
 public class PowerUpManager {
 
     private List<PowerUp> currentMapPowerUps;
+    private List<PowerUp> activatedPowerUps = new ArrayList<>();
 
     private GameGrid gridlogic;
     private CollisionManager collisionManager;
@@ -57,13 +58,13 @@ public class PowerUpManager {
 
         }
 
+        activatedPowerUps.clear();
         Iterator<PowerUp> it = currentMapPowerUps.iterator();
             while (it.hasNext()) {
                 PowerUp powerup = it.next();
-
                 boolean pickedup = collisionManager.checkPowerUpCollision(powerup, player);
                 if (pickedup){
-                    player.setPowerUp(powerup);
+                    activatedPowerUps.add(powerup);
                     it.remove(); 
                 }
                     
@@ -143,5 +144,8 @@ public class PowerUpManager {
         return currentMapPowerUps;
     }
 
+    public List<PowerUp> getActivatedPowerUps(){
+        return activatedPowerUps;
+    }
 
 }

@@ -3,6 +3,7 @@ package com.tankgame.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Eagle;
@@ -47,11 +48,14 @@ public class GameManager {
     private int level = 1;
     private int runningTime = 0;
     private int tick = 0;
+    private boolean isTimeStopped = false;
+    private long lastTimeStop;
 
     public GameManager(GameScene scene, Player player) {
         this.scene = scene;
         this.player = player;
         this.EagleObjective = scene.gridLogic.getEagleObjective();
+        this.lastTimeStop = System.currentTimeMillis();
 
         this.assetManager = new AssetManager();
         this.collisionManager = new CollisionManager(scene.gridLogic);
@@ -91,11 +95,14 @@ public class GameManager {
             shootingSystem.playerShoot(player);
         }
 
-        enemyManager.updateMovement();
-
-        shootingSystem.enemyShoot(enemyManager.getEnemies());
+        if(!isTimeStopped){
+            enemyManager.updateMovement();
+            shootingSystem.enemyShoot(enemyManager.getEnemies());
+        }
+        
 
         powerUpManager.update();
+        applyPowerUps(powerUpManager.getActivatedPowerUps());
 
         updateProjectiles();
 
@@ -175,7 +182,13 @@ public class GameManager {
         }
 
 
-
+        if (isTimeStopped){
+            System.out.println(System.currentTimeMillis() - lastTimeStop);
+            if(System.currentTimeMillis() - lastTimeStop >= GameConfig.POWERUP_TIMESTOP_LENGTH_MS){
+                System.out.println();
+                deactivateTimeStop();
+            }
+        }
 
         if (enemyManager.getEnemies().isEmpty()) {
             levelComplete();
@@ -285,5 +298,36 @@ public class GameManager {
 
     public PowerUpManager getPowerUpManager(){
         return this.powerUpManager;
+    }
+
+    private void applyPowerUps(List<PowerUp> powerups){
+        for(PowerUp powerup : powerups){
+            if (powerup.isPlayerAffected()){
+                player.setPowerUp(powerup);
+            }
+            else{
+                switch (powerup.getName()) {
+                    case "STOPWATCH":
+                        activateTimeStop();
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private void activateTimeStop(){
+        this.isTimeStopped = true;
+        lastTimeStop = System.currentTimeMillis();
+        scene.renderer.setVignette(true);
+        statSystem.setRedTimer(isTimeStopped);
+    }
+
+    private void deactivateTimeStop(){
+        this.isTimeStopped = false;
+        scene.renderer.setVignette(false);
+        statSystem.setRedTimer(isTimeStopped);
     }
 }

@@ -9,7 +9,7 @@ public class HelmetPowerUp extends PowerUp{
         String description = "Makes you invulnerable";
         String spriteKey = "helmet_power_up";
 
-        super(x, y, spriteKey, name, description);
+        super(x, y, spriteKey, name, description, true);
 
         
     }

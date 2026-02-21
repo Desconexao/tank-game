@@ -2,6 +2,9 @@ package com.tankgame.graphics;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.tankgame.entities.tank.Enemy;
@@ -27,6 +31,8 @@ public class Renderer {
 
     public Map<String, ImageIcon> loadedSprites = new HashMap<>();
     private Queue<Object[]> renderQueue = new ArrayDeque<>();
+    private Image vignetteImage;
+    public boolean vignette;
 
     public Renderer(SpriteImport sprites) {
         this.sprites = sprites;
@@ -34,6 +40,25 @@ public class Renderer {
         
 
         loadSprites(SpriteList.SPRITES_TO_LOAD);
+
+        try {
+            vignetteImage = ImageIO.read(new File("assets/vignette.png"));
+        } catch (IOException e) {
+            System.err.println("Could not load vignette image: " + e.getMessage());
+        }
+    }
+
+    public void drawVignetteImage(Graphics2D g2d) {
+        if (vignetteImage != null) {
+            g2d.drawImage(
+                vignetteImage,
+                0,
+                0,
+                GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE,
+                GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE,
+                null
+            );
+        }
     }
 
     public void OLDdraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {
@@ -112,6 +137,9 @@ public class Renderer {
         if (powerUpsQueue != null) {
             drawSpriteQueue(g2d, powerUpsQueue);
         }
+        
+        if(vignette)
+            drawVignetteImage(g2d);
     }
      // This is becoming a mess
      // Keeping this old newDraw method so online doesn't explode that easily (it probably will)
@@ -234,5 +262,9 @@ public class Renderer {
             return true;
         }
         return false;
+    }
+
+    public void setVignette(boolean vignette){
+        this.vignette = vignette;
     }
 }

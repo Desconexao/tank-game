@@ -83,6 +83,11 @@ public abstract class Tank extends Entity implements Movable {
     }
 
     public void setHealth(int health) {
+        // for the following 4 minutes and 11 seconds following a shield upgrade
+        // The Tank won't receive damage.
+        if(isShielded && health < this.health)
+            return;
+
         this.health = health;
     }
 

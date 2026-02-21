@@ -1,5 +1,7 @@
 package com.tankgame.managers;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 
 import com.tankgame.entities.tank.Player;
@@ -33,6 +35,13 @@ public class StatManager {
         livesLabel.setText("?"); // Change later lol
         scoreLabel.setText("" + score);
         timerLabel.setText(String.format("%06d", time));
+    }
+
+    public void setRedTimer(boolean red){
+        if(red)
+            timerLabel.setForeground(Color.RED);
+        else
+            timerLabel.setForeground(Color.RED);
     }
 
 }

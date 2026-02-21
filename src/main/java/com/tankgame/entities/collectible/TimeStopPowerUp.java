@@ -9,7 +9,7 @@ public class TimeStopPowerUp extends PowerUp{
         String description = "ZA WARUDO!";
         String spriteKey = "timestop_power_up";
 
-        super(x, y, spriteKey, name, description);
+        super(x, y, spriteKey, name, description, false);
 
         
     }

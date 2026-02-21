@@ -9,7 +9,7 @@ public class GrenadePowerUp extends PowerUp{
         String description = "BOOM all the enemies";
         String spriteKey = "grenade_power_up";
 
-        super(x, y, spriteKey, name, description);
+        super(x, y, spriteKey, name, description, false);
 
         
     }

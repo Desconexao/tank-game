@@ -44,6 +44,7 @@ public final class GameConfig {
     public static final int POWERUP_SPAWN_BASE_CHANCE = 10000;
     public static final int POWERUP_SPAWN_PROBABILITY = 9000;
     public static final int POWERUP_SHIELD_SIZE = 100;
+    public static final long POWERUP_TIMESTOP_LENGTH_MS = 9000;
 
     private GameConfig() {}
 }
