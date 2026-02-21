@@ -37,6 +37,11 @@ public final class SpriteList {
                 { "brick50",            TILE_SIZE,   TILE_SIZE},
                 { "brick25",            TILE_SIZE,   TILE_SIZE},
                 { "star_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "helmet_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "shovel_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "healthpack",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "timestop_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "grenade_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE}
 
         };
 

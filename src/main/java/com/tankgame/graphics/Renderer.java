@@ -68,6 +68,53 @@ public class Renderer {
         }
     }
 
+     public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue, List<Object[]> powerUpsQueue){
+        Graphics2D g2d = (Graphics2D) g;
+
+        Tile[][] grid = gameGridLogic.getGridTiles();
+        
+        // Draw background tiles (skip trees)
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (!(grid[i][j] instanceof Tree)) {
+                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
+                    if (tileIcon != null) {
+                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                    } else {
+                        System.err.println("fellbackedup [PROBLEMMMMMM]");
+                    }
+                }
+            }
+        }
+
+        drawTank(g2d, player);
+
+        for (Enemy enemy : enemies) {
+            drawTank(g2d, enemy);
+        }
+
+        // Draw foreground tiles (trees)
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] instanceof Tree) {
+                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
+                    if (tileIcon != null) {
+                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
+                    }
+                }
+            }
+        }
+
+        if (bulletQueue != null) {
+            drawSpriteQueue(g2d, bulletQueue);
+        }
+
+        if (powerUpsQueue != null) {
+            drawSpriteQueue(g2d, powerUpsQueue);
+        }
+    }
+     // This is becoming a mess
+     // Keeping this old newDraw method so online doesn't explode that easily (it probably will)
     public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue){
         Graphics2D g2d = (Graphics2D) g;
 
@@ -108,6 +155,7 @@ public class Renderer {
         if (bulletQueue != null) {
             drawSpriteQueue(g2d, bulletQueue);
         }
+
     }
 
     private void drawTank(Graphics2D g2d, Tank tank) {

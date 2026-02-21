@@ -64,7 +64,7 @@ public class GameManager {
         this.inputSystem = new InputSystem();
         this.projectileManager = new ProjectileManager(projectileSystem);
         this.shootingSystem = new ShootingSystem(projectileManager);
-        this.powerUpManager = new PowerUpManager(scene.gridLogic, collisionManager);
+        this.powerUpManager = new PowerUpManager(scene.gridLogic, collisionManager, player);
 
         scene.getGameGrid().addKeyListener(inputSystem.getKeyboard());
         scene.getGameGrid().setFocusable(true);
@@ -100,10 +100,6 @@ public class GameManager {
         updateProjectiles();
 
         increaseTimer();
-
-        ///////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /// ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        TEMPORARYFUNCTION_INSERT_POWERUP();
 
         statSystem.update(runningTime, score);
 
@@ -285,10 +281,6 @@ public class GameManager {
             tick = 0;
             runningTime += 1;
         }
-    }
-
-    private void TEMPORARYFUNCTION_INSERT_POWERUP(){
-        // ??? if i dindt remove it i fogor
     }
 
     public PowerUpManager getPowerUpManager(){

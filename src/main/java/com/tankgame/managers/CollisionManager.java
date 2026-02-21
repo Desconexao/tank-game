@@ -2,7 +2,9 @@ package com.tankgame.managers;
 
 import java.util.List;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.projectile.Bullet;
+import com.tankgame.entities.tank.Player;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
 import com.tankgame.entities.tile.Water;
@@ -73,5 +75,15 @@ public class CollisionManager {
                 bullet.getX() + GameConfig.BULLET_SIZE > tank.getX() &&
                 bullet.getY() < tank.getY() + GameConfig.TILE_SIZE &&
                 bullet.getY() + GameConfig.BULLET_SIZE > tank.getY();
+    }
+
+    public boolean checkPowerUpCollision(PowerUp powerup, Player player) {
+        double powerUpSize = GameConfig.POWERUP_ENTITY_SIZE;
+        double playerSize = GameConfig.TANK_SIZE;
+
+        return powerup.getX() < player.getX() + playerSize &&
+               powerup.getX() + powerUpSize > player.getX() &&
+               powerup.getY() < player.getY() + playerSize &&
+               powerup.getY() + powerUpSize > player.getY();
     }
 }

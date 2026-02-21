@@ -1,11 +1,18 @@
 package com.tankgame.managers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import com.tankgame.entities.collectible.GrenadePowerUp;
+import com.tankgame.entities.collectible.HealthPack;
+import com.tankgame.entities.collectible.HelmetPowerUp;
 import com.tankgame.entities.collectible.PowerUp;
+import com.tankgame.entities.collectible.ShovelPowerUp;
 import com.tankgame.entities.collectible.StarPowerUp;
+import com.tankgame.entities.collectible.TimeStopPowerUp;
+import com.tankgame.entities.tank.Player;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
 
@@ -15,14 +22,18 @@ public class PowerUpManager {
 
     private GameGrid gridlogic;
     private CollisionManager collisionManager;
+    private Player player;
 
     private long lastPowerUpSpawn;
     private long spawnCooldown;
     private Random random;
 
-    public PowerUpManager(GameGrid gridLogic, CollisionManager collisionManager){
+
+    public PowerUpManager(GameGrid gridLogic, CollisionManager collisionManager, Player player){
         this.gridlogic = gridLogic;
         this.collisionManager = collisionManager;
+        this.player = player;
+
         this.lastPowerUpSpawn = System.currentTimeMillis();
         this.spawnCooldown = GameConfig.POWERUP_SPAWN_COOLDOWN_MS;
         this.random = new Random();
@@ -43,12 +54,25 @@ public class PowerUpManager {
                 lastPowerUpSpawn = System.currentTimeMillis(); 
                 spawnNewPowerUp();
             }
+
         }
+
+        Iterator<PowerUp> it = currentMapPowerUps.iterator();
+            while (it.hasNext()) {
+                PowerUp powerup = it.next();
+
+                boolean pickedup = collisionManager.checkPowerUpCollision(powerup, player);
+                if (pickedup){
+                    player.setPowerUp(powerup);
+                    it.remove(); 
+                }
+                    
+
+            }
     }
 
     private void spawnNewPowerUp(){
         
-        int rand = random.nextInt(6);
         PowerUp selectedPowerUp;
         double randX, randY;
         boolean canMove = false;
@@ -62,12 +86,11 @@ public class PowerUpManager {
             
             randX = gridX * GameConfig.TILE_SIZE;
             randY = gridY * GameConfig.TILE_SIZE;
-
-            //System.out.println("it's happening");
             
             canMove = collisionManager.canMove(randX, randY, GameConfig.POWERUP_ENTITY_SIZE);
 
             // Just in case you get extremely unlucky
+            // or for some reason the map has no space at all (would it be possible?)
             if (tryCount > 50){
                 System.err.println("50 tries and no available coord found. Not spawning powerup to avoid hang up");
                 return;
@@ -78,9 +101,30 @@ public class PowerUpManager {
         
 
         // Randomize power up
+        int rand = random.nextInt(6);
         switch (rand) {
             case 0:
                 selectedPowerUp = new StarPowerUp(randX, randY);
+                break;
+
+            case 1:
+                selectedPowerUp = new GrenadePowerUp(randX, randY);
+                break;
+
+            case 2:
+                selectedPowerUp = new HelmetPowerUp(randX, randY);
+                break;
+
+            case 3:
+                selectedPowerUp = new ShovelPowerUp(randX, randY);
+                break;
+
+            case 4:
+                selectedPowerUp = new HealthPack(randX, randY);
+                break;
+
+            case 5:
+                selectedPowerUp = new TimeStopPowerUp(randX, randY);
                 break;
         
             default:

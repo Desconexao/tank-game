@@ -57,10 +57,14 @@ public class Player extends Tank {
 
     
 
-    public void getPowerUp(PowerUp powerup){
+    public void setPowerUp(PowerUp powerup){
         switch (powerup.getName()) {
             case "STAR":
                 startStarPowerUp();
+                break;
+
+            case "HEALTH":
+                setHealth(getHealth() + 1);
                 break;
         
             default:
