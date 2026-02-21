@@ -54,6 +54,7 @@ public class PowerUpManager {
         boolean canMove = false;
 
         // randomize power up coords
+        int tryCount = 0;
         do{
             
             int gridX = random.nextInt(GameConfig.GRID_WIDTH);
@@ -63,8 +64,15 @@ public class PowerUpManager {
             randY = gridY * GameConfig.TILE_SIZE;
 
             //System.out.println("it's happening");
-
+            
             canMove = collisionManager.canMove(randX, randY, GameConfig.POWERUP_ENTITY_SIZE);
+
+            // Just in case you get extremely unlucky
+            if (tryCount > 50){
+                System.err.println("50 tries and no available coord found. Not spawning powerup to avoid hang up");
+                return;
+            }
+            tryCount++;
         }while(!canMove);
 
         
