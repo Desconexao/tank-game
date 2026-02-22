@@ -75,6 +75,12 @@
       <resource>
         <directory>src/main/resources</directory>
       </resource>
+      <resource>
+        <directory>.</directory>
+        <includes>
+          <include>ranking.txt</include>
+        </includes>
+      </resource>
     </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>

@@ -3,8 +3,8 @@ package com.tankgame.graphics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,13 @@ public class Renderer {
         loadSprites(SpriteList.SPRITES_TO_LOAD);
 
         try {
-            vignetteImage = ImageIO.read(new File("assets/vignette.png"));
+            InputStream vignetteStream = getClass().getClassLoader().getResourceAsStream("assets/vignette.png");
+            if (vignetteStream != null) {
+                vignetteImage = ImageIO.read(vignetteStream);
+                vignetteStream.close();
+            } else {
+                System.err.println("Could not find vignette image resource");
+            }
         } catch (IOException e) {
             System.err.println("Could not load vignette image: " + e.getMessage());
         }
