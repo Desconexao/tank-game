@@ -1,5 +1,7 @@
 package com.tankgame.settings;
 import static com.tankgame.settings.GameConfig.BULLET_SIZE;
+import static com.tankgame.settings.GameConfig.POWERUP_ENTITY_SIZE;
+import static com.tankgame.settings.GameConfig.POWERUP_SHIELD_SIZE;
 import static com.tankgame.settings.GameConfig.TANK_SIZE;
 import static com.tankgame.settings.GameConfig.TILE_SIZE;
 
@@ -34,7 +36,15 @@ public final class SpriteList {
                 { "flag",               TILE_SIZE,   TILE_SIZE},
                 { "brick75",            TILE_SIZE,   TILE_SIZE},
                 { "brick50",            TILE_SIZE,   TILE_SIZE},
-                { "brick25",            TILE_SIZE,   TILE_SIZE}
+                { "brick25",            TILE_SIZE,   TILE_SIZE},
+                { "star_power_up",      POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "helmet_power_up",    POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "shovel_power_up",    POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "healthpack",         POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "timestop_power_up",  POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "grenade_power_up",   POWERUP_ENTITY_SIZE,   POWERUP_ENTITY_SIZE},
+                { "shield",             POWERUP_SHIELD_SIZE,   POWERUP_SHIELD_SIZE}
+
 
         };
 

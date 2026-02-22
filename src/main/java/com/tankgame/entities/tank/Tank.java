@@ -14,6 +14,8 @@ public abstract class Tank extends Entity {
     protected TankColors color;
     protected int bulletDamage;
     protected Team team;
+    protected boolean isShielded;
+
 
     public Tank(double x, double y, int health, String spriteKey, Direction direction, TankColors color, Team team) {
         super(x, y, spriteKey);
@@ -23,6 +25,7 @@ public abstract class Tank extends Entity {
         this.bulletDamage = GameConfig.DEFAULT_BULLET_DAMAGE;
         this.team = team;
         setDirection(direction);
+        this.isShielded = false;
     }
 
     public void moveUp() {
@@ -91,6 +94,11 @@ public abstract class Tank extends Entity {
     }
 
     public void setHealth(int health) {
+        // for the following 4 minutes and 11 seconds following a shield upgrade
+        // The Tank won't receive damage.
+        if(isShielded && health < this.health)
+            return;
+
         this.health = health;
         if (this.health < 0) {
             this.health = 0;
@@ -107,5 +115,17 @@ public abstract class Tank extends Entity {
 
     public void setBulletDamage(int newDamage) {
         this.bulletDamage = newDamage;
+    }
+
+    public void activateShield(){
+        this.isShielded = true;
+    }
+
+    public void deactivateShield(){
+        this.isShielded = false;
+    }
+
+    public boolean isShielded(){
+        return isShielded;
     }
 }

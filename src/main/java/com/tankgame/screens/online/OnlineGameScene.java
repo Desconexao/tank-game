@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.game.GameGrid;
@@ -57,6 +58,8 @@ public class OnlineGameScene extends JPanel {
     private boolean isPaused = false;
     private boolean isGameRunning = true;
     private int playerNumber;
+
+    private List<PowerUp> fakeUpList;
 
     public OnlineGameScene(Consumer<String> onAction, JFrame mainWindow, WebSocketClient webSocketClient, int playerNumber) {
         this.mainWindow = mainWindow;

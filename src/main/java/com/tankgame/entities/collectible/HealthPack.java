@@ -4,7 +4,7 @@ import com.tankgame.entities.tank.Tank;
 
 public class HealthPack extends PowerUp {
     public HealthPack(double x, double y) {
-        super(x, y, "HEALTH", "powerup_health");
+        super(x, y, "healthpack", "HEALTH", "powerup_health", true);
     }
 
     @Override

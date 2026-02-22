@@ -137,12 +137,12 @@ public class OptionsScreen extends JPanel {
             socket.close();
 
             SwingUtilities.invokeLater(() -> {
-                statusLabel.setText("Status: \u2713 Connected Successfully");
+                statusLabel.setText("Status: Connected Successfully");
                 statusLabel.setForeground(new Color(0, 200, 0));
             });
         } catch (Exception ex) {
             SwingUtilities.invokeLater(() -> {
-                statusLabel.setText("Status: \u2717 Connection Failed (" + ex.getClass().getSimpleName() + ")");
+                statusLabel.setText("Status: Connection Failed (" + ex.getClass().getSimpleName() + ")");
                 statusLabel.setForeground(Color.RED);
             });
         }

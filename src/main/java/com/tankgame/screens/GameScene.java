@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.game.GameEngine;
@@ -23,7 +24,6 @@ import com.tankgame.screens.widgets.StatBoardWidget;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
-import com.tankgame.entities.projectile.Bullet;
 
 public class GameScene extends JPanel {
     private JPanel gameGrid;
@@ -37,6 +37,10 @@ public class GameScene extends JPanel {
     protected Font pixel;
     protected StatBoardWidget statWidget;
     private int difficulty;
+
+    private List<Object[]> bulletsToRender = new ArrayList<>();
+    private List<Object[]> powerUpsToRender = new ArrayList<>();
+
 
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
@@ -72,7 +76,7 @@ public class GameScene extends JPanel {
                 List<Bullet> bullets = gameManager != null ? gameManager.getProjectileManager().getActiveBullets()
                         : new ArrayList<>();
 
-                renderer.draw(g, gridLogic, player, enemies, bullets);
+                renderer.draw(g, gridLogic, player, enemies, bullets, powerUpsToRender);
 
                 if (gameManager != null && gameManager.isPaused()) {
                     drawPauseText(g);
@@ -162,6 +166,30 @@ public class GameScene extends JPanel {
     }
 
     public void update() {
+        bulletsToRender.clear();
+
+        if (gameManager != null && gameManager.getProjectileManager() != null) {
+            for (var bullet : gameManager.getProjectileManager().getActiveBullets()) {
+                bulletsToRender.add(new Object[] {
+                        bullet.getSpriteKey(),
+                        (int) bullet.getX(),
+                        (int) bullet.getY()
+                });
+            }
+        }
+
+        powerUpsToRender.clear();
+        if(gameManager != null && gameManager.getPowerUpManager() != null){
+            for(var powerup : gameManager.getPowerUpManager().getCurrentMapPowerUps()){
+                powerUpsToRender.add(new Object[] {
+                        powerup.getSpriteKey(),
+                        (int) powerup.getX(),
+                        (int) powerup.getY()
+                });
+            }
+        }
+
+
         this.gameGrid.repaint();
     }
 

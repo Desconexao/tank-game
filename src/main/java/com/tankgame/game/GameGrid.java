@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.tankgame.entities.tile.Breakable;
 import com.tankgame.entities.tile.Brick;
 import com.tankgame.entities.tile.Eagle;
 import com.tankgame.entities.tile.Steel;
@@ -25,6 +24,7 @@ public class GameGrid {
     private int mapId;
     private Tile[][] tileGrid;
     private Eagle EagleObjective;
+    private int[] eagleCoord;
     private int[] playerSpawnXY;
     private List<List<Integer>> enemySpawnXY = new ArrayList<>();
 
@@ -132,7 +132,11 @@ public class GameGrid {
         return this.EagleObjective;
     }
 
-    public int[] getPlayerSpawnXY() {
+    public int[] getEagleCoords(){
+        return eagleCoord;
+    }
+
+    public int[] getPlayerSpawnXY(){
         return this.playerSpawnXY;
     }
 
@@ -143,4 +147,42 @@ public class GameGrid {
     public void setPlayerSpawn(int x, int y) {
         this.playerSpawnXY = new int[] { x, y };
     }
+
+    public void protectEagleTile(){
+
+        int[] pos = getEagleCoords();
+        int x = pos[0];
+        int y = pos[1];
+
+        int[][] tilesToProtect = {
+            {x, y + 1},
+            {x - 1, y},
+            {x, y - 1},
+            {x + 1, y}
+        };
+
+        for(int i = 0; i < 4; i++){
+            Steel steelBlock = new Steel(tilesToProtect[i][0], tilesToProtect[i][1], "steel", GameConfig.STEEL_HP);    
+            replaceTile(steelBlock, tilesToProtect[i][0], tilesToProtect[i][1]);
+        }
+
+        
+        
+    }
+
+    public boolean replaceTile(Tile newTile, int x, int y){
+        if(x > GameConfig.GRID_WIDTH - 1
+            || x < 0
+            || y > GameConfig.GRID_HEIGHT - 1
+            || y < 0
+        ){
+            return false;
+        }
+
+        tileGrid[x][y] = newTile;
+
+        return true;
+            
+    }
+
 }

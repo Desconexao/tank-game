@@ -3,6 +3,7 @@ package com.tankgame.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
@@ -11,17 +12,28 @@ import com.tankgame.entities.tile.Eagle;
 import com.tankgame.input.KeyboardInput;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.EnemyManager;
+import com.tankgame.managers.PowerUpManager;
 import com.tankgame.managers.ProjectileManager;
+import com.tankgame.managers.RankingManager;
 import com.tankgame.managers.StatManager;
 import com.tankgame.screens.GameScene;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.managers.RankingManager;
+import com.tankgame.systems.ProjectileSystem;
+import com.tankgame.systems.ShootingSystem;
 import com.tankgame.utils.Direction;
 
 public class GameManager {
     private final EnemyManager enemyManager;
     private final ProjectileManager projectileManager;
     private final CollisionManager collisionManager;
+    private final PowerUpManager powerUpManager;
+
+    // Systems
+    private final MovementSystem movementSystem;
+    //private final EnemyAISystem enemyAISystem;
+    private final ShootingSystem shootingSystem;
+    private final ProjectileSystem projectileSystem;
+    private final InputSystem inputSystem;
     private final StatManager statSystem;
     private final KeyboardInput keyboard;
 
@@ -39,12 +51,15 @@ public class GameManager {
     private String playerName = "player_1";
     private RankingManager rankingManager = new RankingManager();
     private int difficulty;
+    private boolean isTimeStopped = false;
+    private long lastTimeStop;
 
     public GameManager(GameScene scene, Player player, int difficulty) {
         this.difficulty = difficulty;
         this.scene = scene;
         this.player = player;
         this.EagleObjective = scene.gridLogic.getEagleObjective();
+        this.lastTimeStop = System.currentTimeMillis();
 
         this.collisionManager = new CollisionManager(scene.gridLogic);
         this.statSystem = new StatManager(scene);
@@ -52,6 +67,7 @@ public class GameManager {
 
         this.projectileManager = new ProjectileManager();
         this.enemyManager = new EnemyManager(collisionManager, scene.gridLogic.getEnemySpawnXY());
+        this.powerUpManager = new PowerUpManager(scene.gridLogic, collisionManager, player);
 
         scene.getGameGrid().addKeyListener(keyboard);
         scene.getGameGrid().setFocusable(true);
@@ -76,6 +92,8 @@ public class GameManager {
         handleEnemyShooting();
 
         updateProjectiles();
+        powerUpManager.update();
+        applyPowerUps(powerUpManager.getActivatedPowerUps());
 
         increaseTimer();
         statSystem.update(runningTime, score);
@@ -164,6 +182,14 @@ public class GameManager {
         if (player.getHealth() <= 0 || EagleObjective.isBroken()) {
             gameOver(false);
             return;
+        }
+
+
+        if (isTimeStopped){
+            if(System.currentTimeMillis() - lastTimeStop >= GameConfig.POWERUP_TIMESTOP_LENGTH_MS){
+                System.out.println();
+                deactivateTimeStop();
+            }
         }
 
         if (enemyManager.getEnemies().isEmpty()) {
@@ -287,4 +313,50 @@ public class GameManager {
         initializeEnemies();
     }
 
+    public PowerUpManager getPowerUpManager(){
+        return this.powerUpManager;
+    }
+
+    private void applyPowerUps(List<PowerUp> powerups){
+        for(PowerUp powerup : powerups){
+            if (powerup.isPlayerAffected()){
+                player.setPowerUp(powerup);
+            }
+            else{
+                switch (powerup.getName()) {
+                    case "STOPWATCH":
+                        activateTimeStop();
+                        break;
+
+                    case("SHOVEL"):
+                        protectEagleTile();
+                        break;
+
+                    case("GRENADE"):
+                        enemyManager.clear();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private void activateTimeStop(){
+        this.isTimeStopped = true;
+        lastTimeStop = System.currentTimeMillis();
+        scene.renderer.setVignette(true);
+        statSystem.setRedTimer(isTimeStopped);
+    }
+
+    private void deactivateTimeStop(){
+        this.isTimeStopped = false;
+        scene.renderer.setVignette(false);
+        statSystem.setRedTimer(isTimeStopped);
+    }
+
+    private void protectEagleTile(){
+        scene.gridLogic.protectEagleTile();
+    }
 }
