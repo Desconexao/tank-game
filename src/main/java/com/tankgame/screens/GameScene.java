@@ -23,6 +23,7 @@ import com.tankgame.screens.widgets.StatBoardWidget;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
+import com.tankgame.entities.projectile.Bullet;
 
 public class GameScene extends JPanel {
     private JPanel gameGrid;
@@ -35,25 +36,23 @@ public class GameScene extends JPanel {
     private GameManager gameManager;
     protected Font pixel;
     protected StatBoardWidget statWidget;
-
-    private List<Object[]> bulletsToRender = new ArrayList<>();
-
+    private int difficulty;
 
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
 
-    public GameScene(Consumer<String> onAction, JFrame mainWindow) {
+    public GameScene(Consumer<String> onAction, JFrame mainWindow, int difficulty, int mapId) {
+        this.difficulty = difficulty;
         this.mainWindow = mainWindow;
         this.sprites = new SpriteImport();
         this.renderer = new Renderer(sprites);
-        this.gridLogic = new GameGrid(true, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
+        this.gridLogic = new GameGrid(mapId, GameConfig.GRID_HEIGHT, GameConfig.GRID_WIDTH);
 
         setBackground(Color.DARK_GRAY);
 
-        // This will explode if a custom map doesn't have a 'P' on it. I'm too lazy to care.
+        // This will explode if a custom map doesn't have a 'P' on it
         int playerSpawnX = gridLogic.getPlayerSpawnXY()[0];
         int playerSpawnY = gridLogic.getPlayerSpawnXY()[1];
-
 
         this.player = new Player(
                 playerSpawnX,
@@ -61,26 +60,28 @@ public class GameScene extends JPanel {
                 GameConfig.PLAYER_START_HEALTH,
                 "tank_up_gray",
                 Direction.UP,
-                TankColors.GRAY
-            );
+                TankColors.GRAY);
 
         this.gameGrid = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+
                 List<Enemy> enemies = gameManager != null ? gameManager.getEnemyManager().getEnemies()
                         : new ArrayList<>();
-                renderer.newDraw(g, gridLogic, player, enemies, bulletsToRender);
+                List<Bullet> bullets = gameManager != null ? gameManager.getProjectileManager().getActiveBullets()
+                        : new ArrayList<>();
+
+                renderer.draw(g, gridLogic, player, enemies, bullets);
 
                 if (gameManager != null && gameManager.isPaused()) {
                     drawPauseText(g);
                 }
-                if(!gameManager.isRunning()){
+                if (gameManager != null && !gameManager.isRunning()) {
                     drawGameOverText(g);
                 }
             }
         };
-
         int worldWidth = GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE;
         int worldHeight = GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE;
         this.gameGrid.setPreferredSize(new Dimension(worldWidth, worldHeight));
@@ -92,16 +93,14 @@ public class GameScene extends JPanel {
             onAction.accept("start");
         });
 
-
         add(statWidget);
-        
 
         mainWindow.add(this);
 
         this.gameGrid.setFocusable(true);
         this.gameGrid.requestFocusInWindow();
 
-        this.gameEngine = new GameEngine(this);
+        this.gameEngine = new GameEngine(this, difficulty);
         this.gameManager = gameEngine.getGameManager();
 
         System.out.println("GameScene initialized");
@@ -160,22 +159,9 @@ public class GameScene extends JPanel {
 
         g.drawString(instruction, instX, instY);
 
-        
     }
 
     public void update() {
-        bulletsToRender.clear();
-
-        if (gameManager != null && gameManager.getProjectileManager() != null) {
-            for (var bullet : gameManager.getProjectileManager().getActiveBullets()) {
-                bulletsToRender.add(new Object[] {
-                        bullet.getSpriteKey(),
-                        (int) bullet.getX(),
-                        (int) bullet.getY()
-                });
-            }
-        }
-
         this.gameGrid.repaint();
     }
 
@@ -205,11 +191,9 @@ public class GameScene extends JPanel {
         }
     }
 
-    
-
     public void startGame() {
         if (gameEngine == null) {
-            this.gameEngine = new GameEngine(this);
+            this.gameEngine = new GameEngine(this, this.difficulty);
             this.gameManager = gameEngine.getGameManager();
         }
         this.gameEngine.start();
@@ -219,14 +203,14 @@ public class GameScene extends JPanel {
 
     public void stopGame() {
         if (gameEngine == null) {
-            this.gameEngine = new GameEngine(this);
+            this.gameEngine = new GameEngine(this, this.difficulty);
             this.gameManager = gameEngine.getGameManager();
         }
         this.gameEngine.stop();
         this.gameGrid.requestFocusInWindow();
     }
 
-    public StatBoardWidget getStatBoard(){
+    public StatBoardWidget getStatBoard() {
         return statWidget;
     }
 }

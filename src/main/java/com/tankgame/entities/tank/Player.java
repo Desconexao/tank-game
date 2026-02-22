@@ -2,10 +2,12 @@ package com.tankgame.entities.tank;
 
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
+import com.tankgame.utils.Team;
 
 public class Player extends Tank {
+
     public Player(double x, double y, int health, String spriteKey, Direction direction, TankColors color) {
-        super(x, y, health, spriteKey, direction, color);
+        super(x, y, health, spriteKey, direction, color, Team.PLAYER);
     }
 
     @Override

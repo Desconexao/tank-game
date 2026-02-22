@@ -1,16 +1,16 @@
 package com.tankgame.systems.ai;
 
 import com.tankgame.entities.tank.Enemy;
-import com.tankgame.systems.MovementSystem;
+import com.tankgame.managers.CollisionManager;
+import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 
-public class DefaultAI extends EnemyAISystem{
+public class DefaultAI extends EnemyAISystem {
 
-
-    public DefaultAI(MovementSystem movementSystem, Enemy enemy) {
-        super(movementSystem, enemy);
+    public DefaultAI(CollisionManager collisionManager, Enemy enemy) {
+        super(collisionManager, enemy);
     }
-    
+
     @Override
     public void update() {
         double speed = enemy.getSpeed();
@@ -24,10 +24,14 @@ public class DefaultAI extends EnemyAISystem{
             case RIGHT -> newX += speed;
         }
 
-        boolean moved = movementSystem.tryMove(enemy, newX, newY);
+        boolean moved = false;
+        if (collisionManager.canMove(newX, newY, GameConfig.TANK_SIZE)) {
+            enemy.setX(newX);
+            enemy.setY(newY);
+            moved = true;
+        }
 
         if (!moved) {
-            Direction[] directions = Direction.values();
             Direction newDir = directions[random.nextInt(directions.length)];
             enemy.setDirection(newDir);
         }

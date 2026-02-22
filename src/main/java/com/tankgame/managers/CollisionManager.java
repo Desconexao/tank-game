@@ -32,9 +32,6 @@ public class CollisionManager {
 
         return tile.isCollidable();
 
-
-        
-        
     }
 
     public boolean checkProjectileCollision(Bullet bullet, List<Tank> tanks) {
@@ -45,21 +42,18 @@ public class CollisionManager {
         int gridX = (int) (centerX / GameConfig.TILE_SIZE);
         int gridY = (int) (centerY / GameConfig.TILE_SIZE);
 
-        // Holy exceptions.
         if (gridX >= 0 && gridX < GameConfig.GRID_WIDTH && gridY >= 0 && gridY < GameConfig.GRID_HEIGHT) {
-            if (grid.getGridTiles()[gridY][gridX] instanceof Water) {
-                return false;
+            Tile tile = grid.getGridTiles()[gridY][gridX];
+
+            if (tile.doesBlockProjectiles()) {
+                grid.damageBlock(centerX, centerY, bulletDamage);
+                return true;
             }
         }
 
-        if (isBlocked(centerX, centerY)) {
-            grid.damageBlock(centerX, centerY, bulletDamage);
-            return true;
-        }
-
         for (Tank tank : tanks) {
-            if (tank != bullet.getOwner() && checkTankCollision(bullet, tank)) {
-                tank.setHealth(tank.getHealth() - 1);
+            if (tank.getTeam() != bullet.getOwner().getTeam() && checkTankCollision(bullet, tank)) {
+                tank.setHealth(tank.getHealth() - bullet.getOwner().getBulletDamage());
                 return true;
             }
         }

@@ -1,12 +1,13 @@
 package com.tankgame.entities.tile;
 
-public class Brick extends Breakable{
-    public Brick(double x, double y, String spriteKey, int health){
+public class Brick extends Breakable {
+
+    public Brick(double x, double y, String spriteKey, int health) {
         super(x, y, spriteKey, health);
     }
 
     @Override
-    public int inflictDamage(int damage){
+    public int inflictDamage(int damage) {
         super.inflictDamage(damage);
 
         setCurrentStateSprite();
@@ -15,7 +16,7 @@ public class Brick extends Breakable{
     }
 
     @Override
-    public void setCurrentStateSprite(){
+    public void setCurrentStateSprite() {
         double healthPercentage = (double) this.health / this.initialHealth;
 
         if (healthPercentage > 0.75) {
@@ -26,8 +27,6 @@ public class Brick extends Breakable{
             this.spriteKey = "brick50";
         } else if (healthPercentage > 0) {
             this.spriteKey = "brick25";
-        } else {
-            this.spriteKey = "brick";
         }
     }
 }

@@ -15,11 +15,10 @@ public class InstructionsScreen extends JPanel {
 
     public InstructionsScreen(Consumer<String> onAction) {
 
-        
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        JLabel title = new JLabel("atira com o    Z", SwingConstants.CENTER);
+        JLabel title = new JLabel("Shoot with Z or SPACE MOVE WASD/ARROWS", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
 

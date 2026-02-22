@@ -21,44 +21,56 @@ import com.tankgame.game.online.OnlineGridLoader;
 import com.tankgame.settings.GameConfig;
 
 public class GameGrid {
-    private char[][] grid;
     private final int rows, cols;
+    private int mapId;
     private Tile[][] tileGrid;
     private Eagle EagleObjective;
     private int[] playerSpawnXY;
     private List<List<Integer>> enemySpawnXY = new ArrayList<>();
 
-    public GameGrid(boolean custom, int rows, int cols) {
+    public GameGrid(int mapId, int rows, int cols) {
+        this.mapId = mapId;
         this.rows = rows;
         this.cols = cols;
-        this.grid = new char[rows][cols];
         this.tileGrid = new Tile[rows][cols];
-        
-        loadMapChar(custom);
-        loadMapTiles();
-        // Let's keep the visual representation of characters for some reason (Maybe useful (Maybe I'd miss them))
+
+        loadMap(mapId);
     }
 
-    /**
-     * Constructor for wrapping OnlineGridLoader
-     */
     public GameGrid(OnlineGridLoader loader) {
         this.rows = GameConfig.GRID_HEIGHT;
         this.cols = GameConfig.GRID_WIDTH;
-        this.grid = loader.getGridMatrix();
         this.tileGrid = loader.getTileGrid();
         this.EagleObjective = loader.getEagle();
-        this.playerSpawnXY = new int[] {0, 0}; // Online handles spawns differently
+        this.playerSpawnXY = new int[] { 0, 0 };
     }
 
-    private void loadMapChar(boolean custom) {
-        // This will break if we go above 9 maps.
-        String fileName = custom ? "world/custommap.txt" : "world/scene_0" + (new Random().nextInt(6)) + ".txt";
+    private void loadMap(int mapId) {
+        if (mapId == 3) {
+            mapId = new Random().nextInt(3);
+        }
+        String fileName = "world/scene_0" + mapId + ".txt";
         try {
-            System.out.println(fileName);
+            System.out.println("Loading map: " + fileName);
             List<String> lines = loadLinesFromResource(fileName);
             for (int i = 0; i < Math.min(rows, lines.size()); i++) {
-                grid[i] = lines.get(i).toCharArray();
+                char[] rowChars = lines.get(i).toCharArray();
+                for (int j = 0; j < Math.min(cols, rowChars.length); j++) {
+
+                    char tileChar = rowChars[j];
+                    Tile tile = createTileFromChar(tileChar, j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE);
+
+                    tileGrid[i][j] = tile;
+                    if (tileChar == 'E') {
+                        this.EagleObjective = (Eagle) tile;
+                    }
+                    if (tileChar == 'P') {
+                        playerSpawnXY = new int[] { j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE };
+                    }
+                    if (tileChar == 'S') {
+                        enemySpawnXY.add(new ArrayList<>(List.of(j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE)));
+                    }
+                }
             }
         } catch (IOException e) {
             System.err.println("Map load error: " + e.getMessage());
@@ -67,137 +79,68 @@ public class GameGrid {
 
     private List<String> loadLinesFromResource(String resourcePath) throws IOException {
         List<String> lines = new ArrayList<>();
-        
-        // Try to load from JAR first using ClassLoader
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
-        
-        // Fall back to file system if not in JAR
+
         if (inputStream == null) {
             inputStream = Files.newInputStream(Path.of(resourcePath));
         }
-        
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
             }
         }
-        
         return lines;
     }
 
-    private void loadMapTiles(){
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
-                char tileChar = grid[i][j];
-                Tile tile = getTile(tileChar, j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE);
-
-                tileGrid[i][j] = tile;
-
-                if(tile instanceof Eagle)
-                    setEagle(((Eagle) tile));
-
-                if(tileChar == 'P')
-                    playerSpawnXY = new int[] {j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE};
-
-                if(tileChar == 'S')
-                    enemySpawnXY.add(new ArrayList<>(List.of(j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE)));
-
-            }
-        }
-    }
-
-    private Tile getTile(char tileChar, int x, int y){
-        Tile tile;
-
-        tile = switch(tileChar){
+    private Tile createTileFromChar(char tileChar, int x, int y) {
+        return switch (tileChar) {
             case 'X' -> new Brick(x, y, "brick", GameConfig.BRICK_HP);
-            case 'Y' -> new Steel(x, y, "steel", GameConfig.STEEL_HP); // get rekt
+            case 'Y' -> new Steel(x, y, "steel", GameConfig.STEEL_HP);
             case 'T' -> new Tree(x, y, "tree", false);
             case 'E' -> new Eagle(x, y, "eagle", GameConfig.EAGLE_HP);
             case 'W' -> new Water(x, y, "water", true);
             default -> new Tile(x, y, "black", false);
         };
-
-        return tile;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (char[] row : grid) {
-            for (char c : row)
-                sb.append(" ").append(c).append(" ");
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    public char[][] getGridMatrix() {
-        return grid;
-    }
-
-    public Tile[][] getGridTiles(){
+    public Tile[][] getGridTiles() {
         return tileGrid;
     }
 
     public void removeBlock(int x, int y) {
-        
-        if(tileGrid[y][x] instanceof Eagle)
-            return;
-
-        if (y >= 0 && y < rows && x >= 0 && x < cols) {
-            if (grid[y][x] == 'X') {
-                grid[y][x] = ' ';
-            }
-        }
-
-        tileGrid[y][x] = new Tile(x, y, "black", false);
-        
+        tileGrid[y][x] = new Tile(x * GameConfig.TILE_SIZE, y * GameConfig.TILE_SIZE, "black", false);
     }
 
-     public void damageBlock(double x, double y, int damage) {
+    public void damageBlock(double x, double y, int damage) {
         int gridX = (int) (x / GameConfig.TILE_SIZE);
         int gridY = (int) (y / GameConfig.TILE_SIZE);
 
         if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols) {
             Tile tile = tileGrid[gridY][gridX];
 
-            if(tile instanceof Breakable){
+            tile.inflictDamage(damage);
 
-            
-                Breakable b_tile = (Breakable) tile;
-
-
-                b_tile.inflictDamage(damage);
-
-                if(b_tile.isBroken()){
-                    removeBlock(gridX, gridY);
-                }
-                    
+            if (tile.isBroken() && tile.isRemovableWhenBroken()) {
+                removeBlock(gridX, gridY);
             }
-
         }
     }
 
-    private void setEagle(Eagle eagle){
-        this.EagleObjective = eagle;
-    }
-
-    public Eagle getEagleObjective(){
+    public Eagle getEagleObjective() {
         return this.EagleObjective;
     }
 
-    public int[] getPlayerSpawnXY(){
+    public int[] getPlayerSpawnXY() {
         return this.playerSpawnXY;
     }
 
-    public List<List<Integer>> getEnemySpawnXY(){
+    public List<List<Integer>> getEnemySpawnXY() {
         return this.enemySpawnXY;
     }
 
-    public void setPlayerSpawn(int x, int y){
-        this.playerSpawnXY = new int[] {x, y};
+    public void setPlayerSpawn(int x, int y) {
+        this.playerSpawnXY = new int[] { x, y };
     }
-
 }

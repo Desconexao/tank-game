@@ -1,23 +1,23 @@
 package com.tankgame.systems.ai;
 
 import com.tankgame.entities.tank.Enemy;
-import com.tankgame.systems.MovementSystem;
+import com.tankgame.managers.CollisionManager;
+import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 
-public class RoamAI extends EnemyAISystem{
-    public RoamAI(MovementSystem movementSystem, Enemy enemy) {
-        super(movementSystem, enemy);
+public class RoamAI extends EnemyAISystem {
+
+    public RoamAI(CollisionManager collisionManager, Enemy enemy) {
+        super(collisionManager, enemy);
     }
-    
+
     @Override
     public void update() {
         double speed = enemy.getSpeed();
         double newX = enemy.getX();
         double newY = enemy.getY();
- 
-        // 50% percent of the next direction be the same
-        int movementOportunity = random.nextInt(1000);
-        if (movementOportunity < 10){
+
+        if (random.nextInt(100) < 1) {
             enemy.setDirection(directions[random.nextInt(directions.length)]);
         }
 
@@ -28,14 +28,16 @@ public class RoamAI extends EnemyAISystem{
             case RIGHT -> newX += speed;
         }
 
-        boolean moved = movementSystem.tryMove(enemy, newX, newY);
+        boolean moved = false;
+        if (collisionManager.canMove(newX, newY, GameConfig.TANK_SIZE)) {
+            enemy.setX(newX);
+            enemy.setY(newY);
+            moved = true;
+        }
 
         if (!moved) {
-            Direction[] directions = Direction.values();
             Direction newDir = directions[random.nextInt(directions.length)];
             enemy.setDirection(newDir);
         }
     }
-
-
 }

@@ -11,18 +11,16 @@ import javax.swing.SwingConstants;
 
 import com.tankgame.managers.FontManager;
 
-public class MapCreatorScreen extends JPanel{
+public class MapCreatorScreen extends JPanel {
 
     public MapCreatorScreen(Consumer<String> onAction) {
 
-        
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
         JLabel title = new JLabel("cria mapa aqui", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
-
 
         JButton backButton = new JButton("back");
         backButton.setFont(FontManager.getFont("pixel", 25f));
@@ -32,7 +30,6 @@ public class MapCreatorScreen extends JPanel{
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
         backButton.addActionListener(e -> onAction.accept("start"));
-
 
         add(title, BorderLayout.CENTER);
 

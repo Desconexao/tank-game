@@ -12,12 +12,14 @@ import com.tankgame.screens.OptionsScreen;
 import com.tankgame.screens.StartScreen;
 import com.tankgame.screens.online.OnlineLobbyScreen;
 import com.tankgame.settings.GameConfig;
+import com.tankgame.screens.RankingScreen;
 
 public class MainWindow {
     private final JFrame frame;
     private final CardLayout cardLayout;
     private final JPanel root;
-    private GameScene gameScene; // Keep the field, but don't initialize it here
+    private GameScene gameScene;
+    private RankingScreen rankingScreen;
 
     public MainWindow() {
         frame = new JFrame("Tank Game");
@@ -27,19 +29,15 @@ public class MainWindow {
         cardLayout = new CardLayout();
         root = new JPanel(cardLayout);
 
-        // Don't create GameScene here anymore
-        // gameScene = new GameScene(this::handleScreenAction, frame);
-
         StartScreen startScreen = new StartScreen(this::handleScreenAction);
         OptionsScreen optionsScreen = new OptionsScreen(this::handleScreenAction);
         MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(this::handleScreenAction);
         InstructionsScreen instructionsScreen = new InstructionsScreen(this::handleScreenAction);
         OnlineLobbyScreen onlineScreen = new OnlineLobbyScreen(this::handleScreenAction);
+        rankingScreen = new RankingScreen(this::handleScreenAction);
 
-
-        // inserting new screens is painful
+        root.add(rankingScreen, "ranking");
         root.add(startScreen, "start");
-        // root.add(gameScene, "game"); // Don't add it here
         root.add(optionsScreen, "options");
         root.add(mapCreatorScreen, "mapcreator");
         root.add(instructionsScreen, "instructions");
@@ -58,42 +56,71 @@ public class MainWindow {
     }
 
     private void handleScreenAction(String action) {
+        if (action.startsWith("game:")) {
+            String[] parts = action.split(":");
+            String playerName = parts.length > 1 ? parts[1] : "Jogador_1";
+            int difficulty = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
+            int mapId = parts.length > 3 ? Integer.parseInt(parts[3]) : 3;
+
+            System.out.println("Iniciando com -> Nome: " + playerName + " | Dificuldade: " + difficulty + " | Mapa: " + mapId);
+
+            showGameScreen(playerName, difficulty, mapId);
+            return;
+        }
+
         switch (action) {
-            case "game" -> showGameScreen();
             case "options" -> showOptionsScreen();
             case "mapcreator" -> showMapCreatorScreen();
             case "start" -> showStartScreen();
             case "instructions" -> showInstructionScreen();
             case "online" -> showOnlineScreen();
-            default -> System.out.println("Unknown action: " + action);
+            case "ranking" -> showRankingScreen();
+            default -> {
+                System.out.println("Comando inválido, voltando ao menu: " + action);
+                showStartScreen(); 
+            }
         }
+        
+        root.requestFocusInWindow();
     }
-
     protected void showStartScreen() {
         cardLayout.show(root, "start");
     }
 
-    private void showGameScreen() {
-        // Create a new GameScene instance every time
-        gameScene = new GameScene(this::handleScreenAction, frame);
-        root.add(gameScene, "game"); // Add the new scene to the layout
+    private void showGameScreen(String playerName, int difficulty, int mapId) {
+        if (gameScene != null) {
+            root.remove(gameScene);
+        }
+
+        gameScene = new GameScene(this::handleScreenAction, frame, difficulty, mapId);
+        gameScene.getGameManager().setPlayerName(playerName);
+
+        root.add(gameScene, "game");
+        root.revalidate();
+        root.repaint();
+
         cardLayout.show(root, "game");
-        gameScene.startGame(); // Start the new game
+        gameScene.startGame();
+    }
+
+    private void showRankingScreen() {
+        rankingScreen.refreshRanking();
+        cardLayout.show(root, "ranking");
     }
 
     private void showOptionsScreen() {
         cardLayout.show(root, "options");
     }
 
-    private void showMapCreatorScreen(){
+    private void showMapCreatorScreen() {
         cardLayout.show(root, "mapcreator");
     }
 
-    private void showInstructionScreen(){
+    private void showInstructionScreen() {
         cardLayout.show(root, "instructions");
     }
 
-    private void showOnlineScreen(){
+    private void showOnlineScreen() {
         cardLayout.show(root, "online");
     }
 }

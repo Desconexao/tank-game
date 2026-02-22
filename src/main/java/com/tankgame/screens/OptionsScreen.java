@@ -19,7 +19,6 @@ public class OptionsScreen extends JPanel {
 
     public OptionsScreen(Consumer<String> onAction) {
 
-        
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
@@ -27,7 +26,6 @@ public class OptionsScreen extends JPanel {
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.WHITE);
 
-        // Server configuration panel
         JPanel serverPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         serverPanel.setBackground(Color.BLACK);
 
@@ -54,7 +52,6 @@ public class OptionsScreen extends JPanel {
         testConnectionButton.addActionListener(e -> {
             connectionStatusLabel.setText("Status: Testing...");
             connectionStatusLabel.setForeground(Color.YELLOW);
-            // Run connection test on background thread to avoid freezing UI
             new Thread(() -> {
                 try {
                     String serverUrl = "ws://" + serverField.getText().trim();
@@ -130,18 +127,15 @@ public class OptionsScreen extends JPanel {
 
     private void testConnection(String serverUrl, JLabel statusLabel) {
         try {
-            // Extract host and port from ws://host:port format
             String hostPort = serverUrl.replace("ws://", "").replace("wss://", "");
             String[] parts = hostPort.split(":");
             String host = parts[0];
             int port = Integer.parseInt(parts[1]);
-            
-            // Test connection using socket (works for WebSocket servers)
+
             java.net.Socket socket = new java.net.Socket();
             socket.connect(new java.net.InetSocketAddress(host, port), 3000);
             socket.close();
-            
-            // Update UI on Event Dispatch Thread
+
             SwingUtilities.invokeLater(() -> {
                 statusLabel.setText("Status: \u2713 Connected Successfully");
                 statusLabel.setForeground(new Color(0, 200, 0));

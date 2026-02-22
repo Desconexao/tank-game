@@ -4,57 +4,64 @@ import com.tankgame.entities.Entity;
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
-import com.tankgame.utils.Movable;
 import com.tankgame.utils.TankColors;
+import com.tankgame.utils.Team;
 
-public abstract class Tank extends Entity implements Movable {
+public abstract class Tank extends Entity {
     protected int health;
     protected double speed = GameConfig.PLAYER_SPEED;
     protected Direction direction;
     protected TankColors color;
     protected int bulletDamage;
+    protected Team team;
 
-    
-
-    public Tank(double x, double y, int health, String spriteKey, Direction direction, TankColors color) {
+    public Tank(double x, double y, int health, String spriteKey, Direction direction, TankColors color, Team team) {
         super(x, y, spriteKey);
         this.health = health;
         this.direction = direction;
         this.color = color;
         this.bulletDamage = GameConfig.DEFAULT_BULLET_DAMAGE;
+        this.team = team;
+        setDirection(direction);
     }
 
     public void moveUp() {
         this.y -= speed;
+        setDirection(Direction.UP);
     }
 
     public void moveDown() {
         this.y += speed;
+        setDirection(Direction.DOWN);
     }
 
     public void moveLeft() {
         this.x -= speed;
+        setDirection(Direction.LEFT);
     }
 
     public void moveRight() {
         this.x += speed;
+        setDirection(Direction.RIGHT);
     }
 
     public Bullet shoot() {
-        int p_Size = GameConfig.TANK_SIZE;
-        int b_Size = GameConfig.BULLET_SIZE;
-        int centerOffset = (p_Size - b_Size) / 2;
+        int playerSize = GameConfig.TANK_SIZE;
+        int bulletSize = GameConfig.BULLET_SIZE;
+        int centerOffset = (playerSize - bulletSize) / 2;
 
         double bulletX = x + centerOffset;
         double bulletY = y + centerOffset;
 
         switch (direction) {
-            case UP -> bulletY = y - b_Size;
-            case DOWN -> bulletY = y + p_Size;
-            case LEFT -> bulletX = x - b_Size;
-            case RIGHT -> bulletX = x + p_Size;
+            case UP -> bulletY = y - bulletSize;
+            case DOWN -> bulletY = y + playerSize;
+            case LEFT -> bulletX = x - bulletSize;
+            case RIGHT -> bulletX = x + playerSize;
         }
-        return new Bullet(bulletX, bulletY, direction, this);
+        Bullet bullet = new Bullet(bulletX, bulletY, direction, this);
+        new Thread(bullet).start();
+        return bullet;
     }
 
     public Direction getDirection() {
@@ -73,7 +80,10 @@ public abstract class Tank extends Entity implements Movable {
         }
 
         this.spriteKey = newSpriteName;
-        System.out.println(newSpriteName);
+    }
+
+    public Team getTeam() {
+        return team;
     }
 
     public int getHealth() {
@@ -82,17 +92,20 @@ public abstract class Tank extends Entity implements Movable {
 
     public void setHealth(int health) {
         this.health = health;
+        if (this.health < 0) {
+            this.health = 0;
+        }
     }
 
     public double getSpeed() {
         return speed;
     }
 
-    public int getBulletDamage(){
+    public int getBulletDamage() {
         return this.bulletDamage;
     }
 
-    public void setBulletDamage(int newDamage){
+    public void setBulletDamage(int newDamage) {
         this.bulletDamage = newDamage;
     }
 }

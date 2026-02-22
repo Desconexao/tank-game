@@ -1,7 +1,8 @@
 package com.tankgame.entities.tile;
 
-public class Eagle extends Breakable{
-    public Eagle(double x, double y, String spriteKey, int health){
+public class Eagle extends Breakable {
+
+    public Eagle(double x, double y, String spriteKey, int health) {
         super(x, y, spriteKey, health);
     }
 
@@ -16,8 +17,13 @@ public class Eagle extends Breakable{
 
     @Override
     public void setCurrentStateSprite() {
-        if (health <= 0)
+        if (health <= 0) {
             this.spriteKey = "flag";
+        }
     }
 
+    @Override
+    public boolean isRemovableWhenBroken() {
+        return false;
+    }
 }

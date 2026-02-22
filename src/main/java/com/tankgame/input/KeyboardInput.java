@@ -6,9 +6,7 @@ import java.awt.event.KeyEvent;
 public class KeyboardInput extends KeyAdapter {
     public boolean upPressed, downPressed, leftPressed, rightPressed, shootPressed;
     public boolean pausePressed = false;
-
-    public KeyboardInput() {
-    }
+    private boolean pauseWasPressed = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -35,7 +33,18 @@ public class KeyboardInput extends KeyAdapter {
             pausePressed = pressed;
     }
 
-    public void resetPause() {
-        pausePressed = false;
+    public boolean checkPauseToggle() {
+        if (pausePressed && !pauseWasPressed) {
+            pauseWasPressed = true;
+            return true;
+        }
+        if (!pausePressed) {
+            pauseWasPressed = false;
+        }
+        return false;
+    }
+
+    public void resetAllInputs() {
+        upPressed = downPressed = leftPressed = rightPressed = shootPressed = pausePressed = pauseWasPressed = false;
     }
 }

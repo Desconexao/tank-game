@@ -4,13 +4,15 @@ import com.tankgame.entities.Entity;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
-import com.tankgame.utils.Movable;
 
-public class Bullet extends Entity implements Movable {
+public class Bullet extends Entity implements Runnable {
     private double speed = GameConfig.BULLET_SPEED;
     private Direction direction;
-    private boolean markedForRemoval = false;
+    private volatile boolean markedForRemoval = false;
     private Tank owner;
+
+    private volatile boolean isPaused = false;
+    private volatile boolean gameIsRunning = true;
 
     public Bullet(double x, double y, Direction direction, Tank owner) {
         super(x, y, "bullet_vertical");
@@ -18,12 +20,37 @@ public class Bullet extends Entity implements Movable {
         this.owner = owner;
     }
 
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
+    }
+
+    public void stopGame() {
+        this.gameIsRunning = false;
+    }
+
+    @Override
+    public void run() {
+        while (!markedForRemoval && gameIsRunning) {
+
+            if (!isPaused) {
+                update();
+            }
+
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
     public void update() {
         switch (direction) {
-            case UP -> moveUp();
-            case DOWN -> moveDown();
-            case LEFT -> moveLeft();
-            case RIGHT -> moveRight();
+            case UP -> this.y -= speed;
+            case DOWN -> this.y += speed;
+            case LEFT -> this.x -= speed;
+            case RIGHT -> this.x += speed;
         }
     }
 
@@ -35,41 +62,11 @@ public class Bullet extends Entity implements Movable {
         return markedForRemoval;
     }
 
-    @Override
-    public void moveUp() {
-        this.y -= speed;
-    }
-
-    @Override
-    public void moveDown() {
-        this.y += speed;
-    }
-
-    @Override
-    public void moveLeft() {
-        this.x -= speed;
-    }
-
-    @Override
-    public void moveRight() {
-        this.x += speed;
-    }
-
-    @Override
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    @Override
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
     public Tank getOwner() {
         return owner;
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 }

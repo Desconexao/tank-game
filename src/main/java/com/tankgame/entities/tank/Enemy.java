@@ -1,39 +1,71 @@
 package com.tankgame.entities.tank;
 
+import com.tankgame.managers.CollisionManager;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.MovementSystem;
+import com.tankgame.systems.ai.DefaultAI;
 import com.tankgame.systems.ai.EnemyAISystem;
+import com.tankgame.systems.ai.RoamAI;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
+import com.tankgame.utils.Team;
 
-public class Enemy extends Tank {
+public class Enemy extends Tank implements Runnable {
     private long lastShotTime = 0;
     public EnemyAISystem AI;
-    
 
-    public Enemy(double x, double y, int health, String spriteKey, Direction direction, TankColors color, Class<? extends EnemyAISystem> AIClass, MovementSystem movementSystem) {
-        super(x, y, health, spriteKey, direction, color);
+    private volatile boolean isAlive = true;
+    private volatile boolean isPaused = false;
+    private volatile boolean gameIsRunning = true;
+
+    public enum AIType {
+        DEFAULT, ROAM
+    }
+
+    public Enemy(double x, double y, int health, String spriteKey, Direction direction, TankColors color, AIType aiType,
+            CollisionManager collisionManager) {
+        super(x, y, health, spriteKey, direction, color, Team.ENEMY);
         this.speed = 2.0;
-        setDirection(direction);
-        try {
-            this.AI = AIClass.getConstructor(MovementSystem.class, Enemy.class).newInstance(movementSystem, this);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (aiType == AIType.ROAM) {
+            this.AI = new RoamAI(collisionManager, this);
+        } else {
+            this.AI = new DefaultAI(collisionManager, this);
+        }
+    }
+
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
+    }
+
+    public void stopGame() {
+        this.gameIsRunning = false;
+    }
+
+    @Override
+    public void run() {
+        while (isAlive && gameIsRunning) {
+
+            if (!isPaused) {
+                if (AI != null) {
+                    AI.update();
+                }
+            }
+
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
     }
 
     @Override
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-
-        String newSpriteName = "tank_";
-
-        this.spriteKey = switch (direction) {
-            case UP -> newSpriteName + "up_" + color.getValue();
-            case DOWN -> newSpriteName + "down_" + color.getValue();
-            case LEFT -> newSpriteName + "left_" + color.getValue();
-            case RIGHT -> newSpriteName + "right_" + color.getValue();
-        };
+    public void setHealth(int health) {
+        super.setHealth(health);
+        if (this.health <= 0) {
+            isAlive = false;
+        }
     }
 
     public boolean canShoot() {

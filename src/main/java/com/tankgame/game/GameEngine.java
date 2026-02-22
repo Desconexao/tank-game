@@ -9,9 +9,9 @@ public class GameEngine implements Runnable {
     private Thread gameThread;
     private boolean running = false;
 
-    public GameEngine(GameScene scene) {
+    public GameEngine(GameScene scene, int difficulty) {
         this.scene = scene;
-        this.gameManager = new GameManager(scene, scene.getPlayer());
+        this.gameManager = new GameManager(scene, scene.getPlayer(), difficulty);
     }
 
     public void start() {
@@ -26,51 +26,26 @@ public class GameEngine implements Runnable {
 
     public void stop() {
         running = false;
-        if (gameThread != null) {
-            try {
-                gameThread.join(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+
     }
 
     @Override
     public void run() {
-        long nsPerTick = 1_000_000_000L / GameConfig.TPS;
-        long lastTime = System.nanoTime();
-        int frames = 0;
-        long lastTimer = System.currentTimeMillis();
+        // 1 / 60 frames = 0,016 ms
+        int frameDelay = 1000 / GameConfig.TPS;
 
         while (running) {
-            long now = System.nanoTime();
-
-            if (now - lastTime >= nsPerTick) {
-                gameLoop();
-                lastTime += nsPerTick;
-                frames++;
-            }
+            gameManager.update();
             scene.update();
-
-            if (System.currentTimeMillis() - lastTimer >= 1000) {
-                System.out.println("FPS: " + frames + " | Enemies: " +
-                        gameManager.getEnemyManager().getEnemies().size() +
-                        " | Bullets: " + gameManager.getProjectileManager().getBulletCount());
-                frames = 0;
-                lastTimer += 1000;
-            }
             try {
-                Thread.sleep(1);
+                Thread.sleep(frameDelay);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
-        System.out.println("GameEngine stopped");
-    }
 
-    private void gameLoop() {
-        gameManager.update();
+        System.out.println("GameEngine stopped");
     }
 
     public GameManager getGameManager() {

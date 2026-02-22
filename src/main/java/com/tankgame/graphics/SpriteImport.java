@@ -19,7 +19,7 @@ public class SpriteImport {
 
         // Try to load from JAR first using ClassLoader
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
-        
+
         // Fall back to file system if not in JAR
         if (inputStream == null && Files.exists(Path.of(filePath))) {
             try {

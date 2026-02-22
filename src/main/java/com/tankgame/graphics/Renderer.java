@@ -2,15 +2,13 @@ package com.tankgame.graphics;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-
 import javax.swing.ImageIcon;
 
+import com.tankgame.entities.Entity;
+import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
@@ -22,103 +20,64 @@ import com.tankgame.settings.SpriteList;
 public class Renderer {
     private SpriteImport sprites;
     private int size = GameConfig.TILE_SIZE;
-    private int bulletSize = GameConfig.BULLET_SIZE;
-    private int tankSize = GameConfig.TANK_SIZE;
-
     public Map<String, ImageIcon> loadedSprites = new HashMap<>();
-    private Queue<Object[]> renderQueue = new ArrayDeque<>();
 
     public Renderer(SpriteImport sprites) {
         this.sprites = sprites;
-
-        
-
         loadSprites(SpriteList.SPRITES_TO_LOAD);
     }
 
-    public void OLDdraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue) {
+    // Método principal, simples e direto
+    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Bullet> bullets) {
         Graphics2D g2d = (Graphics2D) g;
-
-        char[][] grid = gameGridLogic.getGridMatrix();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                String tileKey = switch (grid[i][j]) {
-                    case 'X' ->  "brick";
-                    case 'Y' -> "steel";
-                    case 'T' -> "tree";
-                    case 'E' -> "eagle";
-                    case 'W' -> "water";
-                    default -> "black";
-                };
-                ImageIcon tileIcon = loadedSprites.get(tileKey);
-                if (tileIcon != null) {
-                    g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
-                }
-            }
-        }
-
-        drawTank(g2d, player);
-
-        for (Enemy enemy : enemies) {
-            drawTank(g2d, enemy);
-        }
-
-        if (bulletQueue != null) {
-            drawSpriteQueue(g2d, bulletQueue);
-        }
-    }
-
-    public void newDraw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Object[]> bulletQueue){
-        Graphics2D g2d = (Graphics2D) g;
-
         Tile[][] grid = gameGridLogic.getGridTiles();
-        
-        // Draw background tiles (skip trees)
+
+        // CAMADA 1: Background (Tiles normais)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (!(grid[i][j] instanceof Tree)) {
-                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
-                    if (tileIcon != null) {
-                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
-                    } else {
-                        System.err.println("fellbackedup [PROBLEMMMMMM]");
-                    }
+                    drawEntity(g2d, grid[i][j]);
                 }
             }
         }
 
-        drawTank(g2d, player);
-
-        for (Enemy enemy : enemies) {
-            drawTank(g2d, enemy);
+        // CAMADA 2: Entidades (Balas e Tanques)
+        if (bullets != null) {
+            for (Bullet bullet : bullets) {
+                drawEntity(g2d, bullet);
+            }
         }
 
-        // Draw foreground tiles (trees)
+        drawEntity(g2d, player);
+
+        for (Enemy enemy : enemies) {
+            drawEntity(g2d, enemy);
+        }
+
+        // CAMADA 3: Foreground (Árvores cobrem os tanques e balas)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] instanceof Tree) {
-                    ImageIcon tileIcon = loadedSprites.get(grid[i][j].getSpriteKey());
-                    if (tileIcon != null) {
-                        g2d.drawImage(tileIcon.getImage(), j * size, i * size, null);
-                    }
+                    drawEntity(g2d, grid[i][j]);
                 }
             }
         }
-
-        if (bulletQueue != null) {
-            drawSpriteQueue(g2d, bulletQueue);
-        }
     }
 
-    private void drawTank(Graphics2D g2d, Tank tank) {
-        ImageIcon icon = loadedSprites.get(tank.getSpriteKey());
+    // Método mágico que desenha QUALQUER entidade
+    private void drawEntity(Graphics2D g2d, Entity entity) {
+        if (entity == null || entity.getSpriteKey() == null)
+            return;
 
-        if (icon == null) {
+        ImageIcon icon = loadedSprites.get(entity.getSpriteKey());
+
+        // Fallback pro player, como você já tinha feito
+        if (icon == null && entity instanceof Tank) {
             icon = loadedSprites.get("player_tank");
         }
 
         if (icon != null) {
-            g2d.drawImage(icon.getImage(), (int) tank.getX(), (int) tank.getY(), null);
+            g2d.drawImage(icon.getImage(), (int) entity.getX(), (int) entity.getY(), null);
         }
     }
 
@@ -133,23 +92,5 @@ public class Renderer {
                 System.err.println("Failed to load sprite: " + key + " - " + e.getMessage());
             }
         }
-    }
-
-    private void drawSpriteQueue(Graphics2D g2d, List<Object[]> bulletQueue) {
-        List<Object[]> snapshot = new ArrayList<>(bulletQueue);
-        for (Object[] spriteInfo : snapshot) {
-            ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
-            if (spriteIcon != null) {
-                g2d.drawImage(spriteIcon.getImage(), (int) spriteInfo[1], (int) spriteInfo[2], null);
-            }
-        }
-    }
-
-    public boolean pushRenderQueue(String spriteName, int X, int Y) {
-        if (loadedSprites.containsKey(spriteName)) {
-            renderQueue.add(new Object[] { spriteName, X, Y });
-            return true;
-        }
-        return false;
     }
 }

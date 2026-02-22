@@ -3,67 +3,57 @@ package com.tankgame.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tankgame.entities.projectile.Bullet;
+import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Eagle;
-import com.tankgame.managers.AssetManager;
+import com.tankgame.input.KeyboardInput;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.EnemyManager;
 import com.tankgame.managers.ProjectileManager;
 import com.tankgame.managers.StatManager;
 import com.tankgame.screens.GameScene;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.InputSystem;
-import com.tankgame.systems.MovementSystem;
-import com.tankgame.systems.ProjectileSystem;
-import com.tankgame.systems.ShootingSystem;
+import com.tankgame.managers.RankingManager;
+import com.tankgame.utils.Direction;
 
 public class GameManager {
-    // Managers
     private final EnemyManager enemyManager;
     private final ProjectileManager projectileManager;
-    private final AssetManager assetManager;
     private final CollisionManager collisionManager;
-
-    // Systems
-    private final MovementSystem movementSystem;
-    //private final EnemyAISystem enemyAISystem;
-    private final ShootingSystem shootingSystem;
-    private final ProjectileSystem projectileSystem;
-    private final InputSystem inputSystem;
     private final StatManager statSystem;
+    private final KeyboardInput keyboard;
 
-    // Refs
     private final GameScene scene;
     private final Player player;
     private final Eagle EagleObjective;
 
-    // State
     private boolean isPaused = false;
     private boolean isRunning = true;
     private int score = 0;
     private int level = 1;
     private int runningTime = 0;
     private int tick = 0;
+    private long lastPlayerShotTime = 0;
+    private String playerName = "player_1";
+    private RankingManager rankingManager = new RankingManager();
+    private int difficulty;
 
-    public GameManager(GameScene scene, Player player) {
+    public GameManager(GameScene scene, Player player, int difficulty) {
+        this.difficulty = difficulty;
         this.scene = scene;
         this.player = player;
         this.EagleObjective = scene.gridLogic.getEagleObjective();
 
-        this.assetManager = new AssetManager();
         this.collisionManager = new CollisionManager(scene.gridLogic);
         this.statSystem = new StatManager(scene);
+        this.keyboard = new KeyboardInput();
 
-        this.movementSystem = new MovementSystem(collisionManager);
-        this.enemyManager = new EnemyManager(movementSystem, scene.gridLogic.getEnemySpawnXY());
-        //this.enemyAISystem = new RoamAI(movementSystem);
-        this.projectileSystem = new ProjectileSystem(collisionManager);
-        this.inputSystem = new InputSystem();
-        this.projectileManager = new ProjectileManager(projectileSystem);
-        this.shootingSystem = new ShootingSystem(projectileManager);
+        this.projectileManager = new ProjectileManager();
+        this.enemyManager = new EnemyManager(collisionManager, scene.gridLogic.getEnemySpawnXY());
 
-        scene.getGameGrid().addKeyListener(inputSystem.getKeyboard());
+        scene.getGameGrid().addKeyListener(keyboard);
         scene.getGameGrid().setFocusable(true);
         scene.getGameGrid().requestFocusInWindow();
 
@@ -71,84 +61,96 @@ public class GameManager {
     }
 
     public void update() {
-        if (inputSystem.checkPauseToggle()) {
+        if (keyboard.checkPauseToggle()) {
             this.togglePause();
-
-            if (isPaused()) {
-                inputSystem.resetAllInputs();
-            }
-
+            if (isPaused())
+                keyboard.resetAllInputs();
         }
+
         if (isPaused() || !isRunning())
             return;
 
-        inputSystem.processInput(player, movementSystem);
+        handlePlayerInput();
+        handlePlayerShooting();
 
-        if (inputSystem.isShootingPressed()) {
-            shootingSystem.playerShoot(player);
-        }
-
-        enemyManager.updateMovement();
-
-        shootingSystem.enemyShoot(enemyManager.getEnemies());
+        handleEnemyShooting();
 
         updateProjectiles();
 
         increaseTimer();
-
         statSystem.update(runningTime, score);
-
         cleanup();
-
         checkGameConditions();
     }
 
-    public void togglePause() {
-        isPaused = !isPaused;
-        System.out.println("Game " + (isPaused ? "PAUSED" : "RESUMED"));
+    private void handlePlayerInput() {
+        double speed = player.getSpeed();
+        double newX = player.getX();
+        double newY = player.getY();
+        Direction newDir = player.getDirection();
+        boolean moved = false;
+
+        if (keyboard.upPressed) {
+            newY -= speed;
+            newDir = Direction.UP;
+            moved = true;
+        } else if (keyboard.downPressed) {
+            newY += speed;
+            newDir = Direction.DOWN;
+            moved = true;
+        } else if (keyboard.leftPressed) {
+            newX -= speed;
+            newDir = Direction.LEFT;
+            moved = true;
+        } else if (keyboard.rightPressed) {
+            newX += speed;
+            newDir = Direction.RIGHT;
+            moved = true;
+        }
+
+        if (moved && collisionManager.canMove(newX, newY, GameConfig.TANK_SIZE)) {
+            player.setX(newX);
+            player.setY(newY);
+        }
+        if (moved)
+            player.setDirection(newDir);
     }
 
-    public boolean isGamePaused() {
-        return isPaused;
+    private void handlePlayerShooting() {
+        if (keyboard.shootPressed) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastPlayerShotTime >= GameConfig.PLAYER_BULLET_COOL_DOWN_MS) {
+                projectileManager.addBullet(player.shoot());
+                lastPlayerShotTime = currentTime;
+            }
+        }
     }
 
-    public void setPaused(boolean paused) {
-        this.isPaused = paused;
-    }
-
-    private void preloadAssets() {
-        // String[] spritesToLoad
-        // "player_tan
-        // "player_tank_dow
-        // "player_tank_lef
-        // "player_tank_righ
-        // // "enemy_tank_u
-        // // "enemy_tank_dow
-        // // "enemy_tank_lef
-        // // "enemy_tank_righ
-        // "bric
-        // "blac
-        // "bullet_vertica
-        // // "powerup_health"
-        // };
-        //
-        // assetManager.preloadSprites(spritesToLoad, GameConfig.TILE_SI
-        // GameConfig.TILE_SIZE);
-        // assetManager.preloadSprites(new String[] { "bullet_vertical"
-        // GameConfig.BULLET_SIZE, GameConfig.BULLET_SIZE);
-        // FIX : idk if we should preload assets here or in AssetManager directly...
-    }
-
-    private void initializeEnemies() {
-        enemyManager.spawnInitialEnemies();
+    private void handleEnemyShooting() {
+        for (Enemy enemy : enemyManager.getEnemies()) {
+            if (enemy.canShoot() && new java.util.Random().nextInt(100) < 5) {
+                projectileManager.addBullet(enemy.shoot());
+                enemy.shootBullet();
+            }
+        }
     }
 
     private void updateProjectiles() {
-        projectileManager.update(getAllTanks());
+        List<Bullet> bullets = projectileManager.getActiveBullets();
+        List<Bullet> toRemove = new ArrayList<>();
+        List<Tank> allTanks = getAllTanks();
+
+        for (Bullet bullet : bullets) {
+
+            if (collisionManager.checkProjectileCollision(bullet, allTanks) || bullet.isMarkedForRemoval()) {
+                toRemove.add(bullet);
+            }
+        }
+        bullets.removeAll(toRemove);
     }
 
     private List<Tank> getAllTanks() {
-        List<Tank> allTanks = new ArrayList<Tank>();
+        List<Tank> allTanks = new ArrayList<>();
         allTanks.add(player);
         allTanks.addAll(enemyManager.getEnemies());
         return allTanks;
@@ -159,18 +161,10 @@ public class GameManager {
     }
 
     private void checkGameConditions() {
-        if (player.getHealth() <= 0) {
+        if (player.getHealth() <= 0 || EagleObjective.isBroken()) {
             gameOver(false);
             return;
         }
-
-        if (EagleObjective.isBroken()){
-            gameOver(false);
-            return;
-        }
-
-
-
 
         if (enemyManager.getEnemies().isEmpty()) {
             levelComplete();
@@ -180,12 +174,19 @@ public class GameManager {
     private void levelComplete() {
         score += 100 * level;
         level++;
-        enemyManager.spawnInitialEnemies();
+        initializeEnemies();
         System.out.println("Level " + (level - 1) + " complete! Score: " + score);
     }
 
     private void gameOver(boolean won) {
         isRunning = false;
+        enemyManager.stopAllEnemies();
+        projectileManager.stopAllBullets();
+
+        rankingManager.addScore(playerName, score);
+
+        keyboard.resetAllInputs();
+
         if (won) {
             System.out.println("VICTORY! Score: " + score);
         } else {
@@ -193,64 +194,48 @@ public class GameManager {
         }
     }
 
-    public void pause() {
-        isPaused = true;
+    public void togglePause() {
+        isPaused = !isPaused;
+        enemyManager.pauseAllEnemies(isPaused);
+        projectileManager.pauseAllBullets(isPaused);
+        System.out.println("Game " + (isPaused ? "PAUSED" : "RESUMED"));
     }
 
-    public void resume() {
-        isPaused = false;
+    private void increaseTimer() {
+
+        if (tick >= GameConfig.TPS) {
+            tick = 0;
+            runningTime += 1;
+        }
     }
 
-    public void restart() {
-        score = 0;
-        level = 1;
-        isRunning = true;
-        isPaused = false;
+    private void initializeEnemies() {
+        int baseAmount = switch (difficulty) {
+            case 0 -> 3;
+            case 1 -> 5;
+            case 2 -> 7;
+            default -> 5;
+        };
 
-        player.setHealth(GameConfig.PLAYER_START_HEALTH);
-        player.setX(GameConfig.PLAYER_START_X);
-        player.setY(GameConfig.PLAYER_START_Y);
+        int amountToSpawn = (int) (baseAmount * Math.pow(1.3, level - 1));
 
-        enemyManager.clear();
-        projectileManager.clearBullets();
-
-        initializeEnemies();
+        enemyManager.spawnInitialEnemies(amountToSpawn);
     }
 
-    public void stop() {
-        isRunning = false;
+    public boolean isGamePaused() {
+        return isPaused;
     }
 
-    public MovementSystem getMovementSystem() {
-        return movementSystem;
-    }
-
-    public ProjectileSystem getProjectileSystem() {
-        return projectileSystem;
-    }
-
-    public InputSystem getInputSystem() {
-        return inputSystem;
-    }
-
-    public EnemyManager getEnemyManager() {
-        return enemyManager;
-    }
-
-    public ProjectileManager getProjectileManager() {
-        return projectileManager;
-    }
-
-    public AssetManager getAssetManager() {
-        return assetManager;
-    }
-
-    public boolean isRunning() {
-        return isRunning;
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
     }
 
     public boolean isPaused() {
         return isPaused;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public int getScore() {
@@ -265,16 +250,41 @@ public class GameManager {
         return player;
     }
 
+    public void setPlayerName(String name) {
+        this.playerName = name;
+    }
+
+    public EnemyManager getEnemyManager() {
+        return enemyManager;
+    }
+
+    public ProjectileManager getProjectileManager() {
+        return projectileManager;
+    }
+
+    public KeyboardInput getKeyboard() {
+        return keyboard;
+    }
+
     public void addScore(int points) {
         score += points;
     }
 
-    private void increaseTimer(){
-        tick += 1;
-
-        if(tick >= GameConfig.TPS){
-            tick = 0;
-            runningTime += 1;
-        }
+    public void stop() {
+        isRunning = false;
     }
+
+    public void restart() {
+        score = 0;
+        level = 1;
+        isRunning = true;
+        isPaused = false;
+        player.setHealth(GameConfig.PLAYER_START_HEALTH);
+        player.setX(GameConfig.PLAYER_START_X);
+        player.setY(GameConfig.PLAYER_START_Y);
+        enemyManager.clear();
+        projectileManager.clearBullets();
+        initializeEnemies();
+    }
+
 }

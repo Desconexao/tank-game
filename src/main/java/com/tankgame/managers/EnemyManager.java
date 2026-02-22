@@ -1,68 +1,48 @@
 package com.tankgame.managers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.MovementSystem;
-import com.tankgame.systems.ai.DefaultAI;
-import com.tankgame.systems.ai.RoamAI;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
 
 public class EnemyManager {
     private final List<Enemy> enemies;
     protected List<List<Integer>> enemySpawnsXY;
-    private final MovementSystem movementSystem;
-    public EnemyManager(MovementSystem movementSystem, List<List<Integer>> enemySpawnsXY) {
-        this.enemies = new ArrayList<>();
-        this.movementSystem = movementSystem;
+    private final CollisionManager collisionManager;
+    private final Random random = new Random();
+
+    public EnemyManager(CollisionManager collisionManager, List<List<Integer>> enemySpawnsXY) {
+        this.enemies = new CopyOnWriteArrayList<>();
+        this.collisionManager = collisionManager;
         this.enemySpawnsXY = enemySpawnsXY;
     }
 
-    public void spawnInitialEnemies() {
-        int[] spawn;
-        int x, y;
+    public void spawnInitialEnemies(int amount) {
+        TankColors[] colors = { TankColors.GREEN, TankColors.YELLOW, TankColors.RED };
+        Enemy.AIType[] aiTypes = { Enemy.AIType.DEFAULT, Enemy.AIType.ROAM };
 
-        spawn = getRandomSpawn();
-        x = spawn[0]; y = spawn[1];
+        for (int i = 0; i < amount; i++) {
+            int[] spawn = getRandomSpawn();
 
-        enemies.add(new Enemy(x, y,
-                GameConfig.ENEMY_START_HEALTH,
-                "enemy_tank",
-                Direction.DOWN,
-                TankColors.GREEN,
-                DefaultAI.class,
-                movementSystem));
+            TankColors randomColor = colors[random.nextInt(colors.length)];
+            Enemy.AIType randomAI = aiTypes[random.nextInt(aiTypes.length)];
 
-        spawn = getRandomSpawn();
-        x = spawn[0]; y = spawn[1];
+            Enemy newEnemy = new Enemy(
+                    spawn[0], spawn[1],
+                    GameConfig.ENEMY_START_HEALTH,
+                    "enemy_tank",
+                    Direction.DOWN,
+                    randomColor,
+                    randomAI,
+                    collisionManager);
 
-        enemies.add(new Enemy(x, y,
-            GameConfig.ENEMY_START_HEALTH,
-            "enemy_tank",
-            Direction.DOWN,
-            TankColors.YELLOW,
-            RoamAI.class,
-            movementSystem));
+            enemies.add(newEnemy);
 
-        spawn = getRandomSpawn();
-        x = spawn[0]; y = spawn[1];
-
-        enemies.add(new Enemy(x, y,
-            GameConfig.ENEMY_START_HEALTH,
-            "enemy_tank",
-            Direction.DOWN,
-            TankColors.RED,
-            RoamAI.class,
-            movementSystem));
-    }
-
-    public void updateMovement() {
-        for (Enemy enemy : enemies) {
-            enemy.AI.update();
+            new Thread(newEnemy).start();
         }
     }
 
@@ -78,9 +58,22 @@ public class EnemyManager {
         enemies.clear();
     }
 
-    private int[] getRandomSpawn(){
-        var coord = enemySpawnsXY.get(new Random().nextInt(enemySpawnsXY.size()));
+    private int[] getRandomSpawn() {
+        if (enemySpawnsXY == null || enemySpawnsXY.isEmpty())
+            return new int[] { 0, 0 };
+        var coord = enemySpawnsXY.get(random.nextInt(enemySpawnsXY.size()));
+        return new int[] { coord.get(0), coord.get(1) };
+    }
 
-        return new int[] {coord.get(0), coord.get(1)};
+    public void pauseAllEnemies(boolean paused) {
+        for (Enemy enemy : enemies) {
+            enemy.setPaused(paused);
+        }
+    }
+
+    public void stopAllEnemies() {
+        for (Enemy enemy : enemies) {
+            enemy.stopGame();
+        }
     }
 }
