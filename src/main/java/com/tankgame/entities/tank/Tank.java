@@ -15,6 +15,7 @@ public abstract class Tank extends Entity {
     protected int bulletDamage;
     protected Team team;
     protected boolean isShielded;
+    protected long shieldActivationTimeStamp;
 
 
     public Tank(double x, double y, int health, String spriteKey, Direction direction, TankColors color, Team team) {
@@ -26,6 +27,7 @@ public abstract class Tank extends Entity {
         this.team = team;
         setDirection(direction);
         this.isShielded = false;
+        this.shieldActivationTimeStamp = 0;
     }
 
     public void moveUp() {
@@ -117,15 +119,19 @@ public abstract class Tank extends Entity {
         this.bulletDamage = newDamage;
     }
 
-    public void activateShield(){
-        this.isShielded = true;
-    }
-
-    public void deactivateShield(){
-        this.isShielded = false;
+    public void setShield(boolean isShielded){
+        this.isShielded = isShielded;
     }
 
     public boolean isShielded(){
         return isShielded;
+    }
+
+    public void setShieldActivationTimeStamp(long timestamp){
+        this.shieldActivationTimeStamp = timestamp;
+    }
+
+    public long getShieldActivationTimeStamp(){
+        return shieldActivationTimeStamp;
     }
 }

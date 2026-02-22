@@ -1,5 +1,6 @@
 teste:300
 teste2:300
+player_1:300
 vini:100
 vini:100
 vini:0

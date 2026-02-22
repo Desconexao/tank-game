@@ -191,6 +191,10 @@ public class GameManager {
         if (enemyManager.getEnemies().isEmpty()) {
             levelComplete();
         }
+
+        if (System.currentTimeMillis() - player.getShieldActivationTimeStamp() >= GameConfig.SHIELD_TIME_MS && player.isShielded()){
+            player.setShield(false);
+        }
     }
 
     private void levelComplete() {

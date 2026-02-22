@@ -69,7 +69,8 @@ public class Player extends Tank {
                 break;
 
             case "HELMET":
-                activateShield();
+                setShield(true);
+                setShieldActivationTimeStamp(System.currentTimeMillis());
                 break;
         
             default:
