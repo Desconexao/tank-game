@@ -177,6 +177,9 @@ public class GameManager {
     }
 
     private void cleanup() {
+        for (Enemy enemy : enemyManager.getEnemies())
+            if (enemy.getHealth() <= 0)
+                addScore(50);
         enemyManager.removeDeadEnemies();
     }
 
@@ -204,7 +207,8 @@ public class GameManager {
     }
 
     private void levelComplete() {
-        score += 100 * level;
+        int baseReward = 100 * level;
+        score += baseReward * getScoreMultiplier();
         level++;
         initializeEnemies();
         System.out.println("Level " + (level - 1) + " complete! Score: " + score);
@@ -276,6 +280,10 @@ public class GameManager {
         return score;
     }
 
+    private int getScoreMultiplier() {
+        return this.difficulty + 1;
+    }
+
     public int getLevel() {
         return level;
     }
@@ -301,7 +309,7 @@ public class GameManager {
     }
 
     public void addScore(int points) {
-        score += points;
+        score += points * getScoreMultiplier();
     }
 
     public void stop() {
