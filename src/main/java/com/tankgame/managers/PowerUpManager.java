@@ -135,7 +135,7 @@ public class PowerUpManager {
         }
 
         // remove later, debugging stuff
-        selectedPowerUp = new HelmetPowerUp(randX, randY);
+        //selectedPowerUp = new StarPowerUp(randX, randY);
         System.out.println("PowerUp " + selectedPowerUp.getName() + " spawned at X: " + randX + " Y: " + randY);
         // add to available powerups in map
         currentMapPowerUps.add(selectedPowerUp);

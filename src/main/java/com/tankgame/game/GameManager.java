@@ -133,7 +133,7 @@ public class GameManager {
     private void handlePlayerShooting() {
         if (keyboard.shootPressed) {
             long currentTime = System.currentTimeMillis();
-            if (currentTime - lastPlayerShotTime >= GameConfig.PLAYER_BULLET_COOL_DOWN_MS) {
+            if (currentTime - lastPlayerShotTime >= player.getBulletCooldown()) {
                 projectileManager.addBullet(player.shoot());
                 lastPlayerShotTime = currentTime;
             }
