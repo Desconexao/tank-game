@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Player;
 import com.tankgame.game.GameGrid;
@@ -24,10 +23,7 @@ import com.tankgame.graphics.Renderer;
 import com.tankgame.graphics.SpriteImport;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.FontManager;
-import com.tankgame.screens.widgets.StatBoardWidget;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.MovementSystem;
-import com.tankgame.systems.ai.RoamAI;
 import com.tankgame.utils.Direction;
 import com.tankgame.utils.TankColors;
 
@@ -46,26 +42,17 @@ public class OnlineGameScene extends JPanel {
     public JFrame mainWindow;
     private OnlinePlayerInputHandler inputHandler;
     private WebSocketClient webSocketClient;
-    protected StatBoardWidget statWidget;
-    private Consumer<String> onAction;
     private OnlineGameEngine gameEngine;
     private com.tankgame.game.online.OnlineOpponentManager opponentManager;
-
-    private List<Object[]> bulletsToRender = new ArrayList<>();
 
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
     private boolean isPaused = false;
     private boolean isGameRunning = true;
-    private int playerNumber;
-
-    private List<PowerUp> fakeUpList;
 
     public OnlineGameScene(Consumer<String> onAction, JFrame mainWindow, WebSocketClient webSocketClient, int playerNumber) {
         this.mainWindow = mainWindow;
-        this.onAction = onAction;
         this.webSocketClient = webSocketClient;
-        this.playerNumber = playerNumber;
         this.sprites = new SpriteImport();
         this.renderer = new Renderer(sprites);
 
@@ -102,20 +89,19 @@ public class OnlineGameScene extends JPanel {
                 Direction.UP,
                 TankColors.GRAY);
 
-        // Create opponent tank (uses same health as player, not enemy)
         this.wrappedGrid = new GameGrid(gridLoader);
         CollisionManager collisionManager = new CollisionManager(wrappedGrid);
-        MovementSystem movementSystem = new MovementSystem(collisionManager);
         
         this.opponent = new Enemy(
-                opponentSpawn[0],
-                opponentSpawn[1],
-                GameConfig.PLAYER_START_HEALTH,
-                "enemy_tank",
-                Direction.UP,
-                TankColors.RED,
-                RoamAI.class,
-                movementSystem);
+            opponentSpawn[0],
+            opponentSpawn[1],
+            GameConfig.PLAYER_START_HEALTH,
+            "enemy_tank",
+            Direction.UP,
+            TankColors.RED,
+            Enemy.AIType.DEFAULT,
+            collisionManager);
+        this.opponent.AI = null;
 
         // Create input handler
         this.inputHandler = new OnlinePlayerInputHandler();
@@ -159,9 +145,8 @@ public class OnlineGameScene extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                // Use the persistent wrappedGrid to preserve block breaking
-                renderer.newDraw(g, wrappedGrid, player, new ArrayList<>(List.of(opponent)),
-                        bulletsToRender);
+                List<com.tankgame.entities.projectile.Bullet> bullets = gameEngine != null ? gameEngine.getProjectileManager().getActiveBullets() : new ArrayList<>();
+                renderer.draw(g, wrappedGrid, player, new ArrayList<>(List.of(opponent)), bullets, new ArrayList<>());
 
                 if (isPaused) {
                     drawPauseText(g);
@@ -183,13 +168,6 @@ public class OnlineGameScene extends JPanel {
         this.gameGrid.addKeyListener(inputHandler);
 
         this.add(gameGrid, BorderLayout.CENTER);
-
-        statWidget = new StatBoardWidget(action -> {
-            cleanup();
-            onAction.accept("start");
-        });
-
-        //this.add(statWidget, BorderLayout.SOUTH);
 
         this.gameGrid.setFocusable(true);
         this.gameGrid.requestFocusInWindow();
@@ -263,37 +241,9 @@ public class OnlineGameScene extends JPanel {
         g.setFont(originalFont);
     }
 
-    /**
-     * Handle opponent input from server
-     */
-    private void handleOpponentInput(double x, double y, Direction facing) {
-        if (opponentManager != null) {
-            opponentManager.handleInput(x, y, facing);
-        }
-    }
 
-    /**
-     * Handle opponent shooting from server
-     */
-    private void handleOpponentShooting(boolean shooting) {
-        if (opponentManager != null) {
-            opponentManager.handleShooting(shooting);
-        }
-    }
 
     public void update() {
-        bulletsToRender.clear();
-
-        if (gameEngine != null && gameEngine.getProjectileManager() != null) {
-            for (var bullet : gameEngine.getProjectileManager().getActiveBullets()) {
-                bulletsToRender.add(new Object[] {
-                        bullet.getSpriteKey(),
-                        (int) bullet.getX(),
-                        (int) bullet.getY()
-                });
-            }
-        }
-
         gameGrid.repaint();
     }
 

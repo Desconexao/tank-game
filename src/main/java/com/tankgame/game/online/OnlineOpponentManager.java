@@ -3,6 +3,7 @@ package com.tankgame.game.online;
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.managers.ProjectileManager;
+import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
 
 /**
@@ -18,6 +19,7 @@ public class OnlineOpponentManager {
     private double targetY;
     private Direction targetDirection;
     private boolean shooting;
+    private long lastOpponentShotTime = 0;
 
     public OnlineOpponentManager(ProjectileManager projectileManager) {
         this.projectileManager = projectileManager;
@@ -71,10 +73,13 @@ public class OnlineOpponentManager {
             }
         }
 
-        if (shooting && opponent.canShoot()) {
-            Bullet bullet = opponent.shoot();
-            projectileManager.addBullet(bullet);
-            opponent.shootBullet();
+        if (shooting) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastOpponentShotTime >= GameConfig.PLAYER_BULLET_COOL_DOWN_MS) {
+                Bullet bullet = opponent.shoot();
+                projectileManager.addBullet(bullet);
+                lastOpponentShotTime = currentTime;
+            }
         }
     }
 

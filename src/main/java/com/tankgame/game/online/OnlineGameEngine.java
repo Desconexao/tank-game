@@ -24,6 +24,7 @@ public class OnlineGameEngine implements Runnable {
 
     private final CollisionManager collisionManager;
     private final ProjectileManager projectileManager;
+    private final OnlineProjectileUpdater projectileUpdater;
     private final OnlineOpponentManager opponentManager;
     private long lastPlayerShotTime = 0;
 
@@ -34,6 +35,7 @@ public class OnlineGameEngine implements Runnable {
         GameGrid gameGrid = scene.getWrappedGrid();
         this.collisionManager = new CollisionManager(gameGrid);
         this.projectileManager = new ProjectileManager();
+        this.projectileUpdater = new OnlineProjectileUpdater(collisionManager);
         this.opponentManager = new OnlineOpponentManager(projectileManager);
 
         // Setup message handler for opponent actions
@@ -165,7 +167,7 @@ public class OnlineGameEngine implements Runnable {
 
         if (inputHandler.shootPressed) {
             long currentTime = System.currentTimeMillis();
-            if (currentTime - lastPlayerShotTime >= player.getBulletCooldown()) {
+            if (currentTime - lastPlayerShotTime >= GameConfig.PLAYER_BULLET_COOL_DOWN_MS) {
                 projectileManager.addBullet(player.shoot());
                 lastPlayerShotTime = currentTime;
             }
@@ -207,7 +209,6 @@ public class OnlineGameEngine implements Runnable {
 
     private void updateProjectiles() {
         List<com.tankgame.entities.projectile.Bullet> bullets = projectileManager.getActiveBullets();
-        List<com.tankgame.entities.projectile.Bullet> toRemove = new ArrayList<>();
         List<com.tankgame.entities.tank.Tank> allTanks = new ArrayList<>();
 
         allTanks.add(scene.getPlayer());
@@ -215,13 +216,7 @@ public class OnlineGameEngine implements Runnable {
             allTanks.add(scene.getOpponent());
         }
 
-        for (com.tankgame.entities.projectile.Bullet bullet : bullets) {
-            bullet.update();
-            if (collisionManager.checkProjectileCollision(bullet, allTanks) || bullet.isMarkedForRemoval()) {
-                toRemove.add(bullet);
-            }
-        }
-        bullets.removeAll(toRemove);
+        projectileUpdater.update(bullets, allTanks);
     }
 
     public ProjectileManager getProjectileManager() {
