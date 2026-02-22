@@ -1,13 +1,13 @@
 X_X__S__S_X_X
 X_X_XXXXX_X_X
 __S_____X__S_
-XXXX_XX_X_XXX
+X_XX____X_X_X
 __S__XX___S__
 _XXXXXX_XXXX_
 _X____S____X_
-_X_XXXXXXX_X_
+_X_WWWWWWW_X_
 ___X_______X_
-XXXXXXXX_XX__
-X_______X___X
+XTTTTTTX_TTT_
+X___________X
 X_XXXXXXX_X_X
 X__P_XEX__X_X
