@@ -43,6 +43,24 @@ public class CollisionManager {
 
     }
 
+    public boolean checkProjectileCollision(Bullet bullet, List<Tank> tanks, List<Bullet> activeBullets) {
+        if (bullet.isMarkedForRemoval())
+            return true;
+
+        for (Bullet otherBullet : activeBullets) {
+            if (otherBullet != bullet && !otherBullet.isMarkedForRemoval() &&
+                    otherBullet.getOwner().getTeam() != bullet.getOwner().getTeam()) {
+
+                if (checkBulletVsBullet(bullet, otherBullet)) {
+                    otherBullet.markForRemoval();
+                    return true;
+                }
+            }
+        }
+
+        return checkProjectileCollision(bullet, tanks);
+    }
+
     public boolean checkProjectileCollision(Bullet bullet, List<Tank> tanks) {
         double centerX = bullet.getX() + GameConfig.BULLET_SIZE / 2.0;
         double centerY = bullet.getY() + GameConfig.BULLET_SIZE / 2.0;
@@ -69,6 +87,13 @@ public class CollisionManager {
 
         return bullet.getX() < 0 || bullet.getX() > GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE ||
                 bullet.getY() < 0 || bullet.getY() > GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE;
+    }
+
+    private boolean checkBulletVsBullet(Bullet b1, Bullet b2) {
+        return b1.getX() < b2.getX() + GameConfig.BULLET_SIZE &&
+                b1.getX() + GameConfig.BULLET_SIZE > b2.getX() &&
+                b1.getY() < b2.getY() + GameConfig.BULLET_SIZE &&
+                b1.getY() + GameConfig.BULLET_SIZE > b2.getY();
     }
 
     private boolean checkTankCollision(Bullet bullet, Tank tank) {

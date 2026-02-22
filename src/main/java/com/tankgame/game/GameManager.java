@@ -26,8 +26,7 @@ public class GameManager {
     private final CollisionManager collisionManager;
     private final PowerUpManager powerUpManager;
 
-
-    //private final EnemyAISystem enemyAISystem;
+    // private final EnemyAISystem enemyAISystem;
     private final StatManager statSystem;
     private final KeyboardInput keyboard;
 
@@ -85,7 +84,7 @@ public class GameManager {
 
         if (!isTimeStopped)
             handleEnemyShooting();
-            enemyManager.pauseAllEnemies(isTimeStopped);
+        enemyManager.pauseAllEnemies(isTimeStopped);
 
         updateProjectiles();
         powerUpManager.update();
@@ -156,7 +155,14 @@ public class GameManager {
 
         for (Bullet bullet : bullets) {
 
-            if (collisionManager.checkProjectileCollision(bullet, allTanks) || bullet.isMarkedForRemoval()) {
+            if (collisionManager.checkProjectileCollision(bullet, allTanks, bullets) || bullet.isMarkedForRemoval()) {
+                bullet.markForRemoval();
+                toRemove.add(bullet);
+            }
+        }
+
+        for (Bullet bullet : bullets) {
+            if (bullet.isMarkedForRemoval() && !toRemove.contains(bullet)) {
                 toRemove.add(bullet);
             }
         }
@@ -180,9 +186,8 @@ public class GameManager {
             return;
         }
 
-
-        if (isTimeStopped){
-            if(System.currentTimeMillis() - lastTimeStop >= GameConfig.POWERUP_TIMESTOP_LENGTH_MS){
+        if (isTimeStopped) {
+            if (System.currentTimeMillis() - lastTimeStop >= GameConfig.POWERUP_TIMESTOP_LENGTH_MS) {
                 System.out.println();
                 deactivateTimeStop();
             }
@@ -192,7 +197,8 @@ public class GameManager {
             levelComplete();
         }
 
-        if (System.currentTimeMillis() - player.getShieldActivationTimeStamp() >= GameConfig.SHIELD_TIME_MS && player.isShielded()){
+        if (System.currentTimeMillis() - player.getShieldActivationTimeStamp() >= GameConfig.SHIELD_TIME_MS
+                && player.isShielded()) {
             player.setShield(false);
         }
     }
@@ -239,13 +245,13 @@ public class GameManager {
 
     private void initializeEnemies() {
         int baseAmount = switch (difficulty) {
-            case 0 -> 3;
-            case 1 -> 5;
-            case 2 -> 7;
+            case 0 -> 1;
+            case 1 -> 3;
+            case 2 -> 5;
             default -> 5;
         };
 
-        int amountToSpawn = (int) (baseAmount * Math.pow(1.3, level - 1));
+        int amountToSpawn = baseAmount + (int) (baseAmount * 0.3 * (level - 1));
 
         enemyManager.spawnInitialEnemies(amountToSpawn);
     }
@@ -315,26 +321,25 @@ public class GameManager {
         initializeEnemies();
     }
 
-    public PowerUpManager getPowerUpManager(){
+    public PowerUpManager getPowerUpManager() {
         return this.powerUpManager;
     }
 
-    private void applyPowerUps(List<PowerUp> powerups){
-        for(PowerUp powerup : powerups){
-            if (powerup.isPlayerAffected()){
+    private void applyPowerUps(List<PowerUp> powerups) {
+        for (PowerUp powerup : powerups) {
+            if (powerup.isPlayerAffected()) {
                 player.setPowerUp(powerup);
-            }
-            else{
+            } else {
                 switch (powerup.getName()) {
                     case "STOPWATCH":
                         activateTimeStop();
                         break;
 
-                    case("SHOVEL"):
+                    case ("SHOVEL"):
                         protectEagleTile();
                         break;
 
-                    case("GRENADE"):
+                    case ("GRENADE"):
                         enemyManager.clear();
                         break;
 
@@ -345,7 +350,7 @@ public class GameManager {
         }
     }
 
-    private void activateTimeStop(){
+    private void activateTimeStop() {
         this.isTimeStopped = true;
         enemyManager.pauseAllEnemies(isTimeStopped);
         // projectileManager.pauseAllBullets(isTimeStopped);
@@ -354,7 +359,7 @@ public class GameManager {
         statSystem.setRedTimer(isTimeStopped);
     }
 
-    private void deactivateTimeStop(){
+    private void deactivateTimeStop() {
         this.isTimeStopped = false;
         enemyManager.pauseAllEnemies(isTimeStopped);
         // projectileManager.pauseAllBullets(isTimeStopped);
@@ -362,7 +367,7 @@ public class GameManager {
         statSystem.setRedTimer(isTimeStopped);
     }
 
-    private void protectEagleTile(){
+    private void protectEagleTile() {
         scene.gridLogic.protectEagleTile();
     }
 }
