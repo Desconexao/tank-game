@@ -70,7 +70,7 @@ public class StartScreen extends JPanel {
         formPanel.add(mapLabel, gbc);
 
         gbc.gridx = 1;
-        mapBox = new JComboBox<>(new String[] { "Map 1", "Map 2", "Map 3", "Random" });
+        mapBox = new JComboBox<>(new String[] { "Start Map", "Random" });
         mapBox.setFont(FontManager.getFont("pixel", 20f));
         formPanel.add(mapBox, gbc);
 

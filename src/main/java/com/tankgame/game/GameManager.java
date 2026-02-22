@@ -32,7 +32,8 @@ public class GameManager {
 
     private final GameScene scene;
     private final Player player;
-    private final Eagle EagleObjective;
+    private Eagle eagleObjective;
+    private int currentMapId;
 
     private boolean isPaused = false;
     private boolean isRunning = true;
@@ -51,7 +52,8 @@ public class GameManager {
         this.difficulty = difficulty;
         this.scene = scene;
         this.player = player;
-        this.EagleObjective = scene.gridLogic.getEagleObjective();
+        this.eagleObjective = scene.gridLogic.getEagleObjective();
+        this.currentMapId = scene.gridLogic.getMapId();
         this.lastTimeStop = System.currentTimeMillis();
 
         this.collisionManager = new CollisionManager(scene.gridLogic);
@@ -184,7 +186,7 @@ public class GameManager {
     }
 
     private void checkGameConditions() {
-        if (player.getHealth() <= 0 || EagleObjective.isBroken()) {
+        if (player.getHealth() <= 0 || eagleObjective.isBroken()) {
             gameOver(false);
             return;
         }
@@ -210,8 +212,28 @@ public class GameManager {
         int baseReward = 100 * level;
         score += baseReward * getScoreMultiplier();
         level++;
+
+        projectileManager.clearBullets();
+        powerUpManager.getCurrentMapPowerUps().clear();
+
+        currentMapId++;
+        if (currentMapId > 5) {
+            currentMapId = 0;
+        }
+
+        scene.gridLogic.reloadMap(currentMapId);
+
+        this.eagleObjective = scene.gridLogic.getEagleObjective();
+
+        int[] newSpawn = scene.gridLogic.getPlayerSpawnXY();
+        player.setX(newSpawn[0]);
+        player.setY(newSpawn[1]);
+        player.setDirection(Direction.UP);
+
+        player.setHealth(player.getHealth() + 1);
+
         initializeEnemies();
-        System.out.println("Level " + (level - 1) + " complete! Score: " + score);
+        System.out.println("Level " + (level - 1) + " complete! Starting Map: " + currentMapId);
     }
 
     private void gameOver(boolean won) {
@@ -249,7 +271,7 @@ public class GameManager {
 
     private void initializeEnemies() {
         int baseAmount = switch (difficulty) {
-            case 0 -> 1;
+            case 0 -> 2;
             case 1 -> 3;
             case 2 -> 5;
             default -> 5;

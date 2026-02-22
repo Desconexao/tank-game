@@ -46,13 +46,24 @@ public class GameGrid {
     }
 
     private void loadMap(int mapId) {
-        if (mapId == 3) {
-            mapId = new Random().nextInt(3);
+        if (mapId == 1) {
+            mapId = new Random().nextInt(6);
         }
-        String fileName = "world/scene_0" + mapId + ".txt";
+        this.mapId = mapId;
+
+        reloadMap(this.mapId);
+    }
+
+    public void reloadMap(int nextMapId) {
+        this.mapId = nextMapId;
+
+        this.enemySpawnXY.clear();
+
+        String fileName = "world/scene_0" + this.mapId + ".txt";
         try {
-            System.out.println("Loading map: " + fileName);
+            System.out.println("Loading level map: " + fileName);
             List<String> lines = loadLinesFromResource(fileName);
+
             for (int i = 0; i < Math.min(rows, lines.size()); i++) {
                 char[] rowChars = lines.get(i).toCharArray();
                 for (int j = 0; j < Math.min(cols, rowChars.length); j++) {
@@ -62,7 +73,7 @@ public class GameGrid {
 
                     tileGrid[i][j] = tile;
                     if (tileChar == 'E') {
-                        setEagleObjective((Eagle) tile, new int[]{i, j});
+                        setEagleObjective((Eagle) tile, new int[] { i, j });
                     }
                     if (tileChar == 'P') {
                         playerSpawnXY = new int[] { j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE };
@@ -136,14 +147,14 @@ public class GameGrid {
         EagleObjective = eagleObjective;
         int x = coords[0];
         int y = coords[1];
-        this.eagleCoord = new int[]{x, y};
+        this.eagleCoord = new int[] { x, y };
     }
 
-    public int[] getEagleCoords(){
+    public int[] getEagleCoords() {
         return eagleCoord;
     }
 
-    public int[] getPlayerSpawnXY(){
+    public int[] getPlayerSpawnXY() {
         return this.playerSpawnXY;
     }
 
@@ -155,22 +166,27 @@ public class GameGrid {
         this.playerSpawnXY = new int[] { x, y };
     }
 
+    public int getMapId() {
+        return this.mapId;
+    }
+
     public void protectEagleTile() {
         int[] pos = getEagleCoords();
         int row = pos[0];
         int col = pos[1];
 
         int[][] tilesToProtect = {
-                {row, col + 1},
-                {row - 1, col},
-                {row, col - 1},
-                {row + 1, col}
+                { row, col + 1 },
+                { row - 1, col },
+                { row, col - 1 },
+                { row + 1, col }
         };
 
         for (int i = 0; i < 4; i++) {
             int r = tilesToProtect[i][0];
             int c = tilesToProtect[i][1];
-            Steel steelBlock = new Steel(c * GameConfig.TILE_SIZE, r * GameConfig.TILE_SIZE, "steel", GameConfig.STEEL_HP);
+            Steel steelBlock = new Steel(c * GameConfig.TILE_SIZE, r * GameConfig.TILE_SIZE, "steel",
+                    GameConfig.STEEL_HP);
             replaceTile(steelBlock, r, c);
         }
     }
