@@ -83,7 +83,9 @@ public class GameManager {
         handlePlayerInput();
         handlePlayerShooting();
 
-        handleEnemyShooting();
+        if (!isTimeStopped)
+            handleEnemyShooting();
+            enemyManager.pauseAllEnemies(isTimeStopped);
 
         updateProjectiles();
         powerUpManager.update();
@@ -341,6 +343,8 @@ public class GameManager {
 
     private void activateTimeStop(){
         this.isTimeStopped = true;
+        enemyManager.pauseAllEnemies(isTimeStopped);
+        // projectileManager.pauseAllBullets(isTimeStopped);
         lastTimeStop = System.currentTimeMillis();
         scene.renderer.setVignette(true);
         statSystem.setRedTimer(isTimeStopped);
@@ -348,6 +352,8 @@ public class GameManager {
 
     private void deactivateTimeStop(){
         this.isTimeStopped = false;
+        enemyManager.pauseAllEnemies(isTimeStopped);
+        // projectileManager.pauseAllBullets(isTimeStopped);
         scene.renderer.setVignette(false);
         statSystem.setRedTimer(isTimeStopped);
     }
