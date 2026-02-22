@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.tankgame.entities.Entity;
+import com.tankgame.entities.collectible.PowerUp;
 import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
@@ -58,7 +59,7 @@ public class Renderer {
     }
 
     // Método principal, simples e direto
-    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Bullet> bullets) {
+    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Bullet> bullets, List<PowerUp> powerups) {
         Graphics2D g2d = (Graphics2D) g;
         Tile[][] grid = gameGridLogic.getGridTiles();
 
@@ -84,6 +85,12 @@ public class Renderer {
             drawEntity(g2d, enemy);
         }
 
+        if(powerups != null){
+            for (PowerUp powerup : powerups){
+                drawEntity(g2d, powerup);
+            }
+        }
+
         // CAMADA 3: Foreground (Árvores cobrem os tanques e balas)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -92,6 +99,9 @@ public class Renderer {
                 }
             }
         }
+
+        if(vignette)
+            drawVignetteImage(g2d);
     }
 
     // Método mágico que desenha QUALQUER entidade
@@ -104,6 +114,10 @@ public class Renderer {
         // Fallback pro player, como você já tinha feito
         if (icon == null && entity instanceof Tank) {
             icon = loadedSprites.get("player_tank");
+        }
+
+        if (icon != null) {
+            g2d.drawImage(icon.getImage(), (int) entity.getX(), (int) entity.getY(), null);
         }
 
         if (entity instanceof Tank){

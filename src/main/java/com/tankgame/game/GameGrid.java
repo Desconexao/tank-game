@@ -62,7 +62,7 @@ public class GameGrid {
 
                     tileGrid[i][j] = tile;
                     if (tileChar == 'E') {
-                        this.EagleObjective = (Eagle) tile;
+                        setEagleObjective((Eagle) tile, new int[]{i, j});
                     }
                     if (tileChar == 'P') {
                         playerSpawnXY = new int[] { j * GameConfig.TILE_SIZE, i * GameConfig.TILE_SIZE };
@@ -132,6 +132,13 @@ public class GameGrid {
         return this.EagleObjective;
     }
 
+    public void setEagleObjective(Eagle eagleObjective, int[] coords) {
+        EagleObjective = eagleObjective;
+        int x = coords[0];
+        int y = coords[1];
+        this.eagleCoord = new int[]{x, y};
+    }
+
     public int[] getEagleCoords(){
         return eagleCoord;
     }
@@ -148,41 +155,34 @@ public class GameGrid {
         this.playerSpawnXY = new int[] { x, y };
     }
 
-    public void protectEagleTile(){
-
+    public void protectEagleTile() {
         int[] pos = getEagleCoords();
-        int x = pos[0];
-        int y = pos[1];
+        int row = pos[0];
+        int col = pos[1];
 
         int[][] tilesToProtect = {
-            {x, y + 1},
-            {x - 1, y},
-            {x, y - 1},
-            {x + 1, y}
+                {row, col + 1},
+                {row - 1, col},
+                {row, col - 1},
+                {row + 1, col}
         };
 
-        for(int i = 0; i < 4; i++){
-            Steel steelBlock = new Steel(tilesToProtect[i][0], tilesToProtect[i][1], "steel", GameConfig.STEEL_HP);    
-            replaceTile(steelBlock, tilesToProtect[i][0], tilesToProtect[i][1]);
+        for (int i = 0; i < 4; i++) {
+            int r = tilesToProtect[i][0];
+            int c = tilesToProtect[i][1];
+            Steel steelBlock = new Steel(c * GameConfig.TILE_SIZE, r * GameConfig.TILE_SIZE, "steel", GameConfig.STEEL_HP);
+            replaceTile(steelBlock, r, c);
         }
-
-        
-        
     }
 
-    public boolean replaceTile(Tile newTile, int x, int y){
-        if(x > GameConfig.GRID_WIDTH - 1
-            || x < 0
-            || y > GameConfig.GRID_HEIGHT - 1
-            || y < 0
-        ){
+    public boolean replaceTile(Tile newTile, int x, int y) {
+        if (x >= rows || x < 0 || y >= cols || y < 0) {
             return false;
         }
 
         tileGrid[x][y] = newTile;
 
         return true;
-            
     }
 
 }

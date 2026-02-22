@@ -18,8 +18,6 @@ import com.tankgame.managers.RankingManager;
 import com.tankgame.managers.StatManager;
 import com.tankgame.screens.GameScene;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.ProjectileSystem;
-import com.tankgame.systems.ShootingSystem;
 import com.tankgame.utils.Direction;
 
 public class GameManager {
@@ -28,12 +26,8 @@ public class GameManager {
     private final CollisionManager collisionManager;
     private final PowerUpManager powerUpManager;
 
-    // Systems
-    private final MovementSystem movementSystem;
+
     //private final EnemyAISystem enemyAISystem;
-    private final ShootingSystem shootingSystem;
-    private final ProjectileSystem projectileSystem;
-    private final InputSystem inputSystem;
     private final StatManager statSystem;
     private final KeyboardInput keyboard;
 
@@ -228,6 +222,8 @@ public class GameManager {
     }
 
     private void increaseTimer() {
+
+        tick += 1; // ?????????
 
         if (tick >= GameConfig.TPS) {
             tick = 0;
