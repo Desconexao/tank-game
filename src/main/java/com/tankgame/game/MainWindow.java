@@ -58,11 +58,11 @@ public class MainWindow {
     private void handleScreenAction(String action) {
         if (action.startsWith("game:")) {
             String[] parts = action.split(":");
-            String playerName = parts.length > 1 ? parts[1] : "Jogador_1";
+            String playerName = parts.length > 1 ? parts[1] : "player_1";
             int difficulty = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
             int mapId = parts.length > 3 ? Integer.parseInt(parts[3]) : 3;
 
-            System.out.println("Iniciando com -> Nome: " + playerName + " | Dificuldade: " + difficulty + " | Mapa: " + mapId);
+            System.out.println("Name: " + playerName + " | Difficulty: " + difficulty + " | Map: " + mapId);
 
             showGameScreen(playerName, difficulty, mapId);
             return;
@@ -76,13 +76,14 @@ public class MainWindow {
             case "online" -> showOnlineScreen();
             case "ranking" -> showRankingScreen();
             default -> {
-                System.out.println("Comando inválido, voltando ao menu: " + action);
-                showStartScreen(); 
+                System.out.println(" Back to menu:" + action);
+                showStartScreen();
             }
         }
-        
+
         root.requestFocusInWindow();
     }
+
     protected void showStartScreen() {
         cardLayout.show(root, "start");
     }

@@ -18,8 +18,16 @@ public class CollisionManager {
     }
 
     public boolean canMove(double x, double y, int size) {
-        return !isBlocked(x, y) && !isBlocked(x + size, y) &&
-                !isBlocked(x, y + size) && !isBlocked(x + size, y + size);
+        if (x < 0 || y < 0 ||
+                x + size > GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE ||
+                y + size > GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE) {
+            return false;
+        }
+
+        return !isBlocked(x, y) &&
+                !isBlocked(x + size - 1, y) &&
+                !isBlocked(x, y + size - 1) &&
+                !isBlocked(x + size - 1, y + size - 1);
     }
 
     private boolean isBlocked(double x, double y) {
@@ -75,8 +83,8 @@ public class CollisionManager {
         double playerSize = GameConfig.TANK_SIZE;
 
         return powerup.getX() < player.getX() + playerSize &&
-               powerup.getX() + powerUpSize > player.getX() &&
-               powerup.getY() < player.getY() + playerSize &&
-               powerup.getY() + powerUpSize > player.getY();
+                powerup.getX() + powerUpSize > player.getX() &&
+                powerup.getY() < player.getY() + playerSize &&
+                powerup.getY() + powerUpSize > player.getY();
     }
 }
