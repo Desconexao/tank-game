@@ -10,50 +10,30 @@ import com.tankgame.managers.CollisionManager;
 import com.tankgame.managers.ProjectileManager;
 import com.tankgame.screens.online.OnlineGameScene;
 import com.tankgame.settings.GameConfig;
-import com.tankgame.systems.MovementSystem;
-import com.tankgame.systems.ProjectileSystem;
-import com.tankgame.systems.ShootingSystem;
-
-/**
- * Game engine for online multiplayer games.
- * Manages game loop and systems similar to GameEngine but for online gameplay.
- */
 public class OnlineGameEngine implements Runnable {
     private final OnlineGameScene scene;
     private final WebSocketClient webSocketClient;
     private Thread gameThread;
     private boolean running = false;
-    private boolean gameStarted = true; // Start immediately for testing/local play
+    private boolean gameStarted = true;
 
-    // Last sent validation states
     private double lastSentX = -1;
     private double lastSentY = -1;
     private com.tankgame.utils.Direction lastSentFacing = null;
     private boolean lastSentShooting = false;
 
-    // Systems
-    private final MovementSystem movementSystem;
-    private final ShootingSystem shootingSystem;
-    private final ProjectileSystem projectileSystem;
     private final CollisionManager collisionManager;
     private final ProjectileManager projectileManager;
     private final OnlineOpponentManager opponentManager;
+    private long lastPlayerShotTime = 0;
 
     public OnlineGameEngine(OnlineGameScene scene, WebSocketClient webSocketClient) {
         this.scene = scene;
         this.webSocketClient = webSocketClient;
 
-        // Get the persistent GameGrid from scene to preserve block breaking
         GameGrid gameGrid = scene.getWrappedGrid();
         this.collisionManager = new CollisionManager(gameGrid);
-
-        // Initialize systems first
-        this.movementSystem = new MovementSystem(collisionManager);
-        this.projectileSystem = new ProjectileSystem(collisionManager);
-        
-        // Initialize managers with required systems
-        this.projectileManager = new ProjectileManager(projectileSystem);
-        this.shootingSystem = new ShootingSystem(projectileManager);
+        this.projectileManager = new ProjectileManager();
         this.opponentManager = new OnlineOpponentManager(projectileManager);
 
         // Setup message handler for opponent actions
@@ -155,31 +135,40 @@ public class OnlineGameEngine implements Runnable {
         Enemy opponent = scene.getOpponent();
         OnlinePlayerInputHandler inputHandler = scene.getInputHandler();
 
-        // Handle player movement - set direction only on successful move
         if (inputHandler.upPressed) {
-            if (movementSystem.tryMove(player, player.getX(), player.getY() - GameConfig.PLAYER_SPEED)) {
+            double newY = player.getY() - GameConfig.PLAYER_SPEED;
+            if (collisionManager.canMove(player.getX(), newY, GameConfig.TANK_SIZE)) {
+                player.setY(newY);
                 player.setDirection(com.tankgame.utils.Direction.UP);
             }
         } else if (inputHandler.downPressed) {
-            if (movementSystem.tryMove(player, player.getX(), player.getY() + GameConfig.PLAYER_SPEED)) {
+            double newY = player.getY() + GameConfig.PLAYER_SPEED;
+            if (collisionManager.canMove(player.getX(), newY, GameConfig.TANK_SIZE)) {
+                player.setY(newY);
                 player.setDirection(com.tankgame.utils.Direction.DOWN);
             }
         } else if (inputHandler.leftPressed) {
-            if (movementSystem.tryMove(player, player.getX() - GameConfig.PLAYER_SPEED, player.getY())) {
+            double newX = player.getX() - GameConfig.PLAYER_SPEED;
+            if (collisionManager.canMove(newX, player.getY(), GameConfig.TANK_SIZE)) {
+                player.setX(newX);
                 player.setDirection(com.tankgame.utils.Direction.LEFT);
             }
         } else if (inputHandler.rightPressed) {
-            if (movementSystem.tryMove(player, player.getX() + GameConfig.PLAYER_SPEED, player.getY())) {
+            double newX = player.getX() + GameConfig.PLAYER_SPEED;
+            if (collisionManager.canMove(newX, player.getY(), GameConfig.TANK_SIZE)) {
+                player.setX(newX);
                 player.setDirection(com.tankgame.utils.Direction.RIGHT);
             }
         }
 
-        // Update opponent movement based on button states
         opponentManager.update();
 
-        // Handle player shooting - separate from movement
         if (inputHandler.shootPressed) {
-            shootingSystem.playerShoot(player);
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastPlayerShotTime >= player.getBulletCooldown()) {
+                projectileManager.addBullet(player.shoot());
+                lastPlayerShotTime = currentTime;
+            }
         }
 
         if (webSocketClient != null && webSocketClient.isConnected()) {
@@ -200,43 +189,39 @@ public class OnlineGameEngine implements Runnable {
             }
         }
 
-        // Handle pause
         if (inputHandler.pausePressed) {
             scene.setPaused(!scene.isPaused());
             inputHandler.resetPause();
         }
 
-        // Update projectiles
-        for (com.tankgame.entities.projectile.Bullet bullet : projectileManager.getActiveBullets()) {
-            List<com.tankgame.entities.tank.Tank> targets = new ArrayList<>();
-            targets.add(player);
-            if (opponent != null) {
-                targets.add(opponent);
-            }
-            projectileSystem.update(bullet, targets);
-        }
-        List<com.tankgame.entities.tank.Tank> allTanks = new ArrayList<>();
-        allTanks.add(player);
-        if (opponent != null) {
-            allTanks.add(opponent);
-        }
-        projectileManager.update(allTanks);
+        updateProjectiles();
 
-        // Check collisions
-        List<Enemy> enemies = new ArrayList<>();
-        if (opponent != null) {
-            enemies.add(opponent);
-        }
-
-        // Game over if player dies
         if (player.getHealth() <= 0) {
             scene.setGameRunning(false);
         }
 
-        // Game over if opponent dies
         if (opponent != null && opponent.getHealth() <= 0) {
             scene.setGameRunning(false);
         }
+    }
+
+    private void updateProjectiles() {
+        List<com.tankgame.entities.projectile.Bullet> bullets = projectileManager.getActiveBullets();
+        List<com.tankgame.entities.projectile.Bullet> toRemove = new ArrayList<>();
+        List<com.tankgame.entities.tank.Tank> allTanks = new ArrayList<>();
+
+        allTanks.add(scene.getPlayer());
+        if (scene.getOpponent() != null) {
+            allTanks.add(scene.getOpponent());
+        }
+
+        for (com.tankgame.entities.projectile.Bullet bullet : bullets) {
+            bullet.update();
+            if (collisionManager.checkProjectileCollision(bullet, allTanks) || bullet.isMarkedForRemoval()) {
+                toRemove.add(bullet);
+            }
+        }
+        bullets.removeAll(toRemove);
     }
 
     public ProjectileManager getProjectileManager() {
