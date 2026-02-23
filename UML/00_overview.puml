@@ -1,0 +1,115 @@
+@startuml TankGameArchitecture
+
+!define ABSTRACT_COLOR #E1F5FF
+!define ENTITY_COLOR #FFF9C4
+!define MANAGER_COLOR #F0F4C3
+!define SCREEN_COLOR #E8F5E9
+!define UTIL_COLOR #FCE4EC
+
+package "Tank Game" {
+
+  package "Core Game" {
+    class Main
+    class MainWindow
+    class GameEngine
+    class GameManager
+    class GameGrid
+  }
+
+  package "Entities" {
+    abstract class Entity
+    abstract class Tank
+    class Player
+    class Enemy
+    class Bullet
+    abstract class Tile
+    abstract class PowerUp
+  }
+
+  package "Managers" {
+    class EnemyManager
+    class ProjectileManager
+    class CollisionManager
+    class PowerUpManager
+    class StatManager
+    class RankingManager
+  }
+
+  package "Screens" {
+    class GameScene
+    class StartScreen
+    class RankingScreen
+    class OptionsScreen
+    class InstructionsScreen
+    class MapCreatorScreen
+    abstract class OnlineGameScene
+    class OnlineLobbyScreen
+  }
+
+  package "Graphics" {
+    class Renderer
+    class SpriteImport
+  }
+
+  package "Online" {
+    class WebSocketClient
+    class OnlineGridLoader
+  }
+
+  package "Settings & Utils" {
+    class GameConfig
+    class SpriteList
+    enum Direction
+    enum TankColors
+  }
+
+  ' Relationships
+  Main --> MainWindow
+  MainWindow --> GameScene
+  MainWindow --> StartScreen
+  MainWindow --> RankingScreen
+  MainWindow --> OnlineLobbyScreen
+
+  GameScene --> GameManager
+  GameScene --> GameGrid
+  GameScene --> Renderer
+  GameScene --> GameEngine
+
+  GameManager --> EnemyManager
+  GameManager --> ProjectileManager
+  GameManager --> PowerUpManager
+  GameManager --> StatManager
+  GameManager --> CollisionManager
+
+  GameEngine --> GameManager
+
+  GameGrid --> Tile
+
+  Entity <|-- Tank
+  Entity <|-- Bullet
+  Entity <|-- PowerUp
+  Entity <|-- Tile
+
+  Tank <|-- Player
+  Tank <|-- Enemy
+
+  Tile <|-- PowerUp
+
+  Renderer --> SpriteImport
+  Renderer --> GameGrid
+
+  EnemyManager --> Enemy
+  ProjectileManager --> Bullet
+  PowerUpManager --> PowerUp
+
+  CollisionManager --> GameGrid
+
+  RankingManager --> RankingScreen
+
+  OnlineGameScene --> OnlineGridLoader
+  OnlineGameScene --> WebSocketClient
+  OnlineLobbyScreen --> WebSocketClient
+
+}
+
+@enduml

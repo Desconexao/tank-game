@@ -1,0 +1,103 @@
+@startuml EntitySystem
+
+package "Entity System" {
+
+  abstract class Entity {
+    -x: double
+    -y: double
+    -spriteKey: String
+    +getX(): double
+    +getY(): double
+    +setX(double): void
+    +setY(double): void
+    +getSpriteKey(): String
+  }
+
+  abstract class Tank {
+    #health: int
+    #direction: Direction
+    #speed: double
+    #color: TankColors
+    #team: Team
+    +getHealth(): int
+    +setHealth(int): void
+    +getDirection(): Direction
+    +setDirection(Direction): void
+    +moveUp(): void
+    +moveDown(): void
+    +moveLeft(): void
+    +moveRight(): void
+    +shoot(): Bullet
+    +canShoot(): boolean
+  }
+
+  class Player {
+    -bulletCooldown: long
+    -shielded: boolean
+    +setBulletCooldown(long): void
+    +isShielded(): boolean
+    +setShielded(boolean): void
+  }
+
+  class Enemy {
+    -AI: EnemyAISystem
+    -isPaused: boolean
+    -aiType: AIType
+    +run(): void
+    +setPaused(boolean): void
+    +stopGame(): void
+    +getAI(): EnemyAISystem
+  }
+
+  class Bullet {
+    -owner: Tank
+    -direction: Direction
+    -markedForRemoval: boolean
+    +markForRemoval(): void
+    +isMarkedForRemoval(): boolean
+    +getOwner(): Tank
+    +getDirection(): Direction
+  }
+
+  abstract class Tile {
+    #collidable: boolean
+    #blocksProjectiles: boolean
+    +isCollidable(): boolean
+    +doesBlockProjectiles(): boolean
+    +inflictDamage(int): int
+    +isBroken(): boolean
+  }
+
+  abstract class Breakable {
+    #health: int
+    #initialHealth: int
+    #isBroken: boolean
+    +getHealth(): int
+    +inflictDamage(int): int
+    +isBroken(): boolean
+  }
+
+  class Brick
+  class Steel
+  class Eagle
+  class Water
+  class Tree
+
+  Entity <|-- Tank
+  Entity <|-- Bullet
+  Entity <|-- Tile
+
+  Tank <|-- Player
+  Tank <|-- Enemy
+
+  Tile <|-- Breakable
+  Breakable <|-- Brick
+  Breakable <|-- Steel
+  Breakable <|-- Eagle
+
+  Tile <|-- Water
+  Tile <|-- Tree
+
+}
+
+@enduml

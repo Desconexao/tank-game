@@ -1,0 +1,86 @@
+@startuml ScreenSystem
+
+package "UI & Screens" {
+
+  class MainWindow {
+    -frame: JFrame
+    -cardLayout: CardLayout
+    -root: JPanel
+    -gameScene: GameScene
+    -rankingScreen: RankingScreen
+    +handleScreenAction(String): void
+    +showStartScreen(): void
+    +showGameScreen(String, int, int): void
+    +showRankingScreen(): void
+  }
+
+  class GameScene {
+    -gameGrid: JPanel
+    -gridLogic: GameGrid
+    -player: Player
+    -renderer: Renderer
+    -gameEngine: GameEngine
+    -gameManager: GameManager
+    -statWidget: StatBoardWidget
+    +startGame(): void
+    +stopGame(): void
+    +update(): void
+    +getGameManager(): GameManager
+  }
+
+  class StartScreen {
+    -nameField: JTextField
+    -difficultyBox: JComboBox
+    -mapBox: JComboBox
+    +StartScreen(Consumer<String>)
+  }
+
+  class RankingScreen {
+    -rankingManager: RankingManager
+    -listPanel: JPanel
+    +refreshRanking(): void
+  }
+
+  class OptionsScreen {
+    +testConnection(String): void
+  }
+
+  class StatBoardWidget {
+    -timerLabel: JLabel
+    -scoreLabel: JLabel
+    -healthpointLabel: JLabel
+    +update(int, int): void
+  }
+
+  class OnlineLobbyScreen {
+    -webSocketClient: WebSocketClient
+    -currentLobbyId: String
+    -playerNumber: int
+    +joinLobby(String): void
+  }
+
+  class OnlineGameScene {
+    -gridLoader: OnlineGridLoader
+    -opponent: Enemy
+    -webSocketClient: WebSocketClient
+    +startGame(): void
+    +handleOpponentInput(): void
+  }
+
+  MainWindow --> GameScene
+  MainWindow --> StartScreen
+  MainWindow --> RankingScreen
+  MainWindow --> OptionsScreen
+  MainWindow --> OnlineLobbyScreen
+
+  GameScene --> GameManager
+  GameScene --> Renderer
+  GameScene --> StatBoardWidget
+
+  OnlineGameScene --> WebSocketClient
+  OnlineGameScene --> OnlineGridLoader
+  OnlineLobbyScreen --> WebSocketClient
+
+}
+
+@enduml

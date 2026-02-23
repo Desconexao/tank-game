@@ -1,0 +1,123 @@
+@startuml TankGameArchitecture
+
+package "Tank Game" {
+  package "entities" {
+    abstract class Entity {
+      -x: double
+      -y: double
+      -spriteKey: String
+      +getX(): double
+      +getY(): double
+    }
+
+    abstract class Tank {
+      -health: int
+      -direction: Direction
+      -speed: double
+      +moveUp(): void
+      +moveDown(): void
+      +shoot(): Bullet
+    }
+
+    class Player {
+      -bulletCooldown: long
+      +setBulletCooldown(long): void
+    }
+
+    class Enemy {
+      -AI: EnemyAISystem
+      +run(): void
+    }
+
+    class Bullet {
+      -owner: Tank
+      -direction: Direction
+      +markForRemoval(): void
+    }
+
+    Entity <|-- Tank
+    Entity <|-- Bullet
+    Tank <|-- Player
+    Tank <|-- Enemy
+  }
+
+  package "game" {
+    class GameManager {
+      -player: Player
+      -enemies: List<Enemy>
+      -score: int
+      +update(): void
+      +isRunning(): boolean
+    }
+
+    class GameGrid {
+      -tileGrid: Tile[][]
+      -eagleObjective: Eagle
+      +getGridTiles(): Tile[][]
+      +reloadMap(int): void
+    }
+
+    class GameEngine {
+      -gameManager: GameManager
+      +start(): void
+      +stop(): void
+    }
+
+    GameManager --> GameGrid
+    GameManager --> Player
+    GameEngine --> GameManager
+  }
+
+  package "managers" {
+    class EnemyManager {
+      -enemies: List<Enemy>
+      +spawnInitialEnemies(int): void
+      +getEnemies(): List<Enemy>
+    }
+
+    class ProjectileManager {
+      -activeBullets: List<Bullet>
+      +addBullet(Bullet): void
+      +getActiveBullets(): List<Bullet>
+    }
+
+    class CollisionManager {
+      +canMove(double, double, int): boolean
+    }
+
+    GameManager --> EnemyManager
+    GameManager --> ProjectileManager
+    GameManager --> CollisionManager
+  }
+
+  package "screens" {
+    class GameScene {
+      -gameManager: GameManager
+      -renderer: Renderer
+      +startGame(): void
+      +stopGame(): void
+    }
+
+    class StartScreen {
+      +handleGameStart(): void
+    }
+  }
+
+  package "graphics" {
+    class Renderer {
+      -loadedSprites: Map
+      +draw(Graphics, GameGrid, Tank, ...): void
+    }
+
+    class SpriteImport {
+      +getSpriteResized(String, int, int): ImageIcon
+    }
+
+    Renderer --> SpriteImport
+  }
+
+  GameScene --> GameManager
+  GameScene --> Renderer
+}
+
+@enduml

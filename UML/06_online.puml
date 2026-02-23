@@ -1,0 +1,59 @@
+@startuml OnlineSystem
+
+package "Online System" {
+
+  class WebSocketClient {
+    -uri: String
+    -webSocket: WebSocket
+    -messageHandler: MessageHandler
+    +connect(): void
+    +disconnect(): void
+    +sendMessage(String): void
+    +setMessageHandler(MessageHandler): void
+  }
+
+  interface MessageHandler {
+    +onLobbyCreated(String, int, int, int): void
+    +onLobbyJoined(String, int, int, int): void
+    +onGameStarted(): void
+    +onEnemyInput(double, double, Direction): void
+    +onEnemyShooting(boolean): void
+    +onError(String): void
+  }
+
+  class OnlineGridLoader {
+    -grid: char[][]
+    -tileGrid: Tile[][]
+    -playerSpawns: List<int[]>
+    -eagle: Eagle
+    +getTileGrid(): Tile[][]
+    +getPlayerSpawns(): List<int[]>
+    +getPlayerSpawn(int): int[]
+    +getEagle(): Eagle
+  }
+
+  class OnlineGameScene {
+    -gridLoader: OnlineGridLoader
+    -opponent: Enemy
+    -webSocketClient: WebSocketClient
+    -playerNumber: int
+    +startGame(): void
+    +handleOpponentInput(): void
+  }
+
+  class OnlineLobbyScreen {
+    -webSocketClient: WebSocketClient
+    -currentLobbyId: String
+    -playerNumber: int
+    +joinLobby(String): void
+    +createLobby(): void
+  }
+
+  WebSocketClient --> MessageHandler
+  OnlineGameScene --> WebSocketClient
+  OnlineGameScene --> OnlineGridLoader
+  OnlineLobbyScreen --> WebSocketClient
+
+}
+
+@enduml

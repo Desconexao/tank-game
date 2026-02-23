@@ -1,0 +1,58 @@
+@startuml PowerUpSystem
+
+package "Power-Up System" {
+
+  abstract class PowerUp {
+    -name: String
+    -description: String
+    -isPlayerAffected: boolean
+    +getName(): String
+    +getDescription(): String
+    +isPlayerAffected(): boolean
+  }
+
+  class StarPowerUp {
+    +StarPowerUp(double, double)
+  }
+
+  class GrenadePowerUp {
+    +GrenadePowerUp(double, double)
+  }
+
+  class HelmetPowerUp {
+    +HelmetPowerUp(double, double)
+  }
+
+  class ShovelPowerUp {
+    +ShovelPowerUp(double, double)
+  }
+
+  class HealthPack {
+    +HealthPack(double, double)
+  }
+
+  class TimeStopPowerUp {
+    +TimeStopPowerUp(double, double)
+  }
+
+  class PowerUpManager {
+    -currentMapPowerUps: List<PowerUp>
+    -selectedPowerUp: PowerUp
+    -spawnCooldown: long
+    +spawnNewPowerUp(): void
+    +getCurrentMapPowerUps(): List<PowerUp>
+    +checkPlayerCollisions(Player): void
+  }
+
+  PowerUp <|-- StarPowerUp
+  PowerUp <|-- GrenadePowerUp
+  PowerUp <|-- HelmetPowerUp
+  PowerUp <|-- ShovelPowerUp
+  PowerUp <|-- HealthPack
+  PowerUp <|-- TimeStopPowerUp
+
+  PowerUpManager --> PowerUp
+
+}
+
+@enduml

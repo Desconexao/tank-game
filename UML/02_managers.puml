@@ -1,0 +1,94 @@
+@startuml ManagerSystem
+
+package "Game Managers" {
+
+  class GameManager {
+    -player: Player
+    -scene: GameScene
+    -difficulty: int
+    -score: int
+    -level: int
+    -isRunning: boolean
+    -isPaused: boolean
+    -enemyManager: EnemyManager
+    -projectileManager: ProjectileManager
+    -powerUpManager: PowerUpManager
+    -collisionManager: CollisionManager
+    -statSystem: StatManager
+    +update(): void
+    +handlePlayerInput(): void
+    +handlePlayerShooting(): void
+    +handleEnemyShooting(): void
+    +updateProjectiles(): void
+    +checkGameConditions(): void
+    +togglePause(): void
+    +restart(): void
+    +stop(): void
+  }
+
+  class EnemyManager {
+    -enemies: List<Enemy>
+    -collisionManager: CollisionManager
+    -enemySpawnXY: List
+    +spawnInitialEnemies(int): void
+    +removeDeadEnemies(): void
+    +getEnemies(): List<Enemy>
+    +pauseAllEnemies(boolean): void
+    +clear(): void
+  }
+
+  class ProjectileManager {
+    -activeBullets: List<Bullet>
+    +addBullet(Bullet): void
+    +getActiveBullets(): List<Bullet>
+    +clearBullets(): void
+    +update(): void
+  }
+
+  class PowerUpManager {
+    -currentMapPowerUps: List<PowerUp>
+    -selectedPowerUp: PowerUp
+    -collisionManager: CollisionManager
+    +spawnNewPowerUp(): void
+    +getCurrentMapPowerUps(): List<PowerUp>
+    +checkPlayerCollisions(Player): void
+    +activatePowerUp(PowerUp, Player): void
+  }
+
+  class CollisionManager {
+    -gridLogic: GameGrid
+    +canMove(double, double, int): boolean
+    +checkCollision(Entity, Entity): boolean
+    +getTankCollisions(Tank): List<Tank>
+  }
+
+  class StatManager {
+    -player: Player
+    -timerLabel: JLabel
+    -healthPointLabel: JLabel
+    -scoreLabel: JLabel
+    +update(int, int): void
+    +setRedTimer(boolean): void
+  }
+
+  class RankingManager {
+    -scores: List<PlayerScore>
+    +saveScore(String, int): void
+    +getAllScores(): List<PlayerScore>
+    +isTopScore(int): boolean
+  }
+
+  GameManager --> EnemyManager
+  GameManager --> ProjectileManager
+  GameManager --> PowerUpManager
+  GameManager --> CollisionManager
+  GameManager --> StatManager
+
+  EnemyManager --> Enemy
+  ProjectileManager --> Bullet
+  PowerUpManager --> PowerUp
+  CollisionManager --> GameGrid
+
+}
+
+@enduml

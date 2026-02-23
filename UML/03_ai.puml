@@ -1,0 +1,49 @@
+@startuml AISystem
+
+package "AI System" {
+
+  abstract class EnemyAISystem {
+    #collisionManager: CollisionManager
+    #tank: Enemy
+    +update(): void
+    +makeDecision(): void
+    +shoot(): void
+  }
+
+  class DefaultAI {
+    -shootCooldown: long
+    +update(): void
+    +findNearestTarget(): Tank
+    +moveTowardTarget(Tank): void
+  }
+
+  class RoamAI {
+    -currentDirection: Direction
+    -directionChangeCounter: int
+    +update(): void
+    +roamRandomly(): void
+    +changeDirection(): void
+  }
+
+  class Enemy {
+    -AI: EnemyAISystem
+    -AIType: AIType
+    -isPaused: boolean
+    +run(): void
+    +setPaused(boolean): void
+  }
+
+  enum AIType {
+    DEFAULT
+    ROAM
+  }
+
+  EnemyAISystem <|-- DefaultAI
+  EnemyAISystem <|-- RoamAI
+
+  Enemy --> EnemyAISystem
+  Enemy --> AIType
+
+}
+
+@enduml

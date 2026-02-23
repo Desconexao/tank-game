@@ -1,0 +1,48 @@
+@startuml GraphicsSystem
+
+package "Graphics & Rendering" {
+
+  class Renderer {
+    -sprites: SpriteImport
+    -loadedSprites: Map<String, ImageIcon>
+    -vignetteImage: Image
+    -vignette: boolean
+    +draw(Graphics, GameGrid, Tank, List, List, List): void
+    +drawEntity(Graphics2D, Entity): void
+    +drawTank(Graphics2D, Tank): void
+    +drawVignetteImage(Graphics2D): void
+    -loadSprites(Object[][]): void
+  }
+
+  class SpriteImport {
+    -spritesPath: String
+    +getSpriteResized(String, int, int): ImageIcon
+    +getSprite(String): ImageIcon
+    -createPlaceholderSprite(String, int, int): ImageIcon
+    -loadFromResource(String): InputStream
+  }
+
+  class GameGrid {
+    -tileGrid: Tile[][]
+    -mapId: int
+    -EagleObjective: Eagle
+    -playerSpawnXY: int[]
+    -enemySpawnXY: List
+    +getGridTiles(): Tile[][]
+    +reloadMap(int): void
+    +damageBlock(double, double, int): void
+    +replaceTile(Tile, int, int): boolean
+    +protectEagleTile(): void
+  }
+
+  class SpriteList {
+    {static} SPRITES_TO_LOAD: Object[][]
+  }
+
+  Renderer --> SpriteImport
+  Renderer --> GameGrid
+  SpriteImport --> SpriteList
+
+}
+
+@enduml
