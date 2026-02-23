@@ -59,7 +59,7 @@ package "Entity System" {
     +getDirection(): Direction
   }
 
-  abstract class Tile {
+  class Tile {
     #collidable: boolean
     #blocksProjectiles: boolean
     +isCollidable(): boolean
