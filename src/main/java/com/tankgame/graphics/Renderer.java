@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -21,7 +20,6 @@ import com.tankgame.entities.projectile.Bullet;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.entities.tile.Tile;
-import com.tankgame.entities.tile.Tree;
 import com.tankgame.game.GameGrid;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.settings.SpriteList;
@@ -30,7 +28,6 @@ public class Renderer {
     private SpriteImport sprites;
     private int size = GameConfig.TILE_SIZE;
     public Map<String, ImageIcon> loadedSprites = new HashMap<>();
-    private Queue<Object[]> renderQueue = new ArrayDeque<>();
     private Image vignetteImage;
     public boolean vignette;
 
@@ -54,95 +51,86 @@ public class Renderer {
     public void drawVignetteImage(Graphics2D g2d) {
         if (vignetteImage != null) {
             g2d.drawImage(
-                vignetteImage,
-                0,
-                0,
-                GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE,
-                GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE,
-                null
-            );
+                    vignetteImage,
+                    0, 0,
+                    GameConfig.GRID_WIDTH * GameConfig.TILE_SIZE,
+                    GameConfig.GRID_HEIGHT * GameConfig.TILE_SIZE,
+                    null);
         }
     }
 
-    // Método principal, simples e direto
-    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Bullet> bullets, List<PowerUp> powerups) {
+    public void draw(Graphics g, GameGrid gameGridLogic, Tank player, List<Enemy> enemies, List<Bullet> bullets,
+            List<PowerUp> powerups) {
         Graphics2D g2d = (Graphics2D) g;
         Tile[][] grid = gameGridLogic.getGridTiles();
 
-        // CAMADA 1: Background (Tiles normais)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                if (!(grid[i][j] instanceof Tree)) {
+                if (!"tree".equals(grid[i][j].getSpriteKey())) {
                     drawEntity(g2d, grid[i][j]);
                 }
             }
         }
 
-        // CAMADA 2: Entidades (Balas e Tanques)
+        if (powerups != null) {
+            for (PowerUp powerup : powerups) {
+                drawEntity(g2d, powerup);
+            }
+        }
         if (bullets != null) {
             for (Bullet bullet : bullets) {
                 drawEntity(g2d, bullet);
             }
         }
 
-        drawEntity(g2d, player);
+        drawTank(g2d, player);
 
-        for (Enemy enemy : enemies) {
-            drawEntity(g2d, enemy);
-        }
-
-        if(powerups != null){
-            for (PowerUp powerup : powerups){
-                drawEntity(g2d, powerup);
+        if (enemies != null) {
+            for (Enemy enemy : enemies) {
+                drawTank(g2d, enemy);
             }
         }
 
-        // CAMADA 3: Foreground (Árvores cobrem os tanques e balas)
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] instanceof Tree) {
+                if ("tree".equals(grid[i][j].getSpriteKey())) {
                     drawEntity(g2d, grid[i][j]);
                 }
             }
         }
 
-        if(vignette)
+        if (vignette) {
             drawVignetteImage(g2d);
+        }
     }
 
-    // Método mágico que desenha QUALQUER entidade
     private void drawEntity(Graphics2D g2d, Entity entity) {
         if (entity == null || entity.getSpriteKey() == null)
             return;
 
         ImageIcon icon = loadedSprites.get(entity.getSpriteKey());
-
-        // Fallback pro player, como você já tinha feito
-        if (icon == null && entity instanceof Tank) {
-            icon = loadedSprites.get("player_tank");
-        }
-
         if (icon != null) {
             g2d.drawImage(icon.getImage(), (int) entity.getX(), (int) entity.getY(), null);
         }
+    }
 
-        if (entity instanceof Tank){
-            if (((Tank) entity).isShielded()){
+    private void drawTank(Graphics2D g2d, Tank tank) {
+        if (tank == null)
+            return;
+
+        drawEntity(g2d, tank);
+
+        if (tank.isShielded()) {
             ImageIcon shieldIcon = loadedSprites.get("shield");
             if (shieldIcon != null) {
                 int offset = (GameConfig.TANK_SIZE - GameConfig.POWERUP_SHIELD_SIZE) / 2;
-                    
                 g2d.drawImage(
-                    shieldIcon.getImage(), 
-                    (int) entity.getX() + offset, 
-                    (int) entity.getY() + offset, 
-                    null
-                );
-                }
+                        shieldIcon.getImage(),
+                        (int) tank.getX() + offset,
+                        (int) tank.getY() + offset,
+                        null);
             }
         }
-
-        
     }
 
     private void loadSprites(Object[][] spriteSpecs) {
@@ -158,45 +146,7 @@ public class Renderer {
         }
     }
 
-    private void drawSpriteQueue(Graphics2D g2d, List<Object[]> bulletQueue) {
-        List<Object[]> snapshot = new ArrayList<>(bulletQueue);
-        for (Object[] spriteInfo : snapshot) {
-            ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
-            if (spriteIcon != null) {
-                g2d.drawImage(spriteIcon.getImage(), (int) spriteInfo[1], (int) spriteInfo[2], null);
-            }
-        }
-
-
-
-        // Well IDK who made and why bulletQueue took over the renderQueue's dequeue method, but lets keep playing along so
-        // and I'm too drunk to care.
-
-        // I think it would be more correct to pass an Entity object and pull sprite and coords from their methods
-        // After all, are we dynamically rendering something that is not an Entity?
-        Object[] spriteInfo;
-        while ((spriteInfo = renderQueue.poll()) != null) {
-            ImageIcon spriteIcon = loadedSprites.get((String) spriteInfo[0]);
-            if (spriteIcon != null) {
-                g2d.drawImage(
-                    spriteIcon.getImage(),
-                    (int) spriteInfo[1],
-                    (int) spriteInfo[2],
-                    null
-                );
-            }
-        }
-    }
-
-    public boolean pushRenderQueue(String spriteName, int X, int Y) {
-        if (loadedSprites.containsKey(spriteName)) {
-            renderQueue.add(new Object[] { spriteName, X, Y });
-            return true;
-        }
-        return false;
-    }
-
-    public void setVignette(boolean vignette){
+    public void setVignette(boolean vignette) {
         this.vignette = vignette;
     }
 }
