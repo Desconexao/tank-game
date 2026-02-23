@@ -4,9 +4,9 @@ import java.util.Random;
 import com.tankgame.entities.tank.Enemy;
 import com.tankgame.managers.CollisionManager;
 import com.tankgame.utils.Direction;
-import com.tankgame.utils.Movable;
+import com.tankgame.utils.Updatable;
 
-public abstract class EnemyAISystem implements Movable {
+public abstract class EnemyAISystem implements Updatable {
     protected Direction[] directions;
     protected final CollisionManager collisionManager;
     protected final Random random = new Random();

@@ -39,7 +39,6 @@ public class GameScene extends JPanel {
     protected StatBoardWidget statWidget;
     private int difficulty;
 
-
     private Font pauseFont = new Font("Arial", Font.BOLD, 48);
     private Font instructionFont = new Font("Arial", Font.PLAIN, 20);
 
@@ -139,8 +138,8 @@ public class GameScene extends JPanel {
     }
 
     private void drawGameOverText(Graphics g) {
-        Color originalColor = g.getColor();
-        Font originalFont = g.getFont();
+        // Color originalColor = g.getColor();
+        // Font originalFont = g.getFont();
 
         g.setFont(FontManager.getFont("pixel", 52));
         g.setColor(Color.RED);

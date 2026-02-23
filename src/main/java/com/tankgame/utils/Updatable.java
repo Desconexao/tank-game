@@ -1,5 +1,5 @@
 package com.tankgame.utils;
 
-public interface Movable {
+public interface Updatable {
     public void update();
 }
