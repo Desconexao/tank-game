@@ -76,7 +76,7 @@ public class StartScreen extends JPanel {
 
         add(formPanel, BorderLayout.CENTER);
 
-        JButton startButton = new JButton("Start");
+        JButton startButton = new JButton("START");
         startButton.setFont(FontManager.getFont("pixel", 20f));
         startButton.setForeground(Color.WHITE);
         startButton.setBackground(Color.BLACK);
@@ -130,7 +130,7 @@ public class StartScreen extends JPanel {
         instructionsButton.setContentAreaFilled(false);
         instructionsButton.addActionListener(e -> onAction.accept("instructions"));
 
-        JButton onlineLobbyButton = new JButton("online");
+        JButton onlineLobbyButton = new JButton("ONLINE");
         onlineLobbyButton.setFont(FontManager.getFont("pixel", 20f));
         onlineLobbyButton.setForeground(Color.WHITE);
         onlineLobbyButton.setBackground(Color.BLACK);
