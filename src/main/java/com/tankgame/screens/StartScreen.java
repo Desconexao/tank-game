@@ -144,7 +144,8 @@ public class StartScreen extends JPanel {
         buttonPanel.add(startButton);
         buttonPanel.add(rankingButton);
         buttonPanel.add(optionsButton);
-        buttonPanel.add(createMapButton);
+        // buttonPanel.add(createMapButton); it would be cool but i dont have time to
+        // make it work properly
         buttonPanel.add(instructionsButton);
         buttonPanel.add(onlineLobbyButton);
 
