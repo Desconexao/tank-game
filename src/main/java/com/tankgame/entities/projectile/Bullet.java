@@ -4,8 +4,9 @@ import com.tankgame.entities.Entity;
 import com.tankgame.entities.tank.Tank;
 import com.tankgame.settings.GameConfig;
 import com.tankgame.utils.Direction;
+import com.tankgame.utils.Movable;
 
-public class Bullet extends Entity implements Runnable {
+public class Bullet extends Entity implements Runnable, Movable {
     private double speed = GameConfig.BULLET_SPEED;
     private Direction direction;
     private volatile boolean markedForRemoval = false;
