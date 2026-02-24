@@ -1,6 +1,6 @@
 # Tank Game
 
-A modern recreation of the classic 1980s game **Battle City** by Namco for the NES, built from scratch using Java and Maven. This is an academic project developed for the Object Oriented Programming class that reimplements the beloved tank combat game with enhanced features including online multiplayer, custom maps, and power-up systems.
+A modern recreation of the classic 1980s game **Battle City** by Namco for the NES, built from scratch using Java and Maven. This is an academic project developed for the Object Oriented Programming class that reimplements the old tank combat game with enhanced features including online multiplayer, custom maps, and power-up systems.
 
 ## Screenshots
 
