@@ -5,7 +5,7 @@ package com.tankgame.settings;
  */
 public class ServerConfig {
     // Default server address
-    public static final String DEFAULT_SERVER_HOST = "129.148.43.244";
+    public static final String DEFAULT_SERVER_HOST = "localhost";
     public static final int DEFAULT_SERVER_PORT = 3000;
     public static final String DEFAULT_SERVER_URL = "ws://" + DEFAULT_SERVER_HOST + ":" + DEFAULT_SERVER_PORT;
 
