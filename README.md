@@ -144,7 +144,12 @@ The game requires a Node.js WebSocket server for online features.
 
 3. **Start the server:**
    ```bash
-   node server.js
+   npm start
+   ```
+
+   Or alternatively:
+   ```bash
+   node src/server.js
    ```
 
    The server will start on `localhost:3000` by default.
