@@ -4,7 +4,7 @@ A modern recreation of the classic 1980s game **Battle City** by Namco for the N
 
 ## Screenshots
 
-*[Screenshots will be added here]*
+![](https://imgur.com/RdOBGPB.png)
 
 ## Table of Contents
 

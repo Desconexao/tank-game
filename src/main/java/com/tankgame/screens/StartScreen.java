@@ -27,7 +27,7 @@ public class StartScreen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        JLabel title = new JLabel("BATTLE CITY", SwingConstants.CENTER);
+        JLabel title = new JLabel("TANK GAME", SwingConstants.CENTER);
         title.setFont(FontManager.getFont("pixel", 54f));
         title.setForeground(Color.YELLOW);
         add(title, BorderLayout.NORTH);
